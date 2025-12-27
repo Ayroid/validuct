@@ -8,6 +8,7 @@ import { Idea } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '@/context/AuthContext';
 import VoteButtons from '@/components/VoteButtons';
+import CommentSection from '@/components/CommentSection';
 
 export default function IdeaDetailPage() {
   const params = useParams();
@@ -214,12 +215,9 @@ export default function IdeaDetailPage() {
             </div>
           )}
 
-          {/* Comments Section Placeholder */}
+          {/* Comments Section */}
           <div className="mt-8 pt-8 border-t border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Comments</h2>
-            <p className="text-gray-500 text-center py-8">
-              Comments feature coming in Phase 4
-            </p>
+            <CommentSection ideaId={idea.id} initialCommentsCount={idea.commentsCount} />
           </div>
         </div>
       </div>

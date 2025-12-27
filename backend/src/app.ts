@@ -6,6 +6,7 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import ideaRoutes from './routes/ideaRoutes.js';
 import voteRoutes from './routes/voteRoutes.js';
+import commentRoutes from './routes/commentRoutes.js';
 
 const app: Application = express();
 
@@ -33,7 +34,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/ideas', ideaRoutes);
 app.use('/api/v1', voteRoutes);
-// app.use('/api/v1/comments', commentRoutes);
+app.use('/api/v1', commentRoutes);
 
 // Error handlers
 app.use(notFound);

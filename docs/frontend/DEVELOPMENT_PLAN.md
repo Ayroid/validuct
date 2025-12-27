@@ -732,11 +732,11 @@ backend/
 - [x] Real-time vote count updates
 - [x] Calculate trending/hot algorithms
 
-### Phase 4: Comments System (Week 4)
-- [ ] Comment CRUD APIs
-- [ ] Nested comments support
-- [ ] Comment UI with replies
-- [ ] Comment count tracking
+### Phase 4: Comments System (Week 4) ✅
+- [x] Comment CRUD APIs
+- [x] Nested comments support
+- [x] Comment UI with replies
+- [x] Comment count tracking
 
 ### Phase 5: User Profiles (Week 5) ✅
 - [x] User profile API

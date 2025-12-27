@@ -8,7 +8,7 @@ import { Idea } from '@/types';
 type TimelineType = 'hot' | 'new' | 'trending';
 
 export default function Timeline() {
-  const [activeTimeline, setActiveTimeline] = useState<TimelineType>('new');
+  const [activeTimeline, setActiveTimeline] = useState<TimelineType>('hot');
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -49,15 +49,15 @@ export default function Timeline() {
   };
 
   const tabs = [
-    { id: 'new' as TimelineType, label: 'New', icon: '🆕' },
     { id: 'hot' as TimelineType, label: 'Hot', icon: '🔥' },
+    { id: 'new' as TimelineType, label: 'New', icon: '🆕' },
     { id: 'trending' as TimelineType, label: 'Trending', icon: '📈' },
   ];
 
   return (
     <div className="w-full">
-      {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-gray-200">
+      {/* Centered Tabs */}
+      <div className="flex justify-center border-b border-gray-300 mb-8">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -65,16 +65,19 @@ export default function Timeline() {
               setActiveTimeline(tab.id);
               setPage(1);
             }}
-            className={`px-6 py-3 font-medium transition-colors relative ${
+            className={`px-12 py-3 font-medium transition-all relative ${
               activeTimeline === tab.id
-                ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'text-gray-900'
+                : 'text-gray-400 hover:text-gray-600'
             }`}
           >
             <span className="flex items-center gap-2">
               <span>{tab.icon}</span>
               <span>{tab.label}</span>
             </span>
+            {activeTimeline === tab.id && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900"></div>
+            )}
           </button>
         ))}
       </div>
