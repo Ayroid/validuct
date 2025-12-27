@@ -33,3 +33,35 @@ export const protect = async (
     }
   }
 };
+
+export const optionalProtect = async (
+  req: AuthRequest,
+  _res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    let token: string | undefined;
+
+    // Check for token in Authorization header
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+
+    // If no token, just continue without setting userId
+    if (!token) {
+      return next();
+    }
+
+    // Try to verify token, but don't fail if it's invalid
+    try {
+      const decoded = verifyToken(token);
+      req.userId = decoded.userId;
+    } catch {
+      // Invalid token, continue without userId
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};

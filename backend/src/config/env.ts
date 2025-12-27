@@ -25,5 +25,5 @@ export const config: EnvConfig = {
   DATABASE_URL: getEnvVariable('DATABASE_URL'),
   JWT_SECRET: getEnvVariable('JWT_SECRET'),
   JWT_EXPIRE: getEnvVariable('JWT_EXPIRE', '7d'),
-  CORS_ORIGIN: getEnvVariable('CORS_ORIGIN', 'http://localhost:3000'),
+  CORS_ORIGIN: getEnvVariable('CORS_ORIGIN', '*'),
 };

@@ -3,11 +3,18 @@ import cors from 'cors';
 import { config } from './config/env.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
 import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import ideaRoutes from './routes/ideaRoutes.js';
 
 const app: Application = express();
 
 // Middleware
-app.use(cors({ origin: config.CORS_ORIGIN, credentials: true }));
+// For development: allow all origins. For production: specify allowed origins
+const corsOptions = {
+  origin: config.CORS_ORIGIN === '*' ? true : config.CORS_ORIGIN,
+  credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -22,8 +29,8 @@ app.get('/health', (_req, res) => {
 
 // API routes
 app.use('/api/v1/auth', authRoutes);
-// app.use('/api/v1/users', userRoutes);
-// app.use('/api/v1/ideas', ideaRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/ideas', ideaRoutes);
 // app.use('/api/v1/comments', commentRoutes);
 
 // Error handlers
