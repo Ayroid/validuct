@@ -1,10 +1,10 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession, signOut as nextAuthSignOut, signIn } from 'next-auth/react';
 import { authApi } from '@/lib/api/auth';
 import { User, LoginData, RegisterData } from '@/types';
-import { AUTH_TOKEN_KEY } from '@/lib/constants';
 
 interface AuthContextType {
   user: User | null;
@@ -13,58 +13,66 @@ interface AuthContextType {
   register: (data: RegisterData) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
+  backendToken: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: session, status } = useSession();
   const router = useRouter();
+  const loading = status === 'loading';
 
-  useEffect(() => {
-    const initAuth = async () => {
-      const token = localStorage.getItem(AUTH_TOKEN_KEY);
-      if (token) {
-        try {
-          const currentUser = await authApi.getCurrentUser();
-          setUser(currentUser);
-        } catch (error) {
-          localStorage.removeItem(AUTH_TOKEN_KEY);
-        }
+  const user: User | null = session?.user
+    ? {
+        id: session.user.id,
+        username: session.user.username,
+        email: session.user.email,
+        profilePicture: session.user.profilePicture,
+        bio: session.user.bio,
+        createdAt: session.user.createdAt,
       }
-      setLoading(false);
-    };
+    : null;
 
-    initAuth();
-  }, []);
+  const backendToken = session?.backendToken || null;
 
   const login = async (data: LoginData) => {
     try {
-      const response = await authApi.login(data);
-      localStorage.setItem(AUTH_TOKEN_KEY, response.token);
-      setUser(response.user);
+      const result = await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
       router.push('/');
+      router.refresh();
     } catch (error: any) {
-      throw new Error(error.response?.data?.error || 'Login failed');
+      throw new Error(error.message || 'Login failed');
     }
   };
 
   const register = async (data: RegisterData) => {
     try {
-      const response = await authApi.register(data);
-      localStorage.setItem(AUTH_TOKEN_KEY, response.token);
-      setUser(response.user);
-      router.push('/');
+      await authApi.register(data);
+
+      // After successful registration, log the user in
+      await login({
+        email: data.email,
+        password: data.password,
+      });
     } catch (error: any) {
       throw new Error(error.response?.data?.error || 'Registration failed');
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem(AUTH_TOKEN_KEY);
-    setUser(null);
+  const logout = async () => {
+    await nextAuthSignOut({ redirect: false });
     router.push('/login');
+    router.refresh();
   };
 
   return (
@@ -76,6 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         register,
         logout,
         isAuthenticated: !!user,
+        backendToken,
       }}
     >
       {children}

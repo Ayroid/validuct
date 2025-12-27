@@ -47,4 +47,18 @@ export class AuthController {
       next(error);
     }
   }
+
+  static async oauth(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { email, username, profilePicture, provider } = req.body;
+      const result = await AuthService.oauth({ email, username, profilePicture, provider });
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

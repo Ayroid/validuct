@@ -16,6 +16,13 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 });
 
+export const oauthSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  username: z.string().min(1, 'Username is required'),
+  profilePicture: z.string().url().optional().nullable(),
+  provider: z.enum(['google', 'github', 'facebook']),
+});
+
 // User validation schemas
 export const updateUserSchema = z.object({
   username: z
