@@ -1,0 +1,129 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(uuid())
+  username        String   @unique @db.VarChar(50)
+  email           String   @unique @db.VarChar(255)
+  passwordHash    String   @map("password_hash") @db.VarChar(255)
+  profilePicture  String?  @map("profile_picture") @db.VarChar(500)
+  bio             String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  ideas           Idea[]
+  votes           Vote[]
+  comments        Comment[]
+  pinnedIdeas     PinnedIdea[]
+
+  @@index([username])
+  @@index([email])
+  @@map("users")
+}
+
+enum IdeaStatus {
+  VALIDATED
+  WIP
+  LAUNCHED
+  DRAFT
+
+  @@map("idea_status")
+}
+
+model Idea {
+  id              String     @id @default(uuid())
+  userId          String     @map("user_id")
+  heading         String     @db.VarChar(200)
+  description     String     @db.Text
+  status          IdeaStatus @default(DRAFT)
+  launchedLink    String?    @map("launched_link") @db.VarChar(500)
+  upvotesCount    Int        @default(0) @map("upvotes_count")
+  downvotesCount  Int        @default(0) @map("downvotes_count")
+  commentsCount   Int        @default(0) @map("comments_count")
+  isPinned        Boolean    @default(false) @map("is_pinned")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  // Relations
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  votes           Vote[]
+  comments        Comment[]
+  pinnedIdeas     PinnedIdea[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([upvotesCount])
+  @@index([createdAt, upvotesCount])
+  @@map("ideas")
+}
+
+enum VoteType {
+  UPVOTE
+  DOWNVOTE
+
+  @@map("vote_type")
+}
+
+model Vote {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  ideaId    String   @map("idea_id")
+  voteType  VoteType @map("vote_type")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  idea Idea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, ideaId])
+  @@index([ideaId])
+  @@map("votes")
+}
+
+model Comment {
+  id              String    @id @default(uuid())
+  userId          String    @map("user_id")
+  ideaId          String    @map("idea_id")
+  parentCommentId String?   @map("parent_comment_id")
+  content         String    @db.Text
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  idea            Idea      @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  parentComment   Comment?  @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  replies         Comment[] @relation("CommentReplies")
+
+  @@index([ideaId])
+  @@index([parentCommentId])
+  @@index([userId])
+  @@map("comments")
+}
+
+model PinnedIdea {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  ideaId    String   @map("idea_id")
+  pinOrder  Int      @map("pin_order")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  idea Idea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, ideaId])
+  @@unique([userId, pinOrder])
+  @@index([userId])
+  @@map("pinned_ideas")
+}
