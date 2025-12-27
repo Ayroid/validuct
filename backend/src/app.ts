@@ -5,6 +5,7 @@ import { errorHandler, notFound } from './middleware/errorHandler.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import ideaRoutes from './routes/ideaRoutes.js';
+import voteRoutes from './routes/voteRoutes.js';
 
 const app: Application = express();
 
@@ -31,6 +32,7 @@ app.get('/health', (_req, res) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/ideas', ideaRoutes);
+app.use('/api/v1', voteRoutes);
 // app.use('/api/v1/comments', commentRoutes);
 
 // Error handlers

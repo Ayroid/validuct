@@ -52,7 +52,7 @@ export const updateIdeaSchema = z.object({
 
 // Vote validation schemas
 export const voteSchema = z.object({
-  voteType: z.enum(['UPVOTE', 'DOWNVOTE']),
+  vote_type: z.enum(['upvote', 'downvote']),
 });
 
 // Comment validation schemas
