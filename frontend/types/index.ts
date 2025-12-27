@@ -54,7 +54,7 @@ export interface Idea {
     username: string;
     profilePicture: string | null;
   };
-  userVote?: 'UPVOTE' | 'DOWNVOTE' | null;
+  userVote?: 'upvote' | 'downvote' | null;
 }
 
 export interface Comment {

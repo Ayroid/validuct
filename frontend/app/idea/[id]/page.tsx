@@ -7,6 +7,7 @@ import { ideasApi } from '@/lib/api/ideas';
 import { Idea } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '@/context/AuthContext';
+import VoteButtons from '@/components/VoteButtons';
 
 export default function IdeaDetailPage() {
   const params = useParams();
@@ -59,6 +60,17 @@ export default function IdeaDetailPage() {
       case 'DRAFT':
       default:
         return 'Draft';
+    }
+  };
+
+  const handleVoteUpdate = (upvotesCount: number, downvotesCount: number, userVote: 'upvote' | 'downvote' | null) => {
+    if (idea) {
+      setIdea({
+        ...idea,
+        upvotesCount,
+        downvotesCount,
+        userVote,
+      });
     }
   };
 
@@ -153,31 +165,13 @@ export default function IdeaDetailPage() {
 
           {/* Vote Section */}
           <div className="flex items-center gap-6 mb-6 pb-6 border-b border-gray-200">
-            <div className="flex items-center gap-3">
-              <button className="p-2 rounded-lg hover:bg-orange-50 text-gray-400 hover:text-orange-500 transition-colors">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 15l7-7 7 7"
-                  />
-                </svg>
-              </button>
-              <span className="text-2xl font-bold text-gray-700">
-                {idea.upvotesCount - idea.downvotesCount}
-              </span>
-              <button className="p-2 rounded-lg hover:bg-blue-50 text-gray-400 hover:text-blue-500 transition-colors">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-            </div>
+            <VoteButtons
+              ideaId={idea.id}
+              initialUpvotesCount={idea.upvotesCount}
+              initialDownvotesCount={idea.downvotesCount}
+              initialUserVote={idea.userVote}
+              onVoteUpdate={handleVoteUpdate}
+            />
             <div className="flex items-center gap-2 text-gray-500">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path

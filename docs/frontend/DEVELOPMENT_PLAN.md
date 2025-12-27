@@ -727,10 +727,10 @@ backend/
 - [x] Create/Edit idea UI
 
 ### Phase 3: Voting System (Week 3)
-- [ ] Vote API endpoints
-- [ ] Vote UI components
-- [ ] Real-time vote count updates
-- [ ] Calculate trending/hot algorithms
+- [x] Vote API endpoints
+- [x] Vote UI components
+- [x] Real-time vote count updates
+- [x] Calculate trending/hot algorithms
 
 ### Phase 4: Comments System (Week 4)
 - [ ] Comment CRUD APIs

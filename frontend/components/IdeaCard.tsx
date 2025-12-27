@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Idea } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
+import VoteButtons from './VoteButtons';
 
 interface IdeaCardProps {
   idea: Idea;
@@ -60,43 +61,12 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
     >
       <div className="flex gap-4">
         {/* Vote Section */}
-        <div className="flex flex-col items-center gap-1 min-w-15" data-no-navigate>
-          <button
-            className="text-gray-400 hover:text-orange-500 transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Vote functionality will be added later
-            }}
-          >
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 15l7-7 7 7"
-              />
-            </svg>
-          </button>
-          <span className="text-xl font-bold text-gray-700">
-            {idea.upvotesCount - idea.downvotesCount}
-          </span>
-          <button
-            className="text-gray-400 hover:text-blue-500 transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Vote functionality will be added later
-            }}
-          >
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
-        </div>
+        <VoteButtons
+          ideaId={idea.id}
+          initialUpvotesCount={idea.upvotesCount}
+          initialDownvotesCount={idea.downvotesCount}
+          initialUserVote={idea.userVote}
+        />
 
         {/* Content Section */}
         <div className="flex-1">
