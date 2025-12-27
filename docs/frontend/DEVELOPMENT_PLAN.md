@@ -738,12 +738,12 @@ backend/
 - [ ] Comment UI with replies
 - [ ] Comment count tracking
 
-### Phase 5: User Profiles (Week 5)
-- [ ] User profile API
-- [ ] Profile page UI
-- [ ] User's ideas listing
-- [ ] Pin/Unpin functionality
-- [ ] Profile picture upload
+### Phase 5: User Profiles (Week 5) ✅
+- [x] User profile API
+- [x] Profile page UI
+- [x] User's ideas listing
+- [x] Pin/Unpin functionality
+- [x] Profile picture upload
 
 ### Phase 6: Polish & Testing (Week 6)
 - [ ] Error handling & validation

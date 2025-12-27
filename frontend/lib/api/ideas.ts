@@ -72,4 +72,17 @@ export const ideasApi = {
     );
     return data.data!;
   },
+
+  // Pin idea
+  async pinIdea(ideaId: string): Promise<{ pinned: boolean }> {
+    const { data } = await apiClient.post<ApiResponse<{ pinned: boolean }>>(
+      `/ideas/${ideaId}/pin`
+    );
+    return data.data!;
+  },
+
+  // Unpin idea
+  async unpinIdea(ideaId: string): Promise<void> {
+    await apiClient.delete(`/ideas/${ideaId}/pin`);
+  },
 };

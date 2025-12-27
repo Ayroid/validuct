@@ -6,12 +6,14 @@ import { useRouter } from 'next/navigation';
 import { Idea } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import VoteButtons from './VoteButtons';
+import PinButton from './PinButton';
 
 interface IdeaCardProps {
   idea: Idea;
+  onPinChange?: () => void;
 }
 
-export default function IdeaCard({ idea }: IdeaCardProps) {
+export default function IdeaCard({ idea, onPinChange }: IdeaCardProps) {
   const router = useRouter();
 
   const getStatusBadgeColor = (status: string) => {
@@ -75,13 +77,20 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
             <h2 className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors">
               {idea.heading}
             </h2>
-            <span
-              className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
-                idea.status
-              )}`}
-            >
-              {formatStatus(idea.status)}
-            </span>
+            <div className="flex items-center gap-2">
+              <PinButton
+                ideaId={idea.id}
+                ideaUserId={idea.userId}
+                onPinChange={onPinChange}
+              />
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
+                  idea.status
+                )}`}
+              >
+                {formatStatus(idea.status)}
+              </span>
+            </div>
           </div>
 
           {/* Description */}
