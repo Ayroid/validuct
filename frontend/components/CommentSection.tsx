@@ -39,13 +39,13 @@ export default function CommentSection({
         page,
         limit: 20,
       });
-      
+
       if (page === 1) {
         setComments(response.comments);
       } else {
         setComments((prev) => [...prev, ...response.comments]);
       }
-      
+
       setTotalComments(response.pagination.total);
       setHasMore(page < response.pagination.total_pages);
     } catch (error: unknown) {
@@ -62,7 +62,7 @@ export default function CommentSection({
 
   const handleCreateComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!session) {
       router.push('/login');
       return;
@@ -73,11 +73,11 @@ export default function CommentSection({
     try {
       setIsSubmitting(true);
       setError(null);
-      
+
       const newComment = await commentsApi.createComment(ideaId, {
         content: newCommentContent,
       });
-      
+
       setComments([newComment, ...comments]);
       setNewCommentContent('');
       setTotalComments((prev) => prev + 1);
@@ -104,16 +104,16 @@ export default function CommentSection({
     try {
       setIsSubmitting(true);
       setError(null);
-      
+
       await commentsApi.createComment(ideaId, {
         content: replyContent,
         parentCommentId,
       });
-      
+
       // Refresh comments to show new reply
       setPage(1);
       await fetchComments();
-      
+
       setReplyToCommentId(null);
       setReplyContent('');
       setTotalComments((prev) => prev + 1);
@@ -129,7 +129,7 @@ export default function CommentSection({
     try {
       setError(null);
       const updatedComment = await commentsApi.updateComment(commentId, { content });
-      
+
       // Update comment in the list
       const updateCommentInList = (commentsList: Comment[]): Comment[] => {
         return commentsList.map((comment) => {
@@ -145,7 +145,7 @@ export default function CommentSection({
           return comment;
         });
       };
-      
+
       setComments(updateCommentInList(comments));
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
@@ -157,7 +157,7 @@ export default function CommentSection({
     try {
       setError(null);
       await commentsApi.deleteComment(commentId);
-      
+
       // Refresh comments
       setPage(1);
       await fetchComments();
@@ -229,7 +229,7 @@ export default function CommentSection({
                 onEdit={handleEdit}
                 onDelete={handleDelete}
               />
-              
+
               {/* Reply Form */}
               {replyToCommentId === comment.id && (
                 <div className="ml-12 mt-3">
