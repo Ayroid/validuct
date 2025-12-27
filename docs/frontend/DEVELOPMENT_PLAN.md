@@ -710,20 +710,21 @@ backend/
 
 ## 6. Development Phases
 
-### Phase 1: Setup & Authentication (Week 1)
-- [ ] Setup project structure (frontend & backend)
-- [ ] Configure TypeScript, ESLint, Prettier
-- [ ] Setup PostgreSQL + Prisma
-- [ ] Implement database schema
-- [ ] Build authentication (register, login, JWT)
-- [ ] Create auth UI (login/register pages)
+### Phase 1: Setup & Authentication (Week 1) ✅
+- [x] Setup project structure (frontend & backend)
+- [x] Configure TypeScript, ESLint, Prettier
+- [x] Setup PostgreSQL + Prisma
+- [x] Implement database schema
+- [x] Build authentication (register, login, JWT)
+- [x] Create auth UI (login/register pages)
+- [x] **Bonus:** OAuth (Google) authentication integration
 
-### Phase 2: Core Idea Features (Week 2)
-- [ ] CRUD operations for ideas
-- [ ] Ideas timeline API (HOT, NEW, TRENDING)
-- [ ] Idea listing UI with timeline tabs
-- [ ] Idea detail page
-- [ ] Create/Edit idea UI
+### Phase 2: Core Idea Features (Week 2) ✅
+- [x] CRUD operations for ideas
+- [x] Ideas timeline API (HOT, NEW, TRENDING)
+- [x] Idea listing UI with timeline tabs
+- [x] Idea detail page
+- [x] Create/Edit idea UI
 
 ### Phase 3: Voting System (Week 3)
 - [ ] Vote API endpoints

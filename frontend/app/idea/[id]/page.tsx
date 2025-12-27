@@ -6,10 +6,12 @@ import Link from 'next/link';
 import { ideasApi } from '@/lib/api/ideas';
 import { Idea } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
+import { useAuth } from '@/context/AuthContext';
 
 export default function IdeaDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { user } = useAuth();
   const [idea, setIdea] = useState<Idea | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -119,13 +121,34 @@ export default function IdeaDetailPage() {
                 <span>{formatDistanceToNow(new Date(idea.createdAt), { addSuffix: true })}</span>
               </div>
             </div>
-            <span
-              className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusBadgeColor(
-                idea.status
-              )}`}
-            >
-              {formatStatus(idea.status)}
-            </span>
+            <div className="flex items-center gap-3">
+              <span
+                className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusBadgeColor(
+                  idea.status
+                )}`}
+              >
+                {formatStatus(idea.status)}
+              </span>
+              {/* Edit/Delete buttons - only visible to owner */}
+              {user && user.id === idea.userId && (
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/idea/${idea.id}/edit`}
+                    className="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors"
+                    title="Edit idea"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Vote Section */}
