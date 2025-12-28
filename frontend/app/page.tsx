@@ -1,13 +1,12 @@
 import Link from "next/link";
-import Image from "next/image";
 import {
 	HiSparkles,
 	HiRocketLaunch,
 	HiUsers,
 	HiChartBar,
-	HiUser,
 } from "react-icons/hi2";
 import Navbar from "@/components/Navbar";
+import AnimatedLogo from "@/components/AnimatedLogo";
 
 export default async function Home() {
 	return (
@@ -20,13 +19,7 @@ export default async function Home() {
 					<div className="relative overflow-hidden rounded-3xl">
 						<div className="relative px-8 py-12 md:py-16 text-center">
 							<div className="flex justify-center mb-6">
-								<Image
-									src="/logo.svg"
-									alt="Validuct Logo"
-									width={200}
-									height={200}
-									className="object-contain"
-								/>
+								<AnimatedLogo />
 							</div>
 
 							<h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -67,183 +60,127 @@ export default async function Home() {
 				</div>
 			</div>
 
-			{/* Overview Section */}
-			<div className="py-12 bg-white">
-				<div className="max-w-5xl mx-auto px-6">
-					<div className="text-center max-w-3xl mx-auto">
-						<h3 className="text-3xl md:text-4xl font-bold mb-6">
-							VALIDUCT helps founders pressure-test ideas early—before code,
-							capital, or confidence is wasted.
-						</h3>
-						<p className="text-xl text-gray-700">
-							Share your idea, gather structured feedback, and see what
-							resonates <span className="font-semibold">before</span> you
-							commit.
-						</p>
+			{/* Problem Section */}
+			<div className="py-16 bg-gray-900">
+				<div className="max-w-4xl mx-auto px-6 text-center">
+					<h3 className="text-3xl md:text-4xl font-bold mb-6 text-white">
+						80% of startups fail because founders build useless products
+					</h3>
+					<div className="grid md:grid-cols-3 gap-8 mt-12">
+						<div className="flex flex-col items-center">
+							<div className="text-4xl mb-3">🚀</div>
+							<p className="text-gray-300">Launch new features</p>
+						</div>
+						<div className="flex flex-col items-center">
+							<div className="text-4xl mb-3">😐</div>
+							<p className="text-gray-300">But nothing happens</p>
+						</div>
+						<div className="flex flex-col items-center">
+							<div className="text-4xl mb-3">😞</div>
+							<p className="text-gray-300">Lose motivation and quit</p>
+						</div>
 					</div>
 				</div>
 			</div>
 
-			{/* Who is VALIDUCT for? Section */}
-			<div className="py-16 bg-[#eeeeee]">
-				<div className="max-w-5xl mx-auto px-6">
-					<h3 className="text-3xl md:text-4xl font-bold mb-4 text-center">
-						Who is VALIDUCT for?
+			{/* Solution Section */}
+			<div className="py-16 bg-white">
+				<div className="max-w-4xl mx-auto px-6 text-center">
+					<h3 className="text-3xl md:text-4xl font-bold mb-6">
+						Ship features users really want
 					</h3>
-					<p className="text-xl text-gray-700 mb-12 text-center max-w-3xl mx-auto">
-						VALIDUCT creates a shared space where ideas are challenged, refined,
-						and validated—openly.
+					<p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
+						Gather feedback from your community, prioritize what matters, and
+						build products people actually use.
 					</p>
 
-					<div className="grid md:grid-cols-3 gap-8">
-						<div className="bg-white rounded-2xl p-8 shadow-sm">
-							<div className="text-4xl mb-4">🚀</div>
-							<h4 className="text-xl font-bold mb-3">Creators</h4>
-							<p className="text-gray-700">
-								Test ideas publicly and learn what users actually want
+					<div className="grid md:grid-cols-2 gap-6">
+						{/* Collect Feedback Card */}
+						<div className="bg-yellow-400 rounded-2xl p-8 text-left">
+							<h4 className="text-2xl font-bold mb-4">
+								Collect user feedback
+							</h4>
+							<p className="text-gray-800 mb-6">
+								See what new features, improvements, and bugs your users care
+								about.
 							</p>
+							<div className="bg-white rounded-xl p-4 space-y-3">
+								<div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+									<span className="font-medium text-sm">
+										Add timeline/journey integration to the Insighto
+									</span>
+									<span className="text-orange-500 font-bold">💡</span>
+								</div>
+								<div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+									<span className="font-medium text-sm">
+										A one pricing plan for revenue billing
+									</span>
+									<span className="text-orange-500 font-bold">💡</span>
+								</div>
+							</div>
 						</div>
 
-						<div className="bg-white rounded-2xl p-8 shadow-sm">
-							<div className="text-4xl mb-4">✅</div>
-							<h4 className="text-xl font-bold mb-3">Validators</h4>
-							<p className="text-gray-700">
-								Influence early products and help shape better solutions
+						{/* Prioritize Features Card */}
+						<div className="bg-gray-900 rounded-2xl p-8 text-left text-white">
+							<h4 className="text-2xl font-bold mb-4">Prioritize features</h4>
+							<p className="text-gray-300 mb-6">
+								See which features have the most demand and ship accordingly.
 							</p>
-						</div>
-
-						<div className="bg-white rounded-2xl p-8 shadow-sm">
-							<div className="text-4xl mb-4">🌍</div>
-							<h4 className="text-xl font-bold mb-3">Everyone</h4>
-							<p className="text-gray-700">
-								Avoid building features—or startups—based on assumptions
-							</p>
+							<div className="bg-white rounded-xl p-4 space-y-3">
+								<div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+									<span className="font-medium text-sm text-gray-900">
+										Add timeline/journey integration
+									</span>
+									<span className="font-bold text-gray-900">↑ 42</span>
+								</div>
+								<div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+									<span className="font-medium text-sm text-gray-900">
+										One pricing plan for revenue
+									</span>
+									<span className="font-bold text-gray-900">↑ 28</span>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			{/* Key Features Section */}
-			<div className="py-16 bg-white">
-				<div className="max-w-5xl mx-auto px-6">
+			{/* How It Works Section */}
+			<div className="py-16 bg-[#eeeeee]">
+				<div className="max-w-4xl mx-auto px-6">
 					<h3 className="text-3xl md:text-4xl font-bold mb-12 text-center">
-						Features that drive validation
+						How it works
 					</h3>
 
-					<div className="space-y-12">
-						{/* Feature 1 */}
-						<div className="flex flex-col md:flex-row gap-8 items-start">
-							<div className="shrink-0 bg-blue-50 rounded-xl p-4">
-								<HiRocketLaunch className="h-12 w-12 text-blue-600" />
+					<div className="grid md:grid-cols-3 gap-8">
+						<div className="text-center">
+							<div className="bg-white rounded-2xl p-6 mb-4 shadow-sm">
+								<HiRocketLaunch className="h-12 w-12 text-red-500 mx-auto" />
 							</div>
-							<div className="flex-1">
-								<h4 className="text-2xl font-bold mb-3">
-									From thought to traction
-								</h4>
-								<ul className="space-y-2 text-gray-700">
-									<li className="flex items-start gap-2">
-										<span className="text-blue-600 mt-1">•</span>
-										<span>Publish ideas with clarity and context</span>
-									</li>
-									<li className="flex items-start gap-2">
-										<span className="text-blue-600 mt-1">•</span>
-										<span>
-											Track progress from{" "}
-											<strong>Validated → WIP → Launched</strong>
-										</span>
-									</li>
-									<li className="flex items-start gap-2">
-										<span className="text-blue-600 mt-1">•</span>
-										<span>Link real products to proven ideas</span>
-									</li>
-								</ul>
-							</div>
+							<h4 className="text-xl font-bold mb-2">Share your idea</h4>
+							<p className="text-gray-700">
+								Post your concept and get it in front of real people
+							</p>
 						</div>
 
-						{/* Feature 2 */}
-						<div className="flex flex-col md:flex-row gap-8 items-start">
-							<div className="shrink-0 bg-purple-50 rounded-xl p-4">
-								<HiUsers className="h-12 w-12 text-purple-600" />
+						<div className="text-center">
+							<div className="bg-white rounded-2xl p-6 mb-4 shadow-sm">
+								<HiUsers className="h-12 w-12 text-orange-500 mx-auto" />
 							</div>
-							<div className="flex-1">
-								<h4 className="text-2xl font-bold mb-3">Signal, not noise</h4>
-								<ul className="space-y-2 text-gray-700">
-									<li className="flex items-start gap-2">
-										<span className="text-purple-600 mt-1">•</span>
-										<span>Upvotes surface demand, not vanity</span>
-									</li>
-									<li className="flex items-start gap-2">
-										<span className="text-purple-600 mt-1">•</span>
-										<span>
-											Threaded discussions reveal <em>why</em> people care—or
-											don&apos;t
-										</span>
-									</li>
-									<li className="flex items-start gap-2">
-										<span className="text-purple-600 mt-1">•</span>
-										<span>Engagement metrics help you spot momentum early</span>
-									</li>
-								</ul>
-							</div>
+							<h4 className="text-xl font-bold mb-2">Get feedback</h4>
+							<p className="text-gray-700">
+								Community votes and comments on what resonates
+							</p>
 						</div>
 
-						{/* Feature 3 */}
-						<div className="flex flex-col md:flex-row gap-8 items-start">
-							<div className="shrink-0 bg-green-50 rounded-xl p-4">
-								<HiChartBar className="h-12 w-12 text-green-600" />
+						<div className="text-center">
+							<div className="bg-white rounded-2xl p-6 mb-4 shadow-sm">
+								<HiChartBar className="h-12 w-12 text-yellow-500 mx-auto" />
 							</div>
-							<div className="flex-1">
-								<h4 className="text-2xl font-bold mb-3">
-									See what matters now
-								</h4>
-								<ul className="space-y-2 text-gray-700">
-									<li className="flex items-start gap-2">
-										<span className="text-green-600 mt-1">•</span>
-										<span>
-											<strong>HOT</strong>: What&apos;s gaining traction today
-										</span>
-									</li>
-									<li className="flex items-start gap-2">
-										<span className="text-green-600 mt-1">•</span>
-										<span>
-											<strong>NEW</strong>: Fresh ideas, zero bias
-										</span>
-									</li>
-									<li className="flex items-start gap-2">
-										<span className="text-green-600 mt-1">•</span>
-										<span>
-											<strong>TRENDING</strong>: Ideas the community
-											consistently believes in
-										</span>
-									</li>
-								</ul>
-							</div>
-						</div>
-
-						{/* Feature 4 */}
-						<div className="flex flex-col md:flex-row gap-8 items-start">
-							<div className="shrink-0 bg-orange-50 rounded-xl p-4">
-								<HiUser className="h-12 w-12 text-orange-600" />
-							</div>
-							<div className="flex-1">
-								<h4 className="text-2xl font-bold mb-3">
-									Build credibility over time
-								</h4>
-								<ul className="space-y-2 text-gray-700">
-									<li className="flex items-start gap-2">
-										<span className="text-orange-600 mt-1">•</span>
-										<span>Showcase your thinking, not just outcomes</span>
-									</li>
-									<li className="flex items-start gap-2">
-										<span className="text-orange-600 mt-1">•</span>
-										<span>Pin your strongest ideas</span>
-									</li>
-									<li className="flex items-start gap-2">
-										<span className="text-orange-600 mt-1">•</span>
-										<span>Build a public validation track record</span>
-									</li>
-								</ul>
-							</div>
+							<h4 className="text-xl font-bold mb-2">Build with confidence</h4>
+							<p className="text-gray-700">
+								Ship features people actually want and avoid wasting time
+							</p>
 						</div>
 					</div>
 				</div>
@@ -271,7 +208,17 @@ export default async function Home() {
 			{/* Footer */}
 			<div className="py-8 bg-[#eeeeee]">
 				<div className="max-w-5xl mx-auto px-6 text-center text-gray-600">
-					<p>&copy; 2025 VALIDUCT. Built for founders, by founders.</p>
+					<p>
+						&copy; 2025 Validuct | Built by{" "}
+						<a
+							href="https://ayroid.in"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-gray-900 font-semibold hover:underline"
+						>
+							Ayroid
+						</a>
+					</p>
 				</div>
 			</div>
 		</div>

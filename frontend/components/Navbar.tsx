@@ -10,8 +10,10 @@ const Navbar = async () => {
 		<div className="bg-[#eeeeee] sticky top-0 z-50">
 			<div className="max-w-5xl mx-auto px-6 py-4">
 				<div className="flex items-center justify-between bg-white rounded-full px-6 py-3 shadow-sm">
-					<div className="flex-1"></div>
-					<Link href={session?.user ? "/timeline" : "/landing"} className="flex items-center gap-3">
+					<Link
+						href={session?.user ? "/timeline" : "/landing"}
+						className="flex items-center gap-3"
+					>
 						<div className="flex items-center gap-3">
 							<Image
 								src="/logo.svg"
@@ -22,9 +24,6 @@ const Navbar = async () => {
 							/>
 							<div className="flex flex-col leading-tight justify-center">
 								<h1 className="text-xl font-bold text-gray-900">VALIDUCT</h1>
-								<p className="text-xs text-gray-500">
-									Validate your ideas to create successful products
-								</p>
 							</div>
 						</div>
 					</Link>
