@@ -19,6 +19,7 @@ export default function EditIdeaPage() {
     description: '',
     status: 'DRAFT' as 'DRAFT' | 'VALIDATED' | 'WIP' | 'LAUNCHED',
     launchedLink: '',
+    isPrivate: false,
   });
 
   useEffect(() => {
@@ -51,6 +52,7 @@ export default function EditIdeaPage() {
         description: data.description,
         status: data.status,
         launchedLink: data.launchedLink || '',
+        isPrivate: data.isPrivate ?? false,
       });
     } catch (error) {
       console.error('Failed to load idea:', error);
@@ -70,6 +72,7 @@ export default function EditIdeaPage() {
         description: formData.description,
         status: formData.status,
         launchedLink: formData.launchedLink || undefined,
+        isPrivate: formData.isPrivate,
       });
 
       router.push(`/idea/${params.id}`);
@@ -220,6 +223,41 @@ export default function EditIdeaPage() {
                 />
               </div>
             )}
+
+            {/* Privacy Toggle */}
+            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
+              <input
+                type="checkbox"
+                id="isPrivate"
+                name="isPrivate"
+                checked={formData.isPrivate}
+                onChange={(e) =>
+                  setFormData({ ...formData, isPrivate: e.target.checked })
+                }
+                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <label htmlFor="isPrivate" className="flex-1">
+                <div className="text-sm font-medium text-gray-900">
+                  Make this idea private
+                </div>
+                <div className="text-xs text-gray-500">
+                  Only you will be able to see this idea
+                </div>
+              </label>
+              <svg
+                className="w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+            </div>
 
             {/* Action Buttons */}
             <div className="flex gap-4 pt-4 border-t border-gray-200">

@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Get local IP address
-LOCAL_IP=$(hostname -I | awk '{print $1}')
+#LOCAL_IP=$(hostname -I | awk '{print $1}')
+LOCAL_IP="localhost"  # Default to localhost
 
 echo "🌐 Starting Validuct on Local Network"
 echo "=================================="
