@@ -2,9 +2,9 @@ export { auth as middleware } from '@/auth';
 
 export const config = {
   matcher: [
-    '/timeline',
+    '/home',
     '/new-idea',
-    '/profile/:path*',
+    '/:username',
     '/settings/:path*',
   ],
 };

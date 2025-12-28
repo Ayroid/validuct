@@ -7,8 +7,12 @@ import {
 } from "react-icons/hi2";
 import Navbar from "@/components/Navbar";
 import AnimatedLogo from "@/components/AnimatedLogo";
+import { auth } from "@/auth";
 
 export default async function Home() {
+	const session = await auth();
+	const ctaLink = session ? "/home" : "/login";
+
 	return (
 		<div className="min-h-screen bg-[#eeeeee]">
 			<Navbar />
@@ -31,7 +35,7 @@ export default async function Home() {
 							</p>
 
 							<Link
-								href="/home"
+								href={ctaLink}
 								className="inline-flex items-center gap-2 px-10 py-4 bg-white text-gray-900 rounded-full hover:bg-gray-100 transition-all duration-300 font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transform"
 							>
 								<span>Share Your Idea</span>
@@ -97,9 +101,7 @@ export default async function Home() {
 					<div className="grid md:grid-cols-2 gap-6">
 						{/* Collect Feedback Card */}
 						<div className="bg-yellow-400 rounded-2xl p-8 text-left">
-							<h4 className="text-2xl font-bold mb-4">
-								Collect user feedback
-							</h4>
+							<h4 className="text-2xl font-bold mb-4">Collect user feedback</h4>
 							<p className="text-gray-800 mb-6">
 								See what new features, improvements, and bugs your users care
 								about.

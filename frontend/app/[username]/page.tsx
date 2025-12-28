@@ -8,7 +8,7 @@ import { Idea } from "@/types";
 import IdeaCard from "@/components/IdeaCard";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 
 export default function ProfilePage() {
@@ -134,9 +134,17 @@ export default function ProfilePage() {
 									</p>
 								</div>
 								{isOwnProfile && (
-									<Link href="/settings/profile">
-										<Button variant="outline">Edit Profile</Button>
-									</Link>
+									<div className="flex gap-3">
+										<Link href="/settings/profile">
+											<Button variant="outline">Edit Profile</Button>
+										</Link>
+										<Button
+											variant="danger"
+											onClick={() => signOut({ callbackUrl: "/" })}
+										>
+											Logout
+										</Button>
+									</div>
 								)}
 							</div>
 
