@@ -25,17 +25,6 @@ export interface ApiResponse<T = unknown> {
   message?: string;
 }
 
-export interface LoginData {
-  email: string;
-  password: string;
-}
-
-export interface RegisterData {
-  username: string;
-  email: string;
-  password: string;
-}
-
 export interface IdeaStatus {
   VALIDATED: 'VALIDATED';
   WIP: 'WIP';
@@ -113,8 +102,6 @@ export interface ErrorResponse {
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (data: LoginData) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
   backendToken: string | null;

@@ -2,9 +2,8 @@
 
 import { createContext, useContext, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession, signOut as nextAuthSignOut, signIn } from 'next-auth/react';
-import { authApi } from '@/lib/api/auth';
-import { User, LoginData, RegisterData, AuthContextType } from '@/types';
+import { useSession, signOut as nextAuthSignOut } from 'next-auth/react';
+import { User, AuthContextType } from '@/types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -26,39 +25,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const backendToken = session?.backendToken || null;
 
-  const login = async (data: LoginData) => {
-    try {
-      const result = await signIn('credentials', {
-        email: data.email,
-        password: data.password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        throw new Error(result.error);
-      }
-
-      router.push('/');
-      router.refresh();
-    } catch (error: any) {
-      throw new Error(error.message || 'Login failed');
-    }
-  };
-
-  const register = async (data: RegisterData) => {
-    try {
-      await authApi.register(data);
-
-      // After successful registration, log the user in
-      await login({
-        email: data.email,
-        password: data.password,
-      });
-    } catch (error: any) {
-      throw new Error(error.response?.data?.error || 'Registration failed');
-    }
-  };
-
   const logout = async () => {
     await nextAuthSignOut({ redirect: false });
     router.push('/login');
@@ -70,8 +36,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         user,
         loading,
-        login,
-        register,
         logout,
         isAuthenticated: !!user,
         backendToken,

@@ -1,19 +1,21 @@
 import Link from "next/link";
+import Image from "next/image";
 import { HiSparkles } from "react-icons/hi2";
 
 const CTA = () => {
 	return (
 		<div className="py-16">
 			<div className="max-w-5xl mx-auto px-6">
-				<div className="relative overflow-hidden rounded-3xl">
+				<div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#ffde59] via-[#ffbd59] to-[#ff914d] shadow-2xl">
 					<div className="relative px-8 py-12 md:py-16 text-center">
-						<div className="flex justify-center mb-4">
-							<div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white">
-								<HiSparkles className="text-yellow-400 h-5 w-5" />
-								<span className="text-sm font-medium">
-									Start Building Today
-								</span>
-							</div>
+						<div className="flex justify-center mb-6">
+							<Image
+								src="/logo.svg"
+								alt="Validuct Logo"
+								width={200}
+								height={200}
+								className="object-contain"
+							/>
 						</div>
 
 						<h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -32,18 +34,18 @@ const CTA = () => {
 							<HiSparkles className="h-5 w-5" />
 						</Link>
 
-						<div className="mt-8 flex items-center justify-center gap-8 text-gray-900 text-sm">
+						<div className="mt-8 flex items-center justify-center gap-8 text-gray-900 text-sm font-medium">
 							<div className="flex items-center gap-2">
-								<div className="h-2 w-2 bg-green-400 rounded-full"></div>
-								<span>Free Forever</span>
+								<div className="h-2 w-2 bg-red rounded-full shadow-sm"></div>
+								<span>Premium Analytics</span>
 							</div>
 							<div className="flex items-center gap-2">
-								<div className="h-2 w-2 bg-blue-400 rounded-full"></div>
-								<span>Community Driven</span>
+								<div className="h-2 w-2 bg-white rounded-full shadow-sm"></div>
+								<span>Team Collaboration</span>
 							</div>
 							<div className="flex items-center gap-2">
-								<div className="h-2 w-2 bg-purple-400 rounded-full"></div>
-								<span>Real Feedback</span>
+								<div className="h-2 w-2 bg-white rounded-full shadow-sm"></div>
+								<span>Priority Support</span>
 							</div>
 						</div>
 					</div>
