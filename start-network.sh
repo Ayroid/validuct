@@ -16,9 +16,9 @@ if ! grep -q "CORS_ORIGIN=\*" backend/.env; then
 fi
 
 # Create network .env for frontend if it doesn't exist
-if [ ! -f "frontend/.env.local.network" ]; then
+if [ ! -f "frontend/.env.local" ]; then
     echo "📝 Creating network configuration for frontend..."
-    cat > frontend/.env.local.network << EOF
+    cat > frontend/.env.local << EOF
 NEXT_PUBLIC_API_URL=http://$LOCAL_IP:5000/api/v1
 NEXT_PUBLIC_APP_URL=http://$LOCAL_IP:3000
 
@@ -31,15 +31,6 @@ GOOGLE_CLIENT_SECRET=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
 GOOGLE_REDIRECT_URI=http://$LOCAL_IP:3000/api/auth/google/callback
 EOF
 fi
-
-# Backup current .env.local and use network version
-if [ -f "frontend/.env.local" ]; then
-    echo "💾 Backing up current frontend .env.local..."
-    cp frontend/.env.local frontend/.env.local.backup
-fi
-
-echo "🔄 Switching to network configuration..."
-cp frontend/.env.local.network frontend/.env.local
 
 echo ""
 echo "✅ Configuration complete!"

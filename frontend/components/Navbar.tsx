@@ -11,7 +11,7 @@ const Navbar = async () => {
 			<div className="max-w-5xl mx-auto px-6 py-4">
 				<div className="flex items-center justify-between bg-white rounded-full px-6 py-3 shadow-sm">
 					<Link
-						href={session?.user ? "/timeline" : "/landing"}
+						href={session?.user ? "/home" : "/landing"}
 						className="flex items-center gap-3"
 					>
 						<div className="flex items-center gap-3">
@@ -30,11 +30,21 @@ const Navbar = async () => {
 					<div className="flex-1 flex justify-end">
 						{session?.user ? (
 							<Link
-								href="/settings/profile"
+								href={`/${session.user.username}`}
 								className="p-2 hover:bg-gray-100 rounded-full transition-colors"
 								title="Profile"
 							>
-								<HiUserCircle className="h-8 w-8 text-gray-700" />
+								{session.user.profilePicture ? (
+									<Image
+										src={session.user.profilePicture}
+										alt="User Avatar"
+										width={32}
+										height={32}
+										className="rounded-full"
+									/>
+								) : (
+									<HiUserCircle className="h-8 w-8 text-gray-600" />
+								)}
 							</Link>
 						) : (
 							<Link

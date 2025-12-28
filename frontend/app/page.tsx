@@ -31,7 +31,7 @@ export default async function Home() {
 							</p>
 
 							<Link
-								href="/register"
+								href="/home"
 								className="inline-flex items-center gap-2 px-10 py-4 bg-white text-gray-900 rounded-full hover:bg-gray-100 transition-all duration-300 font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transform"
 							>
 								<span>Share Your Idea</span>
@@ -196,7 +196,7 @@ export default async function Home() {
 						Share your idea today and validate it with people who care.
 					</p>
 					<Link
-						href="/register"
+						href="/home"
 						className="inline-flex items-center gap-2 px-10 py-4 bg-white text-gray-900 rounded-full hover:bg-gray-100 transition-all duration-300 font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transform"
 					>
 						<span>Post your first idea</span>
