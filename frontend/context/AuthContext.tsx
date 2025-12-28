@@ -1,20 +1,10 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut as nextAuthSignOut, signIn } from 'next-auth/react';
 import { authApi } from '@/lib/api/auth';
-import { User, LoginData, RegisterData } from '@/types';
-
-interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  login: (data: LoginData) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
-  logout: () => void;
-  isAuthenticated: boolean;
-  backendToken: string | null;
-}
+import { User, LoginData, RegisterData, AuthContextType } from '@/types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

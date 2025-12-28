@@ -9,6 +9,7 @@ import IdeaCard from "@/components/IdeaCard";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 export default function ProfilePage() {
 	const params = useParams();
@@ -34,8 +35,13 @@ export default function ProfilePage() {
 				setLoading(true);
 				const data = await userApi.getUserProfile(username);
 				setProfile(data);
-			} catch (err: any) {
-				setError(err.response?.data?.error || "Failed to load profile");
+			} catch (err: unknown) {
+				const errorMessage =
+					err instanceof Error && "response" in err
+						? (err as { response?: { data?: { error?: string } } }).response
+								?.data?.error
+						: undefined;
+				setError(errorMessage || "Failed to load profile");
 			} finally {
 				setLoading(false);
 			}
@@ -60,8 +66,13 @@ export default function ProfilePage() {
 					setIdeas(data.ideas);
 					setHasMore(data.pagination.page < data.pagination.total_pages);
 				}
-			} catch (err: any) {
-				setError(err.response?.data?.error || "Failed to load ideas");
+			} catch (err: unknown) {
+				const errorMessage =
+					err instanceof Error && "response" in err
+						? (err as { response?: { data?: { error?: string } } }).response
+								?.data?.error
+						: undefined;
+				setError(errorMessage || "Failed to load ideas");
 			} finally {
 				setIdeasLoading(false);
 			}
@@ -89,21 +100,23 @@ export default function ProfilePage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-50">
+		<div className="min-h-screen bg-[#eeeeee]">
 			{/* Profile Header */}
 			<div className="bg-white border-b">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 					<div className="flex items-start gap-6">
 						{/* Profile Picture */}
-						<div className="flex-shrink-0">
+						<div className="shrink-0">
 							{profile.user.profilePicture ? (
-								<img
+								<Image
 									src={profile.user.profilePicture}
 									alt={profile.user.username}
+									width={96}
+									height={96}
 									className="w-24 h-24 rounded-full object-cover"
 								/>
 							) : (
-								<div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold">
+								<div className="w-24 h-24 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold">
 									{profile.user.username[0].toUpperCase()}
 								</div>
 							)}

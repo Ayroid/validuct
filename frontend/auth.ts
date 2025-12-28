@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import { API_URL } from '@/lib/constants';
-import { AuthResponse, LoginData } from '@/types';
+import { AuthResponse, LoginData, ExtendedJWT } from '@/types';
 
 declare module 'next-auth' {
   interface Session {
@@ -26,17 +26,6 @@ declare module 'next-auth' {
     createdAt: string;
     backendToken: string;
   }
-}
-
-interface ExtendedJWT {
-  id?: string;
-  username?: string;
-  email?: string;
-  profilePicture?: string | null;
-  bio?: string | null;
-  createdAt?: string;
-  backendToken?: string;
-  provider?: string;
 }
 
 // Helper function to handle OAuth login/registration with backend

@@ -3,9 +3,7 @@
 import { useState, useEffect } from "react";
 import IdeaCard from "./IdeaCard";
 import { ideasApi } from "@/lib/api/ideas";
-import { Idea } from "@/types";
-
-type TimelineType = "hot" | "new" | "trending";
+import { Idea, TimelineType } from "@/types";
 
 export default function Timeline() {
 	const [activeTimeline, setActiveTimeline] = useState<TimelineType>("hot");

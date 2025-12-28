@@ -55,8 +55,11 @@ export default function ProfileSettingsPage() {
 			setTimeout(() => {
 				router.push(`/profile/${updatedUser.username}`);
 			}, 1000);
-		} catch (err: any) {
-			setError(err.response?.data?.error || "Failed to update profile");
+		} catch (err: unknown) {
+			const errorMessage = err instanceof Error && 'response' in err 
+				? (err as { response?: { data?: { error?: string } } }).response?.data?.error 
+				: undefined;
+			setError(errorMessage || "Failed to update profile");
 		} finally {
 			setIsLoading(false);
 		}
@@ -68,7 +71,7 @@ export default function ProfileSettingsPage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-50 py-12">
+		<div className="min-h-screen bg-[#eeeeee] py-12">
 			<div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="bg-white rounded-lg shadow-md p-8">
 					<h1 className="text-3xl font-bold text-gray-900 mb-6">

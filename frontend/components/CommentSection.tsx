@@ -6,11 +6,7 @@ import { commentsApi, Comment } from '@/lib/api/comments';
 import CommentItem from './CommentItem';
 import Button from './ui/Button';
 import { useRouter } from 'next/navigation';
-
-interface CommentSectionProps {
-  ideaId: string;
-  initialCommentsCount?: number;
-}
+import { CommentSectionProps, ErrorResponse } from '@/types';
 
 export default function CommentSection({
   ideaId,
@@ -49,7 +45,7 @@ export default function CommentSection({
       setTotalComments(response.pagination.total);
       setHasMore(page < response.pagination.total_pages);
     } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string } } };
+      const err = error as ErrorResponse;
       setError(err.response?.data?.message || 'Failed to load comments');
     } finally {
       setIsLoading(false);
@@ -82,7 +78,7 @@ export default function CommentSection({
       setNewCommentContent('');
       setTotalComments((prev) => prev + 1);
     } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string } } };
+      const err = error as ErrorResponse;
       setError(err.response?.data?.message || 'Failed to post comment');
     } finally {
       setIsSubmitting(false);
@@ -118,7 +114,7 @@ export default function CommentSection({
       setReplyContent('');
       setTotalComments((prev) => prev + 1);
     } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string } } };
+      const err = error as ErrorResponse;
       setError(err.response?.data?.message || 'Failed to post reply');
     } finally {
       setIsSubmitting(false);
@@ -148,7 +144,7 @@ export default function CommentSection({
 
       setComments(updateCommentInList(comments));
     } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string } } };
+      const err = error as ErrorResponse;
       setError(err.response?.data?.message || 'Failed to update comment');
     }
   };
@@ -162,7 +158,7 @@ export default function CommentSection({
       setPage(1);
       await fetchComments();
     } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string } } };
+      const err = error as ErrorResponse;
       setError(err.response?.data?.message || 'Failed to delete comment');
     }
   };
@@ -201,7 +197,7 @@ export default function CommentSection({
           </div>
         </form>
       ) : (
-        <div className="mb-8 p-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
+        <div className="mb-8 p-4 bg-[#eeeeee] border border-gray-200 rounded-lg text-center">
           <p className="text-gray-600 mb-2">Sign in to join the conversation</p>
           <Button onClick={() => router.push('/login')} size="sm">
             Sign In

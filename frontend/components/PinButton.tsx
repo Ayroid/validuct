@@ -4,14 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { ideasApi } from '@/lib/api/ideas';
 import { userApi } from '@/lib/api/users';
-import { Idea } from '@/types';
-
-interface PinButtonProps {
-  ideaId: string;
-  ideaUserId: string;
-  initialIsPinned?: boolean;
-  onPinChange?: () => void;
-}
+import { Idea, PinButtonProps } from '@/types';
 
 export default function PinButton({
   ideaId,

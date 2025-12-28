@@ -4,14 +4,7 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { votesApi } from '@/lib/api/votes';
-
-interface VoteButtonsProps {
-  ideaId: string;
-  initialUpvotesCount: number;
-  initialDownvotesCount: number;
-  initialUserVote?: 'upvote' | 'downvote' | null;
-  onVoteUpdate?: (upvotesCount: number, downvotesCount: number, userVote: 'upvote' | 'downvote' | null) => void;
-}
+import { VoteButtonsProps } from '@/types';
 
 export default function VoteButtons({
   ideaId,

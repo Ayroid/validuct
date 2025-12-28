@@ -3,16 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Idea } from "@/types";
+import { IdeaCardProps } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import VoteButtons from "./VoteButtons";
 import PinButton from "./PinButton";
 import { HiUserCircle } from "react-icons/hi2";
-
-interface IdeaCardProps {
-	idea: Idea;
-	onPinChange?: () => void;
-}
 
 export default function IdeaCard({ idea, onPinChange }: IdeaCardProps) {
 	const router = useRouter();

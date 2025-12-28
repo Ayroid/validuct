@@ -6,14 +6,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { Comment } from '@/lib/api/comments';
 import Button from './ui/Button';
 import Image from 'next/image';
-
-interface CommentItemProps {
-  comment: Comment;
-  onReply?: (parentCommentId: string) => void;
-  onEdit?: (commentId: string, content: string) => void;
-  onDelete?: (commentId: string) => void;
-  depth?: number;
-}
+import { CommentItemProps } from '@/types';
 
 export default function CommentItem({
   comment,

@@ -1,3 +1,9 @@
+import { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from 'react';
+
+// ============================================================================
+// Core Domain Types
+// ============================================================================
+
 export interface User {
   id: string;
   username: string;
@@ -55,6 +61,7 @@ export interface Idea {
     profilePicture: string | null;
   };
   userVote?: 'upvote' | 'downvote' | null;
+  isPrivate: boolean;
 }
 
 export interface Comment {
@@ -76,3 +83,109 @@ export interface PaginationMeta {
   total: number;
   total_pages: number;
 }
+
+// ============================================================================
+// Error Types
+// ============================================================================
+
+export interface ApiError {
+  message: string;
+  status?: number;
+  code?: string;
+  data?: unknown;
+}
+
+export interface ErrorResponse {
+  response?: {
+    data?: {
+      message?: string;
+      error?: string;
+    };
+    status?: number;
+  };
+  message?: string;
+}
+
+// ============================================================================
+// Auth Types
+// ============================================================================
+
+export interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+  login: (data: LoginData) => Promise<void>;
+  register: (data: RegisterData) => Promise<void>;
+  logout: () => void;
+  isAuthenticated: boolean;
+  backendToken: string | null;
+}
+
+export interface ExtendedJWT {
+  id?: string;
+  username?: string;
+  email?: string;
+  profilePicture?: string | null;
+  bio?: string | null;
+  createdAt?: string;
+  backendToken?: string;
+  provider?: string;
+}
+
+// ============================================================================
+// UI Component Props Types
+// ============================================================================
+
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'outline' | 'danger';
+  size?: 'sm' | 'md' | 'lg';
+  isLoading?: boolean;
+  children: ReactNode;
+}
+
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+}
+
+// ============================================================================
+// Feature Component Props Types
+// ============================================================================
+
+export interface IdeaCardProps {
+  idea: Idea;
+  onPinChange?: () => void;
+}
+
+export interface CommentSectionProps {
+  ideaId: string;
+  initialCommentsCount?: number;
+}
+
+export interface CommentItemProps {
+  comment: Comment;
+  onReply?: (parentCommentId: string) => void;
+  onEdit?: (commentId: string, content: string) => void;
+  onDelete?: (commentId: string) => void;
+  depth?: number;
+}
+
+export interface VoteButtonsProps {
+  ideaId: string;
+  initialUpvotesCount: number;
+  initialDownvotesCount: number;
+  initialUserVote?: 'upvote' | 'downvote' | null;
+  onVoteUpdate?: (upvotesCount: number, downvotesCount: number, userVote: 'upvote' | 'downvote' | null) => void;
+}
+
+export interface PinButtonProps {
+  ideaId: string;
+  ideaUserId: string;
+  initialIsPinned?: boolean;
+  onPinChange?: () => void;
+}
+
+// ============================================================================
+// Page Types
+// ============================================================================
+
+export type TimelineType = 'hot' | 'new' | 'trending';

@@ -17,6 +17,7 @@ export interface CreateIdeaData {
   description: string;
   status?: 'DRAFT' | 'VALIDATED' | 'WIP' | 'LAUNCHED';
   launchedLink?: string;
+  isPrivate?: boolean;
 }
 
 export interface UpdateIdeaData {
@@ -24,6 +25,7 @@ export interface UpdateIdeaData {
   description?: string;
   status?: 'DRAFT' | 'VALIDATED' | 'WIP' | 'LAUNCHED';
   launchedLink?: string;
+  isPrivate?: boolean;
 }
 
 export const ideasApi = {
