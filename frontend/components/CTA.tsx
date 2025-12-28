@@ -6,7 +6,7 @@ const CTA = () => {
 	return (
 		<div className="py-16">
 			<div className="max-w-5xl mx-auto px-6">
-				<div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#ffde59] via-[#ffbd59] to-[#ff914d] shadow-2xl">
+				<div className="relative overflow-hidden rounded-3xl ">
 					<div className="relative px-8 py-12 md:py-16 text-center">
 						<div className="flex justify-center mb-6">
 							<Image
@@ -19,11 +19,11 @@ const CTA = () => {
 						</div>
 
 						<h2 className="text-4xl md:text-5xl font-bold mb-4">
-							Don&apos;t wait!
+							Validate your idea before you build it
 						</h2>
 						<p className="text-xl md:text-2xl text-gray-700 mb-8 max-w-2xl mx-auto">
-							Turn your vision into reality. Share your idea and get valuable
-							feedback from the community.
+							Get honest feedback, votes, and insights from a focused
+							community—so you don’t ship something nobody wants.
 						</p>
 
 						<Link
@@ -36,16 +36,16 @@ const CTA = () => {
 
 						<div className="mt-8 flex items-center justify-center gap-8 text-gray-900 text-sm font-medium">
 							<div className="flex items-center gap-2">
-								<div className="h-2 w-2 bg-red rounded-full shadow-sm"></div>
-								<span>Premium Analytics</span>
+								<div className="h-2 w-2 bg-(--brand-red) rounded-full shadow-sm"></div>
+								<span>Real Analytics</span>
 							</div>
 							<div className="flex items-center gap-2">
-								<div className="h-2 w-2 bg-white rounded-full shadow-sm"></div>
+								<div className="h-2 w-2 bg-(--brand-orange) rounded-full shadow-sm"></div>
 								<span>Team Collaboration</span>
 							</div>
 							<div className="flex items-center gap-2">
-								<div className="h-2 w-2 bg-white rounded-full shadow-sm"></div>
-								<span>Priority Support</span>
+								<div className="h-2 w-2 bg-(--brand-yellow) rounded-full shadow-sm"></div>
+								<span>Community Support</span>
 							</div>
 						</div>
 					</div>

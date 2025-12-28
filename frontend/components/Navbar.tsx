@@ -1,14 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
 import { HiUserCircle } from "react-icons/hi2";
+import { auth } from "@/auth";
 
-const Navbar = () => {
+const Navbar = async () => {
+	const session = await auth();
+
 	return (
 		<div className="bg-[#eeeeee] sticky top-0 z-50">
 			<div className="max-w-5xl mx-auto px-6 py-4">
 				<div className="flex items-center justify-between bg-white rounded-full px-6 py-3 shadow-sm">
 					<div className="flex-1"></div>
-					<div className="flex items-center gap-3">
+					<Link href={session?.user ? "/timeline" : "/landing"} className="flex items-center gap-3">
 						<div className="flex items-center gap-3">
 							<Image
 								src="/logo.svg"
@@ -24,15 +27,24 @@ const Navbar = () => {
 								</p>
 							</div>
 						</div>
-					</div>
+					</Link>
 					<div className="flex-1 flex justify-end">
-						<Link
-							href="/settings/profile"
-							className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-							title="Profile"
-						>
-							<HiUserCircle className="h-8 w-8 text-gray-700" />
-						</Link>
+						{session?.user ? (
+							<Link
+								href="/settings/profile"
+								className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+								title="Profile"
+							>
+								<HiUserCircle className="h-8 w-8 text-gray-700" />
+							</Link>
+						) : (
+							<Link
+								href="/login"
+								className="px-6 py-2 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors font-medium"
+							>
+								Sign In
+							</Link>
+						)}
 					</div>
 				</div>
 			</div>
