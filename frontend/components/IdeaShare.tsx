@@ -12,11 +12,11 @@ const IdeaShare = () => {
 				<div className="max-w-5xl mx-auto px-6">
 					<Link
 						href="/idea/new"
-						className="block bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 hover:border-gray-300"
+						className="block bg-card rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border hover:border-primary/50"
 					>
 						<div className="flex items-center gap-4">
 							<div className="flex-1">
-								<p className="text-gray-500 text-lg">
+								<p className="text-muted-foreground text-lg">
 									What&apos;s on your mind? Share your idea with the community.
 								</p>
 							</div>
@@ -32,7 +32,7 @@ const IdeaShare = () => {
 			{/* FAB - Mobile */}
 			<Link
 				href="/idea/new"
-				className="md:hidden fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 bg-gray-900 text-white rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200"
+				className="md:hidden fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200"
 			>
 				<HiSparkles className="h-6 w-6" />
 			</Link>

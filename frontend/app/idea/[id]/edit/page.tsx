@@ -25,25 +25,25 @@ const statusOptions: {
 		value: "DRAFT",
 		label: "Draft",
 		emoji: "✏️",
-		color: "bg-gray-100 text-gray-900 hover:bg-gray-200",
+		color: "bg-muted text-foreground hover:bg-muted/80",
 	},
 	{
 		value: "VALIDATED",
 		label: "Validated",
 		emoji: "✅",
-		color: "bg-yellow-100 text-yellow-900 hover:bg-yellow-200",
+		color: "bg-yellow-100 text-yellow-900 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/40",
 	},
 	{
 		value: "WIP",
 		label: "Work in Progress",
 		emoji: "🚧",
-		color: "bg-orange-100 text-orange-900 hover:bg-orange-200",
+		color: "bg-orange-100 text-orange-900 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:hover:bg-orange-900/40",
 	},
 	{
 		value: "LAUNCHED",
 		label: "Launched",
 		emoji: "🚀",
-		color: "bg-red-100 text-red-900 hover:bg-red-200",
+		color: "bg-red-100 text-red-900 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/40",
 	},
 ];
 

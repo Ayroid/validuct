@@ -95,7 +95,7 @@ export default function ProfilePage() {
 	if (error || !profile) {
 		return (
 			<div className="min-h-screen flex items-center justify-center">
-				<div className="text-red-500">{error || "Profile not found"}</div>
+				<div className="text-destructive">{error || "Profile not found"}</div>
 			</div>
 		);
 	}
@@ -132,10 +132,10 @@ export default function ProfilePage() {
 						<div className="flex-1">
 							<div className="flex items-center justify-between">
 								<div>
-									<h1 className="text-3xl font-bold text-gray-900">
+									<h1 className="text-3xl font-bold text-foreground">
 										{profile.user.username}
 									</h1>
-									<p className="text-gray-600 mt-1">
+									<p className="text-muted-foreground mt-1">
 										{profile.ideasCount} ideas shared
 									</p>
 								</div>
@@ -155,12 +155,12 @@ export default function ProfilePage() {
 							</div>
 
 							{profile.user.bio && (
-								<p className="text-gray-700 mt-4 max-w-2xl">
+								<p className="text-muted-foreground mt-4 max-w-2xl">
 									{profile.user.bio}
 								</p>
 							)}
 
-							<div className="flex items-center gap-4 mt-4 text-sm text-gray-600">
+							<div className="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
 								<span>
 									Joined{" "}
 									{new Date(profile.user.createdAt).toLocaleDateString(
@@ -189,8 +189,8 @@ export default function ProfilePage() {
 							}}
 							className={`px-4 py-2 font-medium transition-colors ${
 								activeTab === "all"
-									? "text-blue-600 border-b-2 border-blue-600"
-									: "text-gray-600 hover:text-gray-900"
+									? "text-primary border-b-2 border-primary"
+									: "text-muted-foreground hover:text-foreground"
 							}`}
 						>
 							All Ideas
@@ -203,8 +203,8 @@ export default function ProfilePage() {
 								}}
 								className={`px-4 py-2 font-medium transition-colors ${
 									activeTab === "pinned"
-										? "text-blue-600 border-b-2 border-blue-600"
-										: "text-gray-600 hover:text-gray-900"
+										? "text-primary border-b-2 border-primary"
+										: "text-muted-foreground hover:text-foreground"
 								}`}
 							>
 								Pinned ({profile.pinnedIdeas.length})
@@ -252,11 +252,11 @@ export default function ProfilePage() {
 				{/* Ideas List */}
 				{ideasLoading ? (
 					<div className="text-center py-12">
-						<div className="text-lg text-gray-600">Loading ideas...</div>
+						<div className="text-lg text-muted-foreground">Loading ideas...</div>
 					</div>
 				) : ideas.length === 0 ? (
 					<div className="text-center py-12">
-						<p className="text-gray-600">
+						<p className="text-muted-foreground">
 							{activeTab === "pinned" ? "No pinned ideas yet" : "No ideas yet"}
 						</p>
 						{isOwnProfile && activeTab === "all" && (

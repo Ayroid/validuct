@@ -15,14 +15,14 @@ export default function IdeaCard({ idea, onPinChange }: IdeaCardProps) {
 	const getStatusBadgeColor = (status: string) => {
 		switch (status) {
 			case "VALIDATED":
-				return "bg-green-100 text-green-800";
+				return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
 			case "WIP":
-				return "bg-yellow-100 text-yellow-800";
+				return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
 			case "LAUNCHED":
-				return "bg-blue-100 text-blue-800";
+				return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
 			case "DRAFT":
 			default:
-				return "bg-gray-100 text-gray-800";
+				return "bg-muted text-muted-foreground";
 		}
 	};
 
@@ -101,7 +101,7 @@ export default function IdeaCard({ idea, onPinChange }: IdeaCardProps) {
 										className="rounded-full"
 									/>
 								) : (
-									<HiUserCircle className="w-6 h-6 text-gray-600" />
+									<HiUserCircle className="w-6 h-6 text-muted-foreground" />
 								)}
 								<span className="hover:underline">{idea.user.username}</span>
 							</Link>
@@ -123,7 +123,7 @@ export default function IdeaCard({ idea, onPinChange }: IdeaCardProps) {
 									href={idea.launchedLink}
 									target="_blank"
 									rel="noopener noreferrer"
-									className="flex items-center gap-1 text-blue-600 hover:text-blue-700"
+									className="flex items-center gap-1 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
 									onClick={(e) => e.stopPropagation()}
 								>
 									<svg

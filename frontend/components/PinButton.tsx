@@ -65,8 +65,8 @@ export default function PinButton({
       disabled={isLoading}
       className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm font-medium transition-colors ${
         isPinned
-          ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
-          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/40'
+          : 'bg-muted text-muted-foreground hover:bg-muted/80'
       } disabled:opacity-50 disabled:cursor-not-allowed`}
       title={isPinned ? 'Unpin this idea' : 'Pin this idea to your profile (max 5)'}
     >

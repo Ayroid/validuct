@@ -56,7 +56,7 @@ export default function Timeline() {
 		<div className="max-w-5xl mx-auto px-6 py-8">
 			<div className="w-full">
 				{/* Centered Tabs */}
-				<div className="flex justify-center border-b border-gray-300 mb-8">
+				<div className="flex justify-center border-b mb-8">
 					{tabs.map((tab) => (
 						<button
 							key={tab.id}
@@ -66,8 +66,8 @@ export default function Timeline() {
 							}}
 							className={`px-12 py-3 font-medium transition-all relative ${
 								activeTimeline === tab.id
-									? "text-gray-900"
-									: "text-gray-400 hover:text-gray-600"
+									? "text-foreground"
+									: "text-muted-foreground hover:text-foreground/80"
 							}`}
 						>
 							<span className="flex items-center gap-2">
@@ -75,7 +75,7 @@ export default function Timeline() {
 								<span>{tab.label}</span>
 							</span>
 							{activeTimeline === tab.id && (
-								<div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900"></div>
+								<div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>
 							)}
 						</button>
 					))}
@@ -85,10 +85,10 @@ export default function Timeline() {
 				<div className="space-y-4">
 					{loading && ideas.length === 0 ? (
 						<div className="flex justify-center items-center py-12">
-							<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+							<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
 						</div>
 					) : ideas.length === 0 ? (
-						<div className="text-center py-12 text-gray-500">
+						<div className="text-center py-12 text-muted-foreground">
 							<p className="text-lg">No ideas found</p>
 							<p className="text-sm mt-2">Be the first to share an idea!</p>
 						</div>
@@ -104,7 +104,7 @@ export default function Timeline() {
 									<button
 										onClick={handleLoadMore}
 										disabled={loading}
-										className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+										className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 									>
 										{loading ? "Loading..." : "Load More"}
 									</button>

@@ -21,20 +21,20 @@ const CTA = () => {
 						<h2 className="text-4xl md:text-5xl font-bold mb-4">
 							Validate your idea before you build it
 						</h2>
-						<p className="text-xl md:text-2xl text-gray-700 mb-8 max-w-2xl mx-auto">
+						<p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
 							Get honest feedback, votes, and insights from a focused
-							community—so you don’t ship something nobody wants.
+							community—so you don't ship something nobody wants.
 						</p>
 
 						<Link
 							href="/idea/new"
-							className="inline-flex items-center gap-2 px-10 py-4 bg-white text-gray-900 rounded-full hover:bg-gray-100 transition-all duration-300 font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transform"
+							className="inline-flex items-center gap-2 px-10 py-4 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-all duration-300 font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transform"
 						>
 							<span>Share Your Idea</span>
 							<HiSparkles className="h-5 w-5" />
 						</Link>
 
-						<div className="mt-8 flex items-center justify-center gap-8 text-gray-900 text-sm font-medium">
+						<div className="mt-8 flex items-center justify-center gap-8 text-foreground text-sm font-medium">
 							<div className="flex items-center gap-2">
 								<div className="h-2 w-2 bg-(--brand-red) rounded-full shadow-sm"></div>
 								<span>Real Analytics</span>

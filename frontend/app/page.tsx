@@ -20,7 +20,7 @@ export default async function Home() {
 			<Navbar />
 
 			{/* Hero Section */}
-			<div className="py-16 bg-muted/30">
+			<div className="py-16">
 				<div className="max-w-5xl mx-auto px-6">
 					<div className="border-none">
 						<div className="px-8 py-12 md:py-16 text-center">
@@ -28,7 +28,7 @@ export default async function Home() {
 								<AnimatedLogo />
 							</div>
 
-							<h2 className="text-4xl md:text-5xl font-bold mb-4">
+							<h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
 								Validate your idea before you build it
 							</h2>
 							<p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
@@ -66,7 +66,7 @@ export default async function Home() {
 			</div>
 
 			{/* Problem Section */}
-			<div className="py-16 bg-card border-y">
+			<div className="py-16 bg-muted border-y">
 				<div className="max-w-4xl mx-auto px-6 text-center">
 					<h3 className="text-3xl md:text-4xl font-bold mb-6">
 						80% of startups fail because founders build useless products
@@ -89,7 +89,7 @@ export default async function Home() {
 			</div>
 
 			{/* Solution Section */}
-			<div className="py-16 bg-muted/30">
+			<div className="py-16 bg-background">
 				<div className="max-w-4xl mx-auto px-6 text-center">
 					<h3 className="text-3xl md:text-4xl font-bold mb-6">
 						Ship features users really want
@@ -153,7 +153,7 @@ export default async function Home() {
 			</div>
 
 			{/* How It Works Section */}
-			<div className="py-16 bg-background">
+			<div className="py-16 bg-muted border-y">
 				<div className="max-w-4xl mx-auto px-6">
 					<h3 className="text-3xl md:text-4xl font-bold mb-12 text-center">
 						How it works
@@ -200,7 +200,7 @@ export default async function Home() {
 			</div>
 
 			{/* Closing CTA Section */}
-			<div className="py-16 bg-card border-y">
+			<div className="py-16">
 				<div className="max-w-3xl mx-auto px-6 text-center">
 					<h3 className="text-3xl md:text-4xl font-bold mb-4">
 						Your idea deserves feedback—before reality gives it none.
@@ -218,7 +218,7 @@ export default async function Home() {
 			</div>
 
 			{/* Footer */}
-			<div className="py-8 bg-muted/30">
+			<div className="py-8 bg-background border-t">
 				<div className="max-w-5xl mx-auto px-6 text-center text-muted-foreground">
 					<p>
 						&copy; 2025 Validuct | Built by{" "}

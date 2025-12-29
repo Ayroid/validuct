@@ -39,14 +39,14 @@ export default function IdeaDetailPage() {
 	const getStatusBadgeColor = (status: string) => {
 		switch (status) {
 			case "VALIDATED":
-				return "bg-green-100 text-green-800";
+				return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
 			case "WIP":
-				return "bg-yellow-100 text-yellow-800";
+				return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
 			case "LAUNCHED":
-				return "bg-blue-100 text-blue-800";
+				return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
 			case "DRAFT":
 			default:
-				return "bg-gray-100 text-gray-800";
+				return "bg-muted text-muted-foreground";
 		}
 	};
 
@@ -82,7 +82,7 @@ export default function IdeaDetailPage() {
 	if (loading) {
 		return (
 			<div className="min-h-screen bg-background flex items-center justify-center">
-				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
 			</div>
 		);
 	}
@@ -116,17 +116,17 @@ export default function IdeaDetailPage() {
 				</Link>
 
 				{/* Main Content */}
-				<div className="bg-white rounded-lg shadow-md p-8 border border-gray-200">
+				<div className="bg-card rounded-lg shadow-md p-8 border">
 					{/* Header */}
 					<div className="flex items-start justify-between mb-6">
 						<div className="flex-1">
 							<div className="flex items-center gap-3 mb-2">
-								<h1 className="text-3xl font-bold text-gray-900">
+								<h1 className="text-3xl font-bold text-foreground">
 									{idea.heading}
 								</h1>
 								{idea.isPrivate && (
 									<div
-										className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-lg text-sm text-gray-700"
+										className="flex items-center gap-1.5 px-3 py-1.5 bg-muted rounded-lg text-sm text-muted-foreground"
 										title="This is a private idea"
 									>
 										<svg
@@ -146,10 +146,10 @@ export default function IdeaDetailPage() {
 									</div>
 								)}
 							</div>
-							<div className="flex items-center gap-3 text-sm text-gray-500">
+							<div className="flex items-center gap-3 text-sm text-muted-foreground">
 								<Link
 									href={`/profile/${idea.user.username}`}
-									className="flex items-center gap-2 hover:text-blue-600 transition-colors"
+									className="flex items-center gap-2 hover:text-primary transition-colors"
 								>
 									{idea.user.profilePicture ? (
 										<img
@@ -158,7 +158,7 @@ export default function IdeaDetailPage() {
 											className="w-8 h-8 rounded-full"
 										/>
 									) : (
-										<div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center font-semibold text-gray-600">
+										<div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center font-semibold text-foreground">
 											{idea.user.username.charAt(0).toUpperCase()}
 										</div>
 									)}
@@ -185,7 +185,7 @@ export default function IdeaDetailPage() {
 								<div className="flex items-center gap-2">
 									<Link
 										href={`/idea/${idea.id}/edit`}
-										className="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors"
+										className="p-2 rounded-lg hover:bg-muted text-primary transition-colors"
 										title="Edit idea"
 									>
 										<svg
@@ -208,7 +208,7 @@ export default function IdeaDetailPage() {
 					</div>
 
 					{/* Vote Section */}
-					<div className="flex items-center gap-6 mb-6 pb-6 border-b border-gray-200">
+					<div className="flex items-center gap-6 mb-6 pb-6 border-b">
 						<VoteButtons
 							ideaId={idea.id}
 							initialUpvotesCount={idea.upvotesCount}
@@ -216,7 +216,7 @@ export default function IdeaDetailPage() {
 							initialUserVote={idea.userVote}
 							onVoteUpdate={handleVoteUpdate}
 						/>
-						<div className="flex items-center gap-2 text-gray-500">
+						<div className="flex items-center gap-2 text-muted-foreground">
 							<svg
 								className="w-5 h-5"
 								fill="none"
@@ -236,10 +236,10 @@ export default function IdeaDetailPage() {
 
 					{/* Description */}
 					<div className="mb-6">
-						<h2 className="text-xl font-semibold text-gray-900 mb-3">
+						<h2 className="text-xl font-semibold text-foreground mb-3">
 							Description
 						</h2>
-						<p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+						<p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
 							{idea.description}
 						</p>
 					</div>
@@ -247,12 +247,12 @@ export default function IdeaDetailPage() {
 					{/* Launched Link */}
 					{idea.launchedLink && (
 						<div className="mb-6">
-							<h2 className="text-xl font-semibold text-gray-900 mb-3">Link</h2>
+							<h2 className="text-xl font-semibold text-foreground mb-3">Link</h2>
 							<a
 								href={idea.launchedLink}
 								target="_blank"
 								rel="noopener noreferrer"
-								className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:underline"
+								className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"
 							>
 								{idea.launchedLink}
 								<svg
@@ -273,7 +273,7 @@ export default function IdeaDetailPage() {
 					)}
 
 					{/* Comments Section */}
-					<div className="mt-8 pt-8 border-t border-gray-200">
+					<div className="mt-8 pt-8 border-t">
 						<CommentSection
 							ideaId={idea.id}
 							initialCommentsCount={idea.commentsCount}
