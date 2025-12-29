@@ -76,8 +76,8 @@ export default function ProfileSettingsPage() {
 
 	return (
 		<div className="min-h-screen bg-background py-12">
-			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="max-w-4xl">
+			<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div className="max-w-5xl">
 					<Link
 						href={`/${session.user.username}`}
 						className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground mb-8 text-sm"

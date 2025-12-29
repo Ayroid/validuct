@@ -6,9 +6,10 @@ import { useRouter } from "next/navigation";
 import { IdeaCardProps } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import VoteButtons from "./VoteButtons";
+import PinButton from "./PinButton";
 import { HiUserCircle } from "react-icons/hi2";
 
-export default function IdeaCard({ idea }: IdeaCardProps) {
+export default function IdeaCard({ idea, showPinButton = false, onPinChange }: IdeaCardProps) {
 	const router = useRouter();
 
 	const getStatusBadgeColor = (status: string) => {
@@ -110,6 +111,14 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
 				{/* Vote Section */}
 				<div className="flex flex-col items-end gap-2">
 					<div className="flex items-center gap-2">
+						{showPinButton && (
+							<PinButton
+								ideaId={idea.id}
+								ideaUserId={idea.userId}
+								initialIsPinned={idea.isPinned}
+								onPinChange={onPinChange}
+							/>
+						)}
 						{idea.launchedLink && (
 							<Link
 								href={idea.launchedLink}

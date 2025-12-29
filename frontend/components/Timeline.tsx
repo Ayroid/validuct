@@ -6,7 +6,7 @@ import { ideasApi } from "@/lib/api/ideas";
 import { Idea, TimelineType } from "@/types";
 
 export default function Timeline() {
-	const [activeTimeline, setActiveTimeline] = useState<TimelineType>("hot");
+	const [activeTimeline, setActiveTimeline] = useState<TimelineType>("new");
 	const [ideas, setIdeas] = useState<Idea[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
@@ -47,9 +47,9 @@ export default function Timeline() {
 	};
 
 	const tabs = [
-		{ id: "hot" as TimelineType, label: "Hot", icon: "🔥" },
 		{ id: "new" as TimelineType, label: "New", icon: "🆕" },
-		{ id: "trending" as TimelineType, label: "Trending", icon: "📈" },
+		{ id: "hot" as TimelineType, label: "Trending", icon: "🔥" },
+		{ id: "trending" as TimelineType, label: "Top", icon: "📈" },
 	];
 
 	return (

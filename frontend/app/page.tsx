@@ -21,7 +21,7 @@ export default async function Home() {
 
 			{/* Hero Section */}
 			<div className="py-16">
-				<div className="max-w-4xl mx-auto">
+				<div className="max-w-5xl mx-auto">
 					<div className="border-none">
 						<div className="px-8 py-12 md:py-16 text-center">
 							<div className="flex justify-center mb-6">
@@ -66,7 +66,7 @@ export default async function Home() {
 			</div>
 
 			{/* Problem Section */}
-			<div className="py-16 bg-muted border">
+			<div className="py-16 bg-muted border max-w-5xl mx-auto">
 				<div className="max-w-4xl mx-auto px-6 text-center">
 					<h3 className="text-3xl md:text-4xl font-bold mb-6">
 						80% of startups fail because founders build useless products
@@ -89,8 +89,8 @@ export default async function Home() {
 			</div>
 
 			{/* Solution Section */}
-			<div className="py-16 bg-background">
-				<div className="max-w-4xl mx-auto px-6 text-center">
+			<div className="py-16 bg-background max-w-5xl mx-auto">
+				<div className="max-w-5xl mx-auto text-center">
 					<h3 className="text-3xl md:text-4xl font-bold mb-6">
 						Ship features users really want
 					</h3>
@@ -98,57 +98,57 @@ export default async function Home() {
 						Gather feedback from your community, prioritize what matters, and
 						build products people actually use.
 					</p>
+				</div>
 
-					<div className="grid md:grid-cols-2 gap-6">
-						{/* Collect Feedback Card */}
-						<Card className="bg-primary text-primary-foreground">
-							<CardContent className="p-8 text-left">
-								<h4 className="text-2xl font-bold mb-4">Collect user feedback</h4>
-								<p className="mb-6 opacity-90">
-									See what new features, improvements, and bugs your users care
-									about.
-								</p>
-								<div className="bg-card rounded-xl p-4 space-y-3 text-card-foreground">
-									<div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-										<span className="font-medium text-sm">
-											Add timeline/journey integration to the Insighto
-										</span>
-										<span className="text-primary font-bold">💡</span>
-									</div>
-									<div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-										<span className="font-medium text-sm">
-											A one pricing plan for revenue billing
-										</span>
-										<span className="text-primary font-bold">💡</span>
-									</div>
+				<div className="flex gap-6 max-w-5xl mx-auto">
+					{/* Collect Feedback Card */}
+					<Card className="bg-primary text-primary-foreground w-full">
+						<CardContent className="p-8 text-left">
+							<h4 className="text-2xl font-bold mb-4">Collect user feedback</h4>
+							<p className="mb-6 opacity-90">
+								See what new features, improvements, and bugs your users care
+								about.
+							</p>
+							<div className="bg-card rounded-xl p-4 space-y-3 text-card-foreground">
+								<div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+									<span className="font-medium text-sm">
+										Add timeline/journey integration to the Insighto
+									</span>
+									<span className="text-primary font-bold">💡</span>
 								</div>
-							</CardContent>
-						</Card>
+								<div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+									<span className="font-medium text-sm">
+										A one pricing plan for revenue billing
+									</span>
+									<span className="text-primary font-bold">💡</span>
+								</div>
+							</div>
+						</CardContent>
+					</Card>
 
-						{/* Prioritize Features Card */}
-						<Card className="bg-secondary">
-							<CardContent className="p-8 text-left">
-								<h4 className="text-2xl font-bold mb-4">Prioritize features</h4>
-								<p className="text-secondary-foreground/80 mb-6">
-									See which features have the most demand and ship accordingly.
-								</p>
-								<div className="bg-card rounded-xl p-4 space-y-3">
-									<div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-										<span className="font-medium text-sm">
-											Add timeline/journey integration
-										</span>
-										<span className="font-bold">↑ 42</span>
-									</div>
-									<div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-										<span className="font-medium text-sm">
-											One pricing plan for revenue
-										</span>
-										<span className="font-bold">↑ 28</span>
-									</div>
+					{/* Prioritize Features Card */}
+					<Card className="bg-secondary text-secondary-foreground w-full">
+						<CardContent className="p-8 text-left">
+							<h4 className="text-2xl font-bold mb-4">Prioritize features</h4>
+							<p className="text-secondary-foreground/80 mb-6">
+								See which features have the most demand and ship accordingly.
+							</p>
+							<div className="bg-card rounded-xl p-4 space-y-3">
+								<div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+									<span className="font-medium text-sm">
+										Add timeline/journey integration
+									</span>
+									<span className="font-bold">↑ 42</span>
 								</div>
-							</CardContent>
-						</Card>
-					</div>
+								<div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+									<span className="font-medium text-sm">
+										One pricing plan for revenue
+									</span>
+									<span className="font-bold">↑ 28</span>
+								</div>
+							</div>
+						</CardContent>
+					</Card>
 				</div>
 			</div>
 

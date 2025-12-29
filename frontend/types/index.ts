@@ -141,6 +141,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 export interface IdeaCardProps {
   idea: Idea;
   onPinChange?: () => void;
+  showPinButton?: boolean;
 }
 
 export interface CommentSectionProps {

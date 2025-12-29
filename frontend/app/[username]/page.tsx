@@ -51,38 +51,53 @@ export default function ProfilePage() {
 		fetchProfile();
 	}, [username]);
 
-	useEffect(() => {
-		const fetchIdeas = async () => {
-			try {
-				setIdeasLoading(true);
-				if (activeTab === "pinned" && profile) {
-					setIdeas(profile.pinnedIdeas);
-					setHasMore(false);
-				} else {
-					const data = await ideasApi.getUserIdeas(username, {
-						page,
-						limit: 20,
-						sort: sortBy,
-					});
-					setIdeas(data.ideas);
-					setHasMore(data.pagination.page < data.pagination.total_pages);
-				}
-			} catch (err: unknown) {
-				const errorMessage =
-					err instanceof Error && "response" in err
-						? (err as { response?: { data?: { error?: string } } }).response
-								?.data?.error
-						: undefined;
-				setError(errorMessage || "Failed to load ideas");
-			} finally {
-				setIdeasLoading(false);
+	const fetchIdeas = async () => {
+		try {
+			setIdeasLoading(true);
+			if (activeTab === "pinned" && profile) {
+				setIdeas(profile.pinnedIdeas);
+				setHasMore(false);
+			} else {
+				const data = await ideasApi.getUserIdeas(username, {
+					page,
+					limit: 20,
+					sort: sortBy,
+				});
+				setIdeas(data.ideas);
+				setHasMore(data.pagination.page < data.pagination.total_pages);
 			}
-		};
+		} catch (err: unknown) {
+			const errorMessage =
+				err instanceof Error && "response" in err
+					? (err as { response?: { data?: { error?: string } } }).response
+							?.data?.error
+					: undefined;
+			setError(errorMessage || "Failed to load ideas");
+		} finally {
+			setIdeasLoading(false);
+		}
+	};
 
+	useEffect(() => {
 		if (profile) {
 			fetchIdeas();
 		}
 	}, [username, profile, page, sortBy, activeTab]);
+
+	const handlePinChange = () => {
+		// Refresh ideas when pin status changes
+		fetchIdeas();
+		// Also refresh profile to update pinned ideas count
+		const refreshProfile = async () => {
+			try {
+				const data = await userApi.getUserProfile(username);
+				setProfile(data);
+			} catch (err) {
+				console.error("Failed to refresh profile:", err);
+			}
+		};
+		refreshProfile();
+	};
 
 	if (loading) {
 		return (
@@ -104,8 +119,8 @@ export default function ProfilePage() {
 		<div className="min-h-screen bg-background">
 			{/* Profile Header */}
 			<div className="bg-card border-b">
-				<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-					<div className="max-w-4xl">
+				<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+					<div className="max-w-5xl">
 						<Link
 							href="/home"
 							className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground mb-8 text-sm"
@@ -202,7 +217,7 @@ export default function ProfilePage() {
 			</div>
 
 			{/* Ideas Section */}
-			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+			<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 				{/* Tabs */}
 				<div className="flex items-center justify-between mb-6">
 					<div className="flex gap-4 border-b">
@@ -294,7 +309,12 @@ export default function ProfilePage() {
 				) : (
 					<div className="space-y-4">
 						{ideas.map((idea) => (
-							<IdeaCard key={idea.id} idea={idea} />
+							<IdeaCard
+								key={idea.id}
+								idea={idea}
+								showPinButton={true}
+								onPinChange={handlePinChange}
+							/>
 						))}
 
 						{/* Load More */}

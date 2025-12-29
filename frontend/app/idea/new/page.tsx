@@ -104,7 +104,7 @@ export default function NewIdeaPage() {
 
 	return (
 		<div className="min-h-screen bg-background">
-			<div className="max-w-4xl mx-auto px-4 py-8">
+			<div className="max-w-5xl mx-auto px-4 py-8">
 				{/* Header */}
 				<div className="mb-10">
 					<Link
