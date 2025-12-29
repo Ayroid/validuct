@@ -117,7 +117,7 @@ export default function IdeaDetailPage() {
 				</Link>
 
 				{/* Main Content */}
-				<div className="bg-card rounded-lg shadow-md p-8 border">
+				<div className="bg-card p-8 border">
 					{/* Header */}
 					<div className="flex items-start justify-between mb-6 min-h-40">
 						<div className="flex-1 min-w-0 flex flex-col justify-between self-stretch">
@@ -182,7 +182,7 @@ export default function IdeaDetailPage() {
 							<div className="flex flex-col items-end gap-3">
 								<div className="flex items-center gap-3">
 									<span
-										className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusBadgeColor(
+										className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
 											idea.status
 										)}`}
 									>
@@ -229,7 +229,7 @@ export default function IdeaDetailPage() {
 									rel="noopener noreferrer"
 								>
 									<div
-										className={`px-4 py-2 rounded-full text-sm font-medium flex gap-2 items-center ${getStatusBadgeColor(
+										className={`px-3 py-1 rounded-full text-xs font-medium flex gap-2 items-center ${getStatusBadgeColor(
 											"LAUNCHED"
 										)}`}
 									>

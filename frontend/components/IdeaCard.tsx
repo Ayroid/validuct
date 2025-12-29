@@ -53,23 +53,25 @@ export default function IdeaCard({ idea }: IdeaCardProps) {
 
 	return (
 		<div
-			className="bg-card rounded-lg border hover:shadow-md transition-shadow p-6 cursor-pointer"
+			className="bg-card border hover:shadow-md transition-shadow p-6 cursor-pointer"
 			onClick={handleCardClick}
 		>
-			<div className="flex gap-4">
+			<div className="flex gap-4 min-h-32">
 				{/* Content Section */}
-				<div className="flex-1 min-w-0">
-					{/* Header */}
-					<div className="flex items-start justify-between mb-2">
-						<h2 className="text-xl font-semibold transition-colors wrap-break-word min-w-0 pr-2">
-							{idea.heading}
-						</h2>
-					</div>
+				<div className="flex-1 min-w-0 flex flex-col justify-between">
+					<div>
+						{/* Header */}
+						<div className="flex items-start justify-between mb-2">
+							<h2 className="text-xl font-semibold transition-colors wrap-break-word min-w-0 pr-2">
+								{idea.heading}
+							</h2>
+						</div>
 
-					{/* Description */}
-					<p className="text-muted-foreground mb-4 line-clamp-3 wrap-break-word">
-						{idea.description}
-					</p>
+						{/* Description */}
+						<p className="text-muted-foreground mb-4 line-clamp-3 wrap-break-word">
+							{idea.description}
+						</p>
+					</div>
 
 					{/* Footer */}
 					<div className="flex items-center justify-between text-sm text-muted-foreground">
