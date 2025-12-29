@@ -144,11 +144,11 @@ export default function NewIdeaPage() {
 								value={formData.heading}
 								onChange={handleChange}
 								required
-								maxLength={200}
+								maxLength={100}
 								placeholder="A tool that helps..."
 							/>
 							<div className="text-xs text-gray-400 text-right">
-								{formData.heading.length}/200
+								{formData.heading.length}/100
 							</div>
 						</div>
 
@@ -164,9 +164,13 @@ export default function NewIdeaPage() {
 								onChange={handleChange}
 								required
 								rows={8}
+								maxLength={500}
 								placeholder="Describe your idea, the problem it solves, and who it's for..."
 								className="resize-none"
 							/>
+							<div className="text-xs text-gray-400 text-right">
+								{formData.description.length}/500
+							</div>	
 						</div>
 
 						{/* Status */}

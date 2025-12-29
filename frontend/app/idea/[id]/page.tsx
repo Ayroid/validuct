@@ -9,6 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useAuth } from "@/context/AuthContext";
 import VoteButtons from "@/components/VoteButtons";
 import CommentSection from "@/components/CommentSection";
+import Image from "next/image";
 
 export default function IdeaDetailPage() {
 	const params = useParams();
@@ -97,7 +98,7 @@ export default function IdeaDetailPage() {
 				{/* Back Button */}
 				<Link
 					href="/home"
-						className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground mb-8 text-sm"
+					className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground mb-8 text-sm"
 				>
 					<svg
 						className="w-4 h-4"
@@ -118,10 +119,10 @@ export default function IdeaDetailPage() {
 				{/* Main Content */}
 				<div className="bg-card rounded-lg shadow-md p-8 border">
 					{/* Header */}
-					<div className="flex items-start justify-between mb-6">
-						<div className="flex-1">
-							<div className="flex items-center gap-3 mb-2">
-								<h1 className="text-3xl font-bold text-foreground">
+					<div className="flex items-start justify-between mb-6 min-h-40">
+						<div className="flex-1 min-w-0 flex flex-col justify-between self-stretch">
+							<div className="items-center gap-3 mb-2 pr-2">
+								<h1 className="text-3xl font-bold text-foreground wrap-break-word mb-4">
 									{idea.heading}
 								</h1>
 								{idea.isPrivate && (
@@ -145,17 +146,22 @@ export default function IdeaDetailPage() {
 										<span className="font-medium">Private</span>
 									</div>
 								)}
+								<p className="text-muted-foreground whitespace-pre-wrap leading-relaxed wrap-break-word">
+									{idea.description}
+								</p>
 							</div>
 							<div className="flex items-center gap-3 text-sm text-muted-foreground">
 								<Link
-									href={`/profile/${idea.user.username}`}
+									href={`/${idea.user.username}`}
 									className="flex items-center gap-2 hover:text-primary transition-colors"
 								>
 									{idea.user.profilePicture ? (
-										<img
+										<Image
 											src={idea.user.profilePicture}
 											alt={idea.user.username}
 											className="w-8 h-8 rounded-full"
+											width={32}
+											height={32}
 										/>
 									) : (
 										<div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center font-semibold text-foreground">
@@ -172,24 +178,64 @@ export default function IdeaDetailPage() {
 								</span>
 							</div>
 						</div>
-						<div className="flex items-center gap-3">
-							<span
-								className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusBadgeColor(
-									idea.status
-								)}`}
-							>
-								{formatStatus(idea.status)}
-							</span>
-							{/* Edit/Delete buttons - only visible to owner */}
-							{user && user.id === idea.userId && (
-								<div className="flex items-center gap-2">
-									<Link
-										href={`/idea/${idea.id}/edit`}
-										className="p-2 rounded-lg hover:bg-muted text-primary transition-colors"
-										title="Edit idea"
+						<div className="flex items-end gap-3 justify-between flex-col self-stretch">
+							<div className="flex flex-col items-end gap-3">
+								<div className="flex items-center gap-3">
+									<span
+										className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusBadgeColor(
+											idea.status
+										)}`}
 									>
+										{formatStatus(idea.status)}
+									</span>
+									{/* Edit/Delete buttons - only visible to owner */}
+									{user && user.id === idea.userId && (
+										<div className="flex items-center gap-2">
+											<Link
+												href={`/idea/${idea.id}/edit`}
+												className="p-2 rounded-lg hover:bg-muted text-primary transition-colors"
+												title="Edit idea"
+											>
+												<svg
+													className="w-5 h-5"
+													fill="none"
+													stroke="currentColor"
+													viewBox="0 0 24 24"
+												>
+													<path
+														strokeLinecap="round"
+														strokeLinejoin="round"
+														strokeWidth={2}
+														d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+													/>
+												</svg>
+											</Link>
+										</div>
+									)}
+								</div>
+
+								<VoteButtons
+									ideaId={idea.id}
+									initialUpvotesCount={idea.upvotesCount}
+									initialDownvotesCount={idea.downvotesCount}
+									initialUserVote={idea.userVote}
+									onVoteUpdate={handleVoteUpdate}
+								/>
+							</div>
+							{idea.launchedLink && (
+								<Link
+									href={idea.launchedLink}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									<div
+										className={`px-4 py-2 rounded-full text-sm font-medium flex gap-2 items-center ${getStatusBadgeColor(
+											"LAUNCHED"
+										)}`}
+									>
+										Visit
 										<svg
-											className="w-5 h-5"
+											className="w-4 h-4"
 											fill="none"
 											stroke="currentColor"
 											viewBox="0 0 24 24"
@@ -198,82 +244,17 @@ export default function IdeaDetailPage() {
 												strokeLinecap="round"
 												strokeLinejoin="round"
 												strokeWidth={2}
-												d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+												d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
 											/>
 										</svg>
-									</Link>
-								</div>
+									</div>
+								</Link>
 							)}
 						</div>
 					</div>
 
-					{/* Vote Section */}
-					<div className="flex items-center gap-6 mb-6 pb-6 border-b">
-						<VoteButtons
-							ideaId={idea.id}
-							initialUpvotesCount={idea.upvotesCount}
-							initialDownvotesCount={idea.downvotesCount}
-							initialUserVote={idea.userVote}
-							onVoteUpdate={handleVoteUpdate}
-						/>
-						<div className="flex items-center gap-2 text-muted-foreground">
-							<svg
-								className="w-5 h-5"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-								/>
-							</svg>
-							<span>{idea.commentsCount} comments</span>
-						</div>
-					</div>
-
-					{/* Description */}
-					<div className="mb-6">
-						<h2 className="text-xl font-semibold text-foreground mb-3">
-							Description
-						</h2>
-						<p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
-							{idea.description}
-						</p>
-					</div>
-
-					{/* Launched Link */}
-					{idea.launchedLink && (
-						<div className="mb-6">
-							<h2 className="text-xl font-semibold text-foreground mb-3">Link</h2>
-							<a
-								href={idea.launchedLink}
-								target="_blank"
-								rel="noopener noreferrer"
-								className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"
-							>
-								{idea.launchedLink}
-								<svg
-									className="w-4 h-4"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-									/>
-								</svg>
-							</a>
-						</div>
-					)}
-
 					{/* Comments Section */}
-					<div className="mt-8 pt-8 border-t">
+					<div className="mt-4 border-t">
 						<CommentSection
 							ideaId={idea.id}
 							initialCommentsCount={idea.commentsCount}

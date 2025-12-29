@@ -6,10 +6,9 @@ import { useRouter } from "next/navigation";
 import { IdeaCardProps } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import VoteButtons from "./VoteButtons";
-import PinButton from "./PinButton";
 import { HiUserCircle } from "react-icons/hi2";
 
-export default function IdeaCard({ idea, onPinChange }: IdeaCardProps) {
+export default function IdeaCard({ idea }: IdeaCardProps) {
 	const router = useRouter();
 
 	const getStatusBadgeColor = (status: string) => {
@@ -59,36 +58,24 @@ export default function IdeaCard({ idea, onPinChange }: IdeaCardProps) {
 		>
 			<div className="flex gap-4">
 				{/* Content Section */}
-				<div className="flex-1">
+				<div className="flex-1 min-w-0">
 					{/* Header */}
 					<div className="flex items-start justify-between mb-2">
-						<h2 className="text-xl font-semibold hover:text-primary transition-colors">
+						<h2 className="text-xl font-semibold transition-colors wrap-break-word min-w-0 pr-2">
 							{idea.heading}
 						</h2>
-						<div className="flex items-center gap-2">
-							<PinButton
-								ideaId={idea.id}
-								ideaUserId={idea.userId}
-								onPinChange={onPinChange}
-							/>
-							<span
-								className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
-									idea.status
-								)}`}
-							>
-								{formatStatus(idea.status)}
-							</span>
-						</div>
 					</div>
 
 					{/* Description */}
-					<p className="text-muted-foreground mb-4 line-clamp-3">{idea.description}</p>
+					<p className="text-muted-foreground mb-4 line-clamp-3 wrap-break-word">
+						{idea.description}
+					</p>
 
 					{/* Footer */}
 					<div className="flex items-center justify-between text-sm text-muted-foreground">
 						<div className="flex items-center gap-2">
 							<Link
-								href={`/profile/${idea.user.username}`}
+								href={`/${idea.user.username}`}
 								className="flex items-center gap-1 transition-colors font-bold"
 								onClick={(e) => e.stopPropagation()}
 							>
@@ -116,42 +103,52 @@ export default function IdeaCard({ idea, onPinChange }: IdeaCardProps) {
 								{idea.commentsCount} comments
 							</span>
 						</div>
-
-						<div className="flex items-center gap-4">
-							{idea.launchedLink && (
-								<a
-									href={idea.launchedLink}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="flex items-center gap-1 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-									onClick={(e) => e.stopPropagation()}
-								>
-									<svg
-										className="w-4 h-4"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={2}
-											d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-										/>
-									</svg>
-									<span>Visit</span>
-								</a>
-							)}
-						</div>
 					</div>
 				</div>
 				{/* Vote Section */}
-				<VoteButtons
-					ideaId={idea.id}
-					initialUpvotesCount={idea.upvotesCount}
-					initialDownvotesCount={idea.downvotesCount}
-					initialUserVote={idea.userVote}
-				/>
+				<div className="flex flex-col items-end gap-2">
+					<div className="flex items-center gap-2">
+						{idea.launchedLink && (
+							<Link
+								href={idea.launchedLink}
+								target="_blank"
+								rel="noopener noreferrer"
+								className={`px-3 py-1 rounded-full text-xs font-medium flex gap-2 ${getStatusBadgeColor(
+									"LAUNCHED"
+								)}`}
+								onClick={(e) => e.stopPropagation()}
+							>
+								Visit{" "}
+								<svg
+									className="w-4 h-4"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+									/>
+								</svg>
+							</Link>
+						)}
+						<span
+							className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
+								idea.status
+							)}`}
+						>
+							{formatStatus(idea.status)}
+						</span>
+					</div>
+					<VoteButtons
+						ideaId={idea.id}
+						initialUpvotesCount={idea.upvotesCount}
+						initialDownvotesCount={idea.downvotesCount}
+						initialUserVote={idea.userVote}
+					/>
+				</div>
 			</div>
 		</div>
 	);
