@@ -197,7 +197,7 @@ export default function CommentSection({
           </div>
         </form>
       ) : (
-        <div className="mb-8 p-4 bg-[#eeeeee] border border-gray-200 rounded-lg text-center">
+        <div className="mb-8 p-4 bg-background border border-gray-200 rounded-lg text-center">
           <p className="text-gray-600 mb-2">Sign in to join the conversation</p>
           <Button onClick={() => router.push('/login')} size="sm">
             Sign In

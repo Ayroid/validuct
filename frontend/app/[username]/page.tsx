@@ -260,7 +260,7 @@ export default function ProfilePage() {
 							{activeTab === "pinned" ? "No pinned ideas yet" : "No ideas yet"}
 						</p>
 						{isOwnProfile && activeTab === "all" && (
-							<Link href="/new-idea" className="inline-block mt-4">
+							<Link href="/idea/new" className="inline-block mt-4">
 								<Button>Share Your First Idea</Button>
 							</Link>
 						)}

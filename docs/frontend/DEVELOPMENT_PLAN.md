@@ -609,8 +609,9 @@ frontend/
 │   │   ├── profile/
 │   │   │   └── [username]/
 │   │   │       └── page.tsx      # User Profile
-│   │   └── new-idea/
-│   │       └── page.tsx          # Create Idea
+│   │   └── idea/
+│   │       └── new/
+│   │           └── page.tsx      # Create Idea
 │   ├── globals.css
 │   └── layout.tsx
 ├── components/
@@ -649,7 +650,7 @@ frontend/
 1. **`/`** - Home Timeline (HOT/NEW/TRENDING tabs)
 2. **`/login`** - Login page
 3. **`/register`** - Registration page
-4. **`/new-idea`** - Create new idea (protected)
+4. **`/idea/new`** - Create new idea (protected)
 5. **`/idea/[id]`** - Idea detail with comments
 6. **`/profile/[username]`** - User profile with their ideas
 
