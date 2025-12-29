@@ -10,7 +10,8 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/Card";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export function RegisterForm({
 	className,
@@ -50,11 +51,12 @@ export function RegisterForm({
 							{error}
 						</div>
 					)}
-					<button
+					<Button
 						onClick={handleGoogleSignUp}
 						disabled={isGoogleLoading}
 						type="button"
-						className="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+						variant="outline"
+						className="w-full h-10"
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -67,7 +69,7 @@ export function RegisterForm({
 							/>
 						</svg>
 						{isGoogleLoading ? "Signing up..." : "Sign up with Google"}
-					</button>
+					</Button>
 					<div className="mt-4 text-center text-sm">
 						Already have an account?{" "}
 						<Link

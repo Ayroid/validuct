@@ -47,6 +47,12 @@ echo "Press Ctrl+C to stop both servers"
 echo "=================================="
 echo ""
 
+# Start database container
+docker start postgres-db
+
+# Wait for database to be ready
+sleep 3
+
 # Start backend in background
 cd backend
 npm run dev > /tmp/validuct-backend.log 2>&1 &

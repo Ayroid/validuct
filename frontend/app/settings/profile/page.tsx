@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { userApi, UpdateProfileData } from "@/lib/api/users";
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function ProfileSettingsPage() {
 	const { data: session, update } = useSession();
@@ -71,10 +71,10 @@ export default function ProfileSettingsPage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-[#eeeeee] py-12">
+		<div className="min-h-screen bg-background py-12">
 			<div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="bg-white rounded-lg shadow-md p-8">
-					<h1 className="text-3xl font-bold text-gray-900 mb-6">
+				<div className="bg-card border rounded-lg p-8">
+					<h1 className="text-3xl font-bold mb-6">
 						Edit Profile
 					</h1>
 

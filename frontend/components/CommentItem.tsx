@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { formatDistanceToNow } from 'date-fns';
 import { Comment } from '@/lib/api/comments';
-import Button from './ui/Button';
+import { Button } from './ui/button';
 import Image from 'next/image';
 import { CommentItemProps } from '@/types';
 

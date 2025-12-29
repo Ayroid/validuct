@@ -6,10 +6,11 @@ import { userApi, UserProfile } from "@/lib/api/users";
 import { ideasApi } from "@/lib/api/ideas";
 import { Idea } from "@/types";
 import IdeaCard from "@/components/IdeaCard";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
+import { IoArrowBackOutline } from "react-icons/io5";
 
 export default function ProfilePage() {
 	const params = useParams();
@@ -100,10 +101,15 @@ export default function ProfilePage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-[#eeeeee]">
+		<div className="min-h-screen bg-background">
 			{/* Profile Header */}
-			<div className="bg-white border-b">
+			<div className="bg-card border-b">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+					<div className="max-w-4xl">
+						<Link href="/home" className="mb-4 inline-block">
+							<IoArrowBackOutline />
+						</Link>
+					</div>
 					<div className="flex items-start gap-6">
 						{/* Profile Picture */}
 						<div className="shrink-0">
@@ -139,7 +145,7 @@ export default function ProfilePage() {
 											<Button variant="outline">Edit Profile</Button>
 										</Link>
 										<Button
-											variant="danger"
+											variant="destructive"
 											onClick={() => signOut({ callbackUrl: "/" })}
 										>
 											Logout
@@ -210,7 +216,7 @@ export default function ProfilePage() {
 					{activeTab === "all" && (
 						<div className="flex gap-2">
 							<Button
-								variant={sortBy === "newest" ? "primary" : "outline"}
+								variant={sortBy === "newest" ? "default" : "outline"}
 								onClick={() => {
 									setSortBy("newest");
 									setPage(1);
@@ -220,7 +226,7 @@ export default function ProfilePage() {
 								Newest
 							</Button>
 							<Button
-								variant={sortBy === "popular" ? "primary" : "outline"}
+								variant={sortBy === "popular" ? "default" : "outline"}
 								onClick={() => {
 									setSortBy("popular");
 									setPage(1);
@@ -230,7 +236,7 @@ export default function ProfilePage() {
 								Popular
 							</Button>
 							<Button
-								variant={sortBy === "oldest" ? "primary" : "outline"}
+								variant={sortBy === "oldest" ? "default" : "outline"}
 								onClick={() => {
 									setSortBy("oldest");
 									setPage(1);

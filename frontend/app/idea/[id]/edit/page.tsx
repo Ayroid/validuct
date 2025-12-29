@@ -6,6 +6,46 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { ideasApi } from "@/lib/api/ideas";
 import { Idea } from "@/types";
+import { HiPencil, HiTrash } from "react-icons/hi2";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+
+type IdeaStatus = "DRAFT" | "VALIDATED" | "WIP" | "LAUNCHED";
+
+const statusOptions: {
+	value: IdeaStatus;
+	label: string;
+	emoji: string;
+	color: string;
+}[] = [
+	{
+		value: "DRAFT",
+		label: "Draft",
+		emoji: "✏️",
+		color: "bg-gray-100 text-gray-900 hover:bg-gray-200",
+	},
+	{
+		value: "VALIDATED",
+		label: "Validated",
+		emoji: "✅",
+		color: "bg-yellow-100 text-yellow-900 hover:bg-yellow-200",
+	},
+	{
+		value: "WIP",
+		label: "Work in Progress",
+		emoji: "🚧",
+		color: "bg-orange-100 text-orange-900 hover:bg-orange-200",
+	},
+	{
+		value: "LAUNCHED",
+		label: "Launched",
+		emoji: "🚀",
+		color: "bg-red-100 text-red-900 hover:bg-red-200",
+	},
+];
 
 export default function EditIdeaPage() {
 	const params = useParams();
@@ -17,7 +57,7 @@ export default function EditIdeaPage() {
 	const [formData, setFormData] = useState({
 		heading: "",
 		description: "",
-		status: "DRAFT" as "DRAFT" | "VALIDATED" | "WIP" | "LAUNCHED",
+		status: "DRAFT" as IdeaStatus,
 		launchedLink: "",
 		isPrivate: false,
 	});
@@ -115,8 +155,8 @@ export default function EditIdeaPage() {
 
 	if (loading || status === "loading") {
 		return (
-			<div className="min-h-screen bg-[#eeeeee] flex items-center justify-center">
-				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+			<div className="min-h-screen bg-background flex items-center justify-center">
+				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
 			</div>
 		);
 	}
@@ -126,16 +166,16 @@ export default function EditIdeaPage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-[#eeeeee]">
-			<div className="max-w-3xl mx-auto px-4 py-8">
+		<div className="min-h-screen bg-background">
+			<div className="max-w-2xl mx-auto px-4 py-12">
 				{/* Header */}
-				<div className="mb-8">
+				<div className="mb-10">
 					<Link
 						href={`/idea/${params.id}`}
-						className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors"
+						className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground mb-8 text-sm"
 					>
 						<svg
-							className="w-5 h-5"
+							className="w-4 h-4"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -147,24 +187,22 @@ export default function EditIdeaPage() {
 								d="M15 19l-7-7 7-7"
 							/>
 						</svg>
-						Back to Idea
+						<span>BACK</span>
 					</Link>
-					<h1 className="text-3xl font-bold text-gray-900">Edit Idea</h1>
-					<p className="text-gray-600 mt-2">Update your idea details</p>
+					<h1 className="text-3xl font-bold mb-2">
+						Edit your idea
+					</h1>
 				</div>
 
 				{/* Form */}
-				<div className="bg-white rounded-lg shadow-md p-8 border border-gray-200">
-					<form onSubmit={handleSubmit} className="space-y-6">
+				<div className="bg-card border rounded-lg p-8 md:p-10">
+					<form onSubmit={handleSubmit} className="space-y-8">
 						{/* Heading */}
-						<div>
-							<label
-								htmlFor="heading"
-								className="block text-sm font-medium text-gray-700 mb-2"
-							>
-								Heading <span className="text-red-500">*</span>
-							</label>
-							<input
+						<div className="space-y-2">
+							<Label htmlFor="heading">
+								Idea title <span className="text-red-500">*</span>
+							</Label>
+							<Input
 								type="text"
 								id="heading"
 								name="heading"
@@ -172,140 +210,140 @@ export default function EditIdeaPage() {
 								onChange={handleChange}
 								required
 								maxLength={200}
-								placeholder="Enter a catchy heading for your idea"
-								className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+								placeholder="A tool that helps..."
 							/>
-							<p className="text-sm text-gray-500 mt-1">
+							<div className="text-xs text-gray-400 text-right">
 								{formData.heading.length}/200
-							</p>
+							</div>
 						</div>
 
 						{/* Description */}
-						<div>
-							<label
-								htmlFor="description"
-								className="block text-sm font-medium text-gray-700 mb-2"
-							>
+						<div className="space-y-2">
+							<Label htmlFor="description">
 								Description <span className="text-red-500">*</span>
-							</label>
-							<textarea
+							</Label>
+							<Textarea
 								id="description"
 								name="description"
 								value={formData.description}
 								onChange={handleChange}
 								required
 								rows={8}
-								placeholder="Describe your idea in detail..."
-								className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
+								placeholder="Describe your idea, the problem it solves, and who it's for..."
+								className="resize-none"
 							/>
 						</div>
 
 						{/* Status */}
-						<div>
-							<label
-								htmlFor="status"
-								className="block text-sm font-medium text-gray-700 mb-2"
-							>
-								Status
-							</label>
-							<select
-								id="status"
-								name="status"
-								value={formData.status}
-								onChange={handleChange}
-								className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-							>
-								<option value="DRAFT">Draft</option>
-								<option value="VALIDATED">Validated</option>
-								<option value="WIP">Work in Progress</option>
-								<option value="LAUNCHED">Launched</option>
-							</select>
+						<div className="space-y-3">
+							<Label>Current status</Label>
+							<div className="grid grid-cols-2 gap-3">
+								{statusOptions.map((option) => (
+									<Button
+										key={option.value}
+										type="button"
+										onClick={() =>
+											setFormData({ ...formData, status: option.value })
+										}
+										variant={formData.status === option.value ? 'default' : 'outline'}
+										className="justify-start"
+									>
+										<span className="mr-2">{option.emoji}</span>
+										{option.label}
+									</Button>
+								))}
+							</div>
 						</div>
 
 						{/* Launched Link */}
 						{(formData.status === "LAUNCHED" || formData.status === "WIP") && (
-							<div>
-								<label
-									htmlFor="launchedLink"
-									className="block text-sm font-medium text-gray-700 mb-2"
-								>
-									Link {formData.status === "LAUNCHED" && "(optional)"}
-								</label>
-								<input
+							<div className="space-y-2">
+								<Label htmlFor="launchedLink">
+									{formData.status === "LAUNCHED"
+										? "Project link"
+										: "Work in progress link"}
+									{formData.status === "LAUNCHED" && (
+										<span className="text-gray-400 ml-1">(optional)</span>
+									)}
+								</Label>
+								<Input
 									type="url"
 									id="launchedLink"
 									name="launchedLink"
 									value={formData.launchedLink}
 									onChange={handleChange}
-									placeholder="https://your-project-url.com"
-									className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									placeholder="https://your-project.com"
 								/>
 							</div>
 						)}
 
 						{/* Privacy Toggle */}
-						<div className="flex items-center gap-3 p-4 bg-[#eeeeee] rounded-lg">
-							<input
-								type="checkbox"
-								id="isPrivate"
-								name="isPrivate"
-								checked={formData.isPrivate}
-								onChange={(e) =>
-									setFormData({ ...formData, isPrivate: e.target.checked })
-								}
-								className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-							/>
-							<label htmlFor="isPrivate" className="flex-1">
-								<div className="text-sm font-medium text-gray-900">
+						<div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
+							<div className="flex-1">
+								<Label htmlFor="isPrivate" className="text-base cursor-pointer">
 									Make this idea private
-								</div>
-								<div className="text-xs text-gray-500">
-									Only you will be able to see this idea
-								</div>
-							</label>
-							<svg
-								className="w-5 h-5 text-gray-400"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-								/>
-							</svg>
+								</Label>
+								<p className="text-sm text-gray-500">
+									{formData.isPrivate
+										? "Only you can see this idea"
+										: "Visible to everyone"}
+								</p>
+							</div>
+							<Switch
+								id="isPrivate"
+								checked={formData.isPrivate}
+								onCheckedChange={(checked) =>
+									setFormData({ ...formData, isPrivate: checked })
+								}
+							/>
 						</div>
 
 						{/* Action Buttons */}
-						<div className="flex gap-4 pt-4 border-t border-gray-200">
-							<button
-								type="submit"
-								disabled={
-									submitting || !formData.heading || !formData.description
-								}
-								className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-							>
-								{submitting ? "Updating..." : "Update Idea"}
-							</button>
-							<Link
-								href={`/idea/${params.id}`}
-								className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-[#eeeeee] transition-colors font-medium text-center"
-							>
-								Cancel
-							</Link>
-						</div>
+						<div className="space-y-4">
+							<div className="flex gap-3">
+								<Button
+									type="button"
+									variant="outline"
+									className="flex-1"
+									size="lg"
+									asChild
+								>
+									<Link href={`/idea/${params.id}`}>
+										Cancel
+									</Link>
+								</Button>
+								<Button
+									type="submit"
+									disabled={
+										submitting || !formData.heading || !formData.description
+									}
+									className="flex-1"
+									size="lg"
+								>
+									{submitting ? (
+										<>
+											<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+											<span>Updating...</span>
+										</>
+									) : (
+										<>
+											<HiPencil className="h-4 w-4" />
+											<span>Update</span>
+										</>
+									)}
+								</Button>
+							</div>
 
-						{/* Delete Button */}
-						<div className="pt-4 border-t border-gray-200">
-							<button
+							{/* Delete Button */}
+							<Button
 								type="button"
+								variant="destructive"
 								onClick={handleDelete}
-								className="w-full px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+								className="w-full"
 							>
-								Delete Idea
-							</button>
+								<HiTrash className="h-4 w-4" />
+								<span>Delete idea</span>
+							</Button>
 						</div>
 					</form>
 				</div>

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { commentsApi, Comment } from '@/lib/api/comments';
 import CommentItem from './CommentItem';
-import Button from './ui/Button';
+import { Button } from './ui/button';
 import { useRouter } from 'next/navigation';
 import { CommentSectionProps, ErrorResponse } from '@/types';
 

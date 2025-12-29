@@ -54,7 +54,7 @@ export default function IdeaCard({ idea, onPinChange }: IdeaCardProps) {
 
 	return (
 		<div
-			className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-200 cursor-pointer"
+			className="bg-card rounded-lg border hover:shadow-md transition-shadow p-6 cursor-pointer"
 			onClick={handleCardClick}
 		>
 			<div className="flex gap-4">
@@ -62,7 +62,7 @@ export default function IdeaCard({ idea, onPinChange }: IdeaCardProps) {
 				<div className="flex-1">
 					{/* Header */}
 					<div className="flex items-start justify-between mb-2">
-						<h2 className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+						<h2 className="text-xl font-semibold hover:text-primary transition-colors">
 							{idea.heading}
 						</h2>
 						<div className="flex items-center gap-2">
@@ -82,10 +82,10 @@ export default function IdeaCard({ idea, onPinChange }: IdeaCardProps) {
 					</div>
 
 					{/* Description */}
-					<p className="text-gray-600 mb-4 line-clamp-3">{idea.description}</p>
+					<p className="text-muted-foreground mb-4 line-clamp-3">{idea.description}</p>
 
 					{/* Footer */}
-					<div className="flex items-center justify-between text-sm text-gray-500">
+					<div className="flex items-center justify-between text-sm text-muted-foreground">
 						<div className="flex items-center gap-2">
 							<Link
 								href={`/profile/${idea.user.username}`}
