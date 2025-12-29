@@ -104,7 +104,7 @@ export default function ProfilePage() {
 		<div className="min-h-screen bg-background">
 			{/* Profile Header */}
 			<div className="bg-card border-b">
-				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+				<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 					<div className="max-w-4xl">
 						<Link
 							href="/home"
@@ -202,7 +202,7 @@ export default function ProfilePage() {
 			</div>
 
 			{/* Ideas Section */}
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 				{/* Tabs */}
 				<div className="flex items-center justify-between mb-6">
 					<div className="flex gap-4 border-b">

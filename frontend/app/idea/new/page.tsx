@@ -104,7 +104,7 @@ export default function NewIdeaPage() {
 
 	return (
 		<div className="min-h-screen bg-background">
-			<div className="max-w-2xl mx-auto px-4 py-12">
+			<div className="max-w-4xl mx-auto px-4 py-8">
 				{/* Header */}
 				<div className="mb-10">
 					<Link
@@ -170,7 +170,7 @@ export default function NewIdeaPage() {
 							/>
 							<div className="text-xs text-gray-400 text-right">
 								{formData.description.length}/500
-							</div>	
+							</div>
 						</div>
 
 						{/* Status */}

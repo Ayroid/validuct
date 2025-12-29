@@ -56,7 +56,7 @@ export default function Timeline() {
 		<div className="max-w-5xl mx-auto px-6 py-8">
 			<div className="w-full">
 				{/* Centered Tabs */}
-				<div className="flex justify-center border-b mb-8">
+				<div className="flex justify-between border-b mb-8">
 					{tabs.map((tab) => (
 						<button
 							key={tab.id}
@@ -64,13 +64,13 @@ export default function Timeline() {
 								setActiveTimeline(tab.id);
 								setPage(1);
 							}}
-							className={`px-12 py-3 font-medium transition-all relative ${
+							className={`px-12 py-3 font-medium transition-all relative flex-1 w-full${
 								activeTimeline === tab.id
-									? "text-foreground"
+									? "text-foreground bg-primary/10"
 									: "text-muted-foreground hover:text-foreground/80"
 							}`}
 						>
-							<span className="flex items-center gap-2">
+							<span className="flex items-center gap-2 justify-center">
 								<span>{tab.icon}</span>
 								<span>{tab.label}</span>
 							</span>

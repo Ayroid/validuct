@@ -16,12 +16,12 @@ export default async function Home() {
 	const ctaLink = session ? "/home" : "/login";
 
 	return (
-		<div className="min-h-screen bg-background">
+		<div className="min-h-screen bg-background max-w-5xl mx-auto">
 			<Navbar />
 
 			{/* Hero Section */}
 			<div className="py-16">
-				<div className="max-w-5xl mx-auto px-6">
+				<div className="max-w-4xl mx-auto">
 					<div className="border-none">
 						<div className="px-8 py-12 md:py-16 text-center">
 							<div className="flex justify-center mb-6">
@@ -66,7 +66,7 @@ export default async function Home() {
 			</div>
 
 			{/* Problem Section */}
-			<div className="py-16 bg-muted border-y">
+			<div className="py-16 bg-muted border">
 				<div className="max-w-4xl mx-auto px-6 text-center">
 					<h3 className="text-3xl md:text-4xl font-bold mb-6">
 						80% of startups fail because founders build useless products
@@ -101,7 +101,7 @@ export default async function Home() {
 
 					<div className="grid md:grid-cols-2 gap-6">
 						{/* Collect Feedback Card */}
-						<Card className="bg-primary text-primary-foreground border-0">
+						<Card className="bg-primary text-primary-foreground">
 							<CardContent className="p-8 text-left">
 								<h4 className="text-2xl font-bold mb-4">Collect user feedback</h4>
 								<p className="mb-6 opacity-90">
@@ -126,7 +126,7 @@ export default async function Home() {
 						</Card>
 
 						{/* Prioritize Features Card */}
-						<Card className="bg-secondary border-2">
+						<Card className="bg-secondary">
 							<CardContent className="p-8 text-left">
 								<h4 className="text-2xl font-bold mb-4">Prioritize features</h4>
 								<p className="text-secondary-foreground/80 mb-6">
@@ -192,7 +192,7 @@ export default async function Home() {
 							</Card>
 							<h4 className="text-xl font-bold mb-2">Build with confidence</h4>
 							<p className="text-muted-foreground">
-								Ship features people actually want and avoid wasting time
+								Ship features people want without the guesswork
 							</p>
 						</div>
 					</div>
