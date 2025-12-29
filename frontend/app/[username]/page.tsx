@@ -106,8 +106,24 @@ export default function ProfilePage() {
 			<div className="bg-card border-b">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 					<div className="max-w-4xl">
-						<Link href="/home" className="mb-4 inline-block">
-							<IoArrowBackOutline />
+						<Link
+							href="/home"
+							className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground mb-8 text-sm"
+						>
+							<svg
+								className="w-4 h-4"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={2}
+									d="M15 19l-7-7 7-7"
+								/>
+							</svg>
+							<span>BACK</span>
 						</Link>
 					</div>
 					<div className="flex items-start gap-6">
@@ -140,16 +156,24 @@ export default function ProfilePage() {
 									</p>
 								</div>
 								{isOwnProfile && (
-									<div className="flex gap-3">
-										<Link href="/settings/profile">
-											<Button variant="outline">Edit Profile</Button>
+									<div className="flex gap-3 flex-col">
+										<div className="flex gap-3">
+											<Link href={`/${profile.user.username}/edit`} className="flex-1">
+												<Button variant="outline" className="w-full cursor-pointer">Edit Profile</Button>
+											</Link>
+											<Button
+												variant="destructive"
+												className="flex-1 w-full cursor-pointer"
+												onClick={() => signOut({ callbackUrl: "/" })}
+											>
+												Logout
+											</Button>
+										</div>
+										<Link href="/idea/new" className="w-full">
+											<Button variant="default" className="w-full cursor-pointer hover:bg-primary/90">
+												New Idea
+											</Button>
 										</Link>
-										<Button
-											variant="destructive"
-											onClick={() => signOut({ callbackUrl: "/" })}
-										>
-											Logout
-										</Button>
 									</div>
 								)}
 							</div>
@@ -252,7 +276,9 @@ export default function ProfilePage() {
 				{/* Ideas List */}
 				{ideasLoading ? (
 					<div className="text-center py-12">
-						<div className="text-lg text-muted-foreground">Loading ideas...</div>
+						<div className="text-lg text-muted-foreground">
+							Loading ideas...
+						</div>
 					</div>
 				) : ideas.length === 0 ? (
 					<div className="text-center py-12">

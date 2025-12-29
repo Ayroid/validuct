@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { userApi, UpdateProfileData } from "@/lib/api/users";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
 
 export default function ProfileSettingsPage() {
 	const { data: session, update } = useSession();
@@ -53,11 +54,11 @@ export default function ProfileSettingsPage() {
 
 			// Redirect to profile after 1 second
 			setTimeout(() => {
-				router.push(`/profile/${updatedUser.username}`);
+				router.push(`/${updatedUser.username}`);
 			}, 1000);
 		} catch (err: unknown) {
-			const errorMessage = err instanceof Error && 'response' in err 
-				? (err as { response?: { data?: { error?: string } } }).response?.data?.error 
+			const errorMessage = err instanceof Error && 'response' in err
+				? (err as { response?: { data?: { error?: string } } }).response?.data?.error
 				: undefined;
 			setError(errorMessage || "Failed to update profile");
 		} finally {
@@ -162,10 +163,12 @@ export default function ProfileSettingsPage() {
 							{formData.profilePicture && (
 								<div className="mt-4">
 									<p className="text-sm text-gray-700 mb-2">Preview:</p>
-									<img
+									<Image
 										src={formData.profilePicture}
 										alt="Profile preview"
 										className="w-24 h-24 rounded-full object-cover"
+										height={96}
+										width={96}
 										onError={(e) => {
 											(e.target as HTMLImageElement).style.display = "none";
 										}}
