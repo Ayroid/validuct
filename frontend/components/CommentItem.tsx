@@ -14,6 +14,12 @@ export default function CommentItem({
 	onEdit,
 	onDelete,
 	depth = 0,
+	replyToCommentId,
+	replyContent,
+	setReplyContent,
+	handleSubmitReply,
+	isSubmitting,
+	setReplyToCommentId,
 }: CommentItemProps) {
 	const { data: session } = useSession();
 	const [isEditing, setIsEditing] = useState(false);
@@ -21,7 +27,7 @@ export default function CommentItem({
 	const [showReplies, setShowReplies] = useState(true);
 
 	const isOwner = session?.user?.id === comment.userId;
-	const maxDepth = 3; // Limit nesting depth
+	const maxDepth = 5; // Limit nesting depth
 
 	const handleEdit = () => {
 		if (editedContent.trim() && editedContent !== comment.content) {
@@ -158,8 +164,47 @@ export default function CommentItem({
 										onEdit={onEdit}
 										onDelete={onDelete}
 										depth={depth + 1}
+										replyToCommentId={replyToCommentId}
+										replyContent={replyContent}
+										setReplyContent={setReplyContent}
+										handleSubmitReply={handleSubmitReply}
+										isSubmitting={isSubmitting}
+										setReplyToCommentId={setReplyToCommentId}
 									/>
 								))}
+						</div>
+					)}
+
+					{/* Reply Form */}
+					{replyToCommentId === comment.id && (
+						<div className="mt-3">
+							<textarea
+								value={replyContent}
+								onChange={(e) => setReplyContent?.(e.target.value)}
+								placeholder="Write a reply..."
+								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+								rows={2}
+								autoFocus
+							/>
+							<div className="flex gap-2 mt-2">
+								<Button
+									onClick={() => handleSubmitReply?.(comment.id)}
+									size="sm"
+									disabled={isSubmitting || !replyContent?.trim()}
+								>
+									{isSubmitting ? "Posting..." : "Reply"}
+								</Button>
+								<Button
+									onClick={() => {
+										setReplyToCommentId?.(null);
+										setReplyContent?.("");
+									}}
+									variant="outline"
+									size="sm"
+								>
+									Cancel
+								</Button>
+							</div>
 						</div>
 					)}
 				</div>

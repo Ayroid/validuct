@@ -79,6 +79,19 @@ export class CommentService {
     return comment;
   }
 
+  // Helper method to recursively build comment tree
+  private static buildCommentTree(
+    comments: any[],
+    parentId: string | null = null
+  ): any[] {
+    return comments
+      .filter((comment) => comment.parentCommentId === parentId)
+      .map((comment) => ({
+        ...comment,
+        replies: this.buildCommentTree(comments, comment.id),
+      }));
+  }
+
   // Get comments for an idea (with nested structure)
   static async getIdeaComments(params: GetCommentsParams) {
     const { ideaId, page = 1, limit = 50 } = params;
@@ -93,11 +106,10 @@ export class CommentService {
       throw new AppError('Idea not found', 404);
     }
 
-    // Get top-level comments (those without a parent)
-    const topLevelComments = await prisma.comment.findMany({
+    // Fetch ALL comments for this idea (we'll build the tree structure in memory)
+    const allComments = await prisma.comment.findMany({
       where: {
         ideaId,
-        parentCommentId: null,
       },
       include: {
         user: {
@@ -107,52 +119,25 @@ export class CommentService {
             profilePicture: true,
           },
         },
-        replies: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                username: true,
-                profilePicture: true,
-              },
-            },
-            replies: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    username: true,
-                    profilePicture: true,
-                  },
-                },
-              },
-              orderBy: {
-                createdAt: 'asc',
-              },
-            },
-          },
-          orderBy: {
-            createdAt: 'asc',
-          },
-        },
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: 'asc',
       },
-      skip,
-      take: limit,
     });
+
+    // Build nested comment tree recursively
+    const commentTree = this.buildCommentTree(allComments, null);
+
+    // Apply pagination to top-level comments only
+    const paginatedComments = commentTree
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(skip, skip + limit);
 
     // Get total count of top-level comments
-    const total = await prisma.comment.count({
-      where: {
-        ideaId,
-        parentCommentId: null,
-      },
-    });
+    const total = allComments.filter((c) => c.parentCommentId === null).length;
 
     return {
-      comments: topLevelComments,
+      comments: paginatedComments,
       pagination: {
         page,
         limit,

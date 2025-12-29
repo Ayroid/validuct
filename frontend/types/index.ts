@@ -155,6 +155,12 @@ export interface CommentItemProps {
   onEdit?: (commentId: string, content: string) => void;
   onDelete?: (commentId: string) => void;
   depth?: number;
+  replyToCommentId?: string | null;
+  replyContent?: string;
+  setReplyContent?: (content: string) => void;
+  handleSubmitReply?: (parentCommentId: string) => Promise<void>;
+  isSubmitting?: boolean;
+  setReplyToCommentId?: (commentId: string | null) => void;
 }
 
 export interface VoteButtonsProps {

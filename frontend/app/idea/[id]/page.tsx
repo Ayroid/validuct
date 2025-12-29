@@ -22,12 +22,14 @@ export default function IdeaDetailPage() {
 		if (params.id) {
 			loadIdea();
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [params.id]);
 
 	const loadIdea = async () => {
 		try {
 			setLoading(true);
 			const data = await ideasApi.getIdeaById(params.id as string);
+			console.log("Loaded idea:", data);
 			setIdea(data);
 		} catch (error) {
 			console.error("Failed to load idea:", error);

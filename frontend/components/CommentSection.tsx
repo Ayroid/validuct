@@ -188,7 +188,7 @@ export default function CommentSection({
 						value={newCommentContent}
 						onChange={(e) => setNewCommentContent(e.target.value)}
 						placeholder="Share your thoughts..."
-						className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+						className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
 						rows={3}
 						disabled={isSubmitting}
 					/>
@@ -217,53 +217,25 @@ export default function CommentSection({
 					<p className="mt-2 text-gray-600">Loading comments...</p>
 				</div>
 			) : comments.length === 0 ? (
-				<div className="text-center py-12 text-gray-500">
+				<div className="text-center py-2 text-gray-500">
 					<p>No comments yet. Be the first to share your thoughts!</p>
 				</div>
 			) : (
 				<div className="space-y-4">
 					{comments.map((comment) => (
-						<div key={comment.id}>
-							<CommentItem
-								comment={comment}
-								onReply={handleReply}
-								onEdit={handleEdit}
-								onDelete={handleDelete}
-							/>
-
-							{/* Reply Form */}
-							{replyToCommentId === comment.id && (
-								<div className="ml-12 mt-3">
-									<textarea
-										value={replyContent}
-										onChange={(e) => setReplyContent(e.target.value)}
-										placeholder="Write a reply..."
-										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-										rows={2}
-										autoFocus
-									/>
-									<div className="flex gap-2 mt-2">
-										<Button
-											onClick={() => handleSubmitReply(comment.id)}
-											size="sm"
-											disabled={isSubmitting || !replyContent.trim()}
-										>
-											{isSubmitting ? "Posting..." : "Reply"}
-										</Button>
-										<Button
-											onClick={() => {
-												setReplyToCommentId(null);
-												setReplyContent("");
-											}}
-											variant="outline"
-											size="sm"
-										>
-											Cancel
-										</Button>
-									</div>
-								</div>
-							)}
-						</div>
+						<CommentItem
+							key={comment.id}
+							comment={comment}
+							onReply={handleReply}
+							onEdit={handleEdit}
+							onDelete={handleDelete}
+							replyToCommentId={replyToCommentId}
+							replyContent={replyContent}
+							setReplyContent={setReplyContent}
+							handleSubmitReply={handleSubmitReply}
+							isSubmitting={isSubmitting}
+							setReplyToCommentId={setReplyToCommentId}
+						/>
 					))}
 
 					{/* Load More Button */}
