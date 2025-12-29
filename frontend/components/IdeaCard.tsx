@@ -79,7 +79,7 @@ export default function IdeaCard({ idea, showPinButton = false, onPinChange }: I
 						<div className="flex items-center gap-2">
 							<Link
 								href={`/${idea.user.username}`}
-								className="flex items-center gap-1 transition-colors font-bold"
+								className="flex items-center gap-2 transition-colors font-bold"
 								onClick={(e) => e.stopPropagation()}
 							>
 								{idea.user.profilePicture ? (
