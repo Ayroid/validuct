@@ -7,6 +7,7 @@ import { userApi, UpdateProfileData } from "@/lib/api/users";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function ProfileSettingsPage() {
 	const { data: session, update } = useSession();
@@ -57,9 +58,11 @@ export default function ProfileSettingsPage() {
 				router.push(`/${updatedUser.username}`);
 			}, 1000);
 		} catch (err: unknown) {
-			const errorMessage = err instanceof Error && 'response' in err
-				? (err as { response?: { data?: { error?: string } } }).response?.data?.error
-				: undefined;
+			const errorMessage =
+				err instanceof Error && "response" in err
+					? (err as { response?: { data?: { error?: string } } }).response?.data
+							?.error
+					: undefined;
 			setError(errorMessage || "Failed to update profile");
 		} finally {
 			setIsLoading(false);
@@ -73,11 +76,30 @@ export default function ProfileSettingsPage() {
 
 	return (
 		<div className="min-h-screen bg-background py-12">
-			<div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div className="max-w-4xl">
+					<Link
+						href={`/${session.user.username}`}
+						className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground mb-8 text-sm"
+					>
+						<svg
+							className="w-4 h-4"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M15 19l-7-7 7-7"
+							/>
+						</svg>
+						<span>BACK</span>
+					</Link>
+				</div>
 				<div className="bg-card border rounded-lg p-8">
-					<h1 className="text-3xl font-bold mb-6">
-						Edit Profile
-					</h1>
+					<h1 className="text-3xl font-bold mb-6">Edit Profile</h1>
 
 					{error && (
 						<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">

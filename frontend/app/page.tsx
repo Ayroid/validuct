@@ -201,7 +201,7 @@ export default async function Home() {
 
 			{/* Closing CTA Section */}
 			<div className="py-16">
-				<div className="max-w-3xl mx-auto px-6 text-center">
+				<div className="max-w-4xl mx-auto px-6 text-center">
 					<h3 className="text-3xl md:text-4xl font-bold mb-4">
 						Your idea deserves feedback—before reality gives it none.
 					</h3>
@@ -219,7 +219,7 @@ export default async function Home() {
 
 			{/* Footer */}
 			<div className="py-8 bg-background border-t">
-				<div className="max-w-5xl mx-auto px-6 text-center text-muted-foreground">
+				<div className="max-w-4xl mx-auto px-6 text-center text-muted-foreground">
 					<p>
 						&copy; 2025 Validuct | Built by{" "}
 						<a
