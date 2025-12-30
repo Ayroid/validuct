@@ -1,9 +1,3 @@
-
----
-
-## 📄 `06-delete-idea.md`
-
-```md
 # Delete Idea Flow
 
 ```mermaid

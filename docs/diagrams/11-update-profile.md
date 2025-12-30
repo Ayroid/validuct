@@ -1,9 +1,3 @@
-
----
-
-## 📄 `11-update-profile.md`
-
-```md
 # Update Profile Flow
 
 ```mermaid

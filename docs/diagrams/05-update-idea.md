@@ -1,9 +1,3 @@
-
----
-
-## 📄 `05-update-idea.md`
-
-```md
 # Update Idea Flow
 
 ```mermaid

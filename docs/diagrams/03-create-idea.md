@@ -1,9 +1,3 @@
-
----
-
-## 📄 `03-create-idea.md`
-
-```md
 # Create Idea Flow
 
 ```mermaid

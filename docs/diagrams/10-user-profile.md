@@ -1,9 +1,3 @@
-
----
-
-## 📄 `10-user-profile.md`
-
-```md
 # User Profile Flow
 
 ```mermaid

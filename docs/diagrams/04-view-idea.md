@@ -1,9 +1,3 @@
-
----
-
-## 📄 `04-view-idea.md`
-
-```md
 # View Idea Flow
 
 ```mermaid

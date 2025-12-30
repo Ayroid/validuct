@@ -1,9 +1,3 @@
-
----
-
-## 📄 `08-comments.md`
-
-```md
 # Comments Flow
 
 ```mermaid

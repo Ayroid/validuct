@@ -1,9 +1,3 @@
-
----
-
-## 📄 `02-ideas-timeline.md`
-
-```md
 # Ideas Timeline Flow
 
 ```mermaid

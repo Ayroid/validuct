@@ -1,9 +1,3 @@
-
----
-
-## 📄 `09-pin-unpin.md`
-
-```md
 # Pin / Unpin Flow
 
 ```mermaid

@@ -1,9 +1,3 @@
-
----
-
-## 📄 `07-voting.md`
-
-```md
 # Voting Flow
 
 ```mermaid
