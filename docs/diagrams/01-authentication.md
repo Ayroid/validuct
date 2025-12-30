@@ -1,7 +1,7 @@
 # Authentication Flow
 
 ```mermaid
-flowchart LR
+flowchart TD
   A[User visits app] --> B{Check session?}
   B -- No --> C[Click Google Login]
   B -- Yes --> D[GET /api/v1/auth/me]

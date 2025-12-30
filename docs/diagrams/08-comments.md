@@ -7,7 +7,7 @@
 # Comments Flow
 
 ```mermaid
-flowchart LR
+flowchart TD
   A[View idea] --> B[Load comments]
   B --> C[GET comments]
   C --> D[Fetch DB]

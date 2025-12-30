@@ -7,7 +7,7 @@
 # Create Idea Flow
 
 ```mermaid
-flowchart LR
+flowchart TD
   A[Click New Idea] --> B{Authenticated?}
   B -- No --> C[Redirect to login]
   B -- Yes --> D[Show idea form]

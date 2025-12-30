@@ -7,7 +7,7 @@
 # User Profile Flow
 
 ```mermaid
-flowchart LR
+flowchart TD
   A[Visit profile] --> B[Parse username]
   B --> C[GET user]
   C --> D{Exists?}

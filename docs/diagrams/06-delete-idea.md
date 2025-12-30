@@ -7,7 +7,7 @@
 # Delete Idea Flow
 
 ```mermaid
-flowchart LR
+flowchart TD
   A[Click Delete] --> B[Show confirmation]
   B --> C{Confirm?}
   C -- No --> D[Cancel]

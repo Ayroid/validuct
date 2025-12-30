@@ -7,7 +7,7 @@
 # Update Profile Flow
 
 ```mermaid
-flowchart LR
+flowchart TD
   A[Edit profile] --> B{Owner?}
   B -- No --> C[403]
   B -- Yes --> D[Load data]

@@ -7,7 +7,7 @@
 # Pin / Unpin Flow
 
 ```mermaid
-flowchart LR
+flowchart TD
   A[View own idea] --> B[Check pin status]
   B --> C{Pinned?}
 

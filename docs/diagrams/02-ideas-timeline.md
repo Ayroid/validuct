@@ -7,7 +7,7 @@
 # Ideas Timeline Flow
 
 ```mermaid
-flowchart LR
+flowchart TD
   A[View homepage] --> B[Select timeline]
   B --> C{Hot / New / Trending?}
   C --> D[GET /api/v1/ideas]

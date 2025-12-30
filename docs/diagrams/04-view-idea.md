@@ -7,7 +7,7 @@
 # View Idea Flow
 
 ```mermaid
-flowchart LR
+flowchart TD
   A[Click idea] --> B[Navigate to /idea/:id]
   B --> C[GET /api/v1/ideas/:id]
   C --> D[Fetch idea]

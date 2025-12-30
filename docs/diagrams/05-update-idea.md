@@ -7,7 +7,7 @@
 # Update Idea Flow
 
 ```mermaid
-flowchart LR
+flowchart TD
   A[Click Edit] --> B{Owner?}
   B -- No --> C[Show error]
   B -- Yes --> D[Edit page]
