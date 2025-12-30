@@ -19,7 +19,7 @@ VALIDUCT bridges the gap between ideation and execution by creating a collaborat
 ### 🚀 Idea Management
 - Create, read, update, and delete your ideas
 - Organize ideas with clear headings and detailed descriptions
-- Track idea status: **Validated**, **Work in Progress (WIP)**, or **Launched**
+- Track idea status: **Validated**, **In Progress (WIP)**, or **Launched**
 - Attach links to validated or launched products
 
 ### 👥 Community Engagement

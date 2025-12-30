@@ -33,7 +33,7 @@ const statusOptions: {
 	},
 	{
 		value: "WIP",
-		label: "Work in Progress",
+		label: "In Progress",
 		emoji: "🚧",
 		color: "bg-orange-100 text-orange-900 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:hover:bg-orange-900/40",
 	},
@@ -48,7 +48,7 @@ const statusOptions: {
 export default function NewIdeaPage() {
 	const router = useRouter();
 	const { data: session, status } = useSession();
-	const [loading, setLoading] = useState(false);
+	const [submitting, setSubmitting] = useState(false);
 	const [formData, setFormData] = useState({
 		heading: "",
 		description: "",
@@ -74,7 +74,7 @@ export default function NewIdeaPage() {
 		e.preventDefault();
 
 		try {
-			setLoading(true);
+			setSubmitting(true);
 			const idea = await ideasApi.createIdea({
 				heading: formData.heading,
 				description: formData.description,
@@ -87,7 +87,7 @@ export default function NewIdeaPage() {
 			console.error("Failed to create idea:", error);
 			alert("Failed to create idea. Please try again.");
 		} finally {
-			setLoading(false);
+			setSubmitting(false);
 		}
 	};
 
@@ -200,9 +200,7 @@ export default function NewIdeaPage() {
 						{(formData.status === "LAUNCHED" || formData.status === "WIP") && (
 							<div className="space-y-2">
 								<Label htmlFor="launchedLink">
-									{formData.status === "LAUNCHED"
-										? "Project link"
-										: "Work in progress link"}
+									Project Link
 									{formData.status === "LAUNCHED" && (
 										<span className="text-gray-400 ml-1">(optional)</span>
 									)}
@@ -238,12 +236,12 @@ export default function NewIdeaPage() {
 								<Button
 									type="submit"
 									disabled={
-										loading || !formData.heading || !formData.description
+										submitting || !formData.heading || !formData.description
 									}
 									className="flex-1"
 									size="lg"
 								>
-									{loading ? (
+									{submitting ? (
 										<>
 											<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
 											<span>Sharing...</span>

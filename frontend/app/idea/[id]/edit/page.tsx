@@ -11,7 +11,6 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 
 type IdeaStatus = "DRAFT" | "VALIDATED" | "WIP" | "LAUNCHED";
 
@@ -31,19 +30,22 @@ const statusOptions: {
 		value: "VALIDATED",
 		label: "Validated",
 		emoji: "✅",
-		color: "bg-yellow-100 text-yellow-900 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/40",
+		color:
+			"bg-yellow-100 text-yellow-900 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/40",
 	},
 	{
 		value: "WIP",
-		label: "Work in Progress",
+		label: "In Progress",
 		emoji: "🚧",
-		color: "bg-orange-100 text-orange-900 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:hover:bg-orange-900/40",
+		color:
+			"bg-orange-100 text-orange-900 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:hover:bg-orange-900/40",
 	},
 	{
 		value: "LAUNCHED",
 		label: "Launched",
 		emoji: "🚀",
-		color: "bg-red-100 text-red-900 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/40",
+		color:
+			"bg-red-100 text-red-900 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/40",
 	},
 ];
 
@@ -59,7 +61,6 @@ export default function EditIdeaPage() {
 		description: "",
 		status: "DRAFT" as IdeaStatus,
 		launchedLink: "",
-		isPrivate: false,
 	});
 
 	useEffect(() => {
@@ -72,6 +73,7 @@ export default function EditIdeaPage() {
 		if (params.id && status === "authenticated") {
 			loadIdea();
 		}
+		//eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [params.id, status]);
 
 	const loadIdea = async () => {
@@ -92,7 +94,6 @@ export default function EditIdeaPage() {
 				description: data.description,
 				status: data.status,
 				launchedLink: data.launchedLink || "",
-				isPrivate: data.isPrivate ?? false,
 			});
 		} catch (error) {
 			console.error("Failed to load idea:", error);
@@ -112,7 +113,6 @@ export default function EditIdeaPage() {
 				description: formData.description,
 				status: formData.status,
 				launchedLink: formData.launchedLink || undefined,
-				isPrivate: formData.isPrivate,
 			});
 
 			router.push(`/idea/${params.id}`);
@@ -126,6 +126,7 @@ export default function EditIdeaPage() {
 
 	const handleDelete = async () => {
 		if (
+			// TODO: Replace with shadcn modal later
 			!confirm(
 				"Are you sure you want to delete this idea? This action cannot be undone."
 			)
@@ -189,9 +190,7 @@ export default function EditIdeaPage() {
 						</svg>
 						<span>BACK</span>
 					</Link>
-					<h1 className="text-3xl font-bold mb-2">
-						Edit your idea
-					</h1>
+					<h1 className="text-3xl font-bold mb-2">Edit your idea</h1>
 				</div>
 
 				{/* Form */}
@@ -209,11 +208,11 @@ export default function EditIdeaPage() {
 								value={formData.heading}
 								onChange={handleChange}
 								required
-								maxLength={200}
+								maxLength={100}
 								placeholder="A tool that helps..."
 							/>
 							<div className="text-xs text-gray-400 text-right">
-								{formData.heading.length}/200
+								{formData.heading.length}/100
 							</div>
 						</div>
 
@@ -229,9 +228,13 @@ export default function EditIdeaPage() {
 								onChange={handleChange}
 								required
 								rows={8}
+								maxLength={500}
 								placeholder="Describe your idea, the problem it solves, and who it's for..."
 								className="resize-none"
 							/>
+							<div className="text-xs text-gray-400 text-right">
+								{formData.description.length}/500
+							</div>
 						</div>
 
 						{/* Status */}
@@ -245,7 +248,9 @@ export default function EditIdeaPage() {
 										onClick={() =>
 											setFormData({ ...formData, status: option.value })
 										}
-										variant={formData.status === option.value ? 'default' : 'outline'}
+										variant={
+											formData.status === option.value ? "default" : "outline"
+										}
 										className="justify-start"
 									>
 										<span className="mr-2">{option.emoji}</span>
@@ -259,12 +264,8 @@ export default function EditIdeaPage() {
 						{(formData.status === "LAUNCHED" || formData.status === "WIP") && (
 							<div className="space-y-2">
 								<Label htmlFor="launchedLink">
-									{formData.status === "LAUNCHED"
-										? "Project link"
-										: "Work in progress link"}
-									{formData.status === "LAUNCHED" && (
-										<span className="text-gray-400 ml-1">(optional)</span>
-									)}
+									Project Link
+									<span className="text-gray-400 ml-1">(Optional)</span>
 								</Label>
 								<Input
 									type="url"
@@ -277,27 +278,6 @@ export default function EditIdeaPage() {
 							</div>
 						)}
 
-						{/* Privacy Toggle */}
-						<div className="flex items-center justify-between space-x-4 rounded-lg border p-4">
-							<div className="flex-1">
-								<Label htmlFor="isPrivate" className="text-base cursor-pointer">
-									Make this idea private
-								</Label>
-								<p className="text-sm text-gray-500">
-									{formData.isPrivate
-										? "Only you can see this idea"
-										: "Visible to everyone"}
-								</p>
-							</div>
-							<Switch
-								id="isPrivate"
-								checked={formData.isPrivate}
-								onCheckedChange={(checked) =>
-									setFormData({ ...formData, isPrivate: checked })
-								}
-							/>
-						</div>
-
 						{/* Action Buttons */}
 						<div className="space-y-4">
 							<div className="flex gap-3">
@@ -308,9 +288,7 @@ export default function EditIdeaPage() {
 									size="lg"
 									asChild
 								>
-									<Link href={`/idea/${params.id}`}>
-										Cancel
-									</Link>
+									<Link href={`/idea/${params.id}`}>Cancel</Link>
 								</Button>
 								<Button
 									type="submit"
@@ -328,7 +306,7 @@ export default function EditIdeaPage() {
 									) : (
 										<>
 											<HiPencil className="h-4 w-4" />
-											<span>Update</span>
+											<span>Update idea</span>
 										</>
 									)}
 								</Button>

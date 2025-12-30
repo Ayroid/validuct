@@ -29,7 +29,7 @@ export default function IdeaCard({ idea, showPinButton = false, onPinChange }: I
 	const formatStatus = (status: string) => {
 		switch (status) {
 			case "WIP":
-				return "Work in Progress";
+				return "In Progress";
 			case "VALIDATED":
 				return "Validated";
 			case "LAUNCHED":

@@ -50,7 +50,6 @@ export interface Idea {
     profilePicture: string | null;
   };
   userVote?: 'upvote' | 'downvote' | null;
-  isPrivate: boolean;
 }
 
 export interface Comment {
