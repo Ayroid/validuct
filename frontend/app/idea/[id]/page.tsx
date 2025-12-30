@@ -94,13 +94,15 @@ export default function IdeaDetailPage() {
 		return null;
 	}
 
+
+
 	return (
 		<div className="min-h-screen bg-background">
 			<div className="max-w-5xl mx-auto px-4 py-8">
 				{/* Back Button */}
-				<Link
-					href="/home"
-					className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground mb-8 text-sm"
+				<button
+					onClick={() => router.back()}
+					className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground mb-8 text-sm cursor-pointer"
 				>
 					<svg
 						className="w-4 h-4"
@@ -116,7 +118,7 @@ export default function IdeaDetailPage() {
 						/>
 					</svg>
 					<span>BACK</span>
-				</Link>
+				</button>
 
 				{/* Main Content */}
 				<div className="bg-card p-8 border">
