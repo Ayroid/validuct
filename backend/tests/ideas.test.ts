@@ -103,16 +103,36 @@ describe('Idea API Endpoints', () => {
       });
       await prisma.idea.update({
         where: { id: trendingIdea.id },
-        data: { upvotesCount: 10, createdAt: new Date(now - 1000 * 60 * 60) }, // 1 hour ago
+        data: { createdAt: new Date(now - 1000 * 60 * 60) }, // 1 hour ago
+      });
+      // Create actual vote records for trending logic (each user can only vote once)
+      await prisma.vote.create({
+        data: {
+          userId: testUser.id,
+          ideaId: trendingIdea.id,
+          voteType: 'UPVOTE',
+        },
+      });
+      await prisma.vote.create({
+        data: {
+          userId: otherUser.id,
+          ideaId: trendingIdea.id,
+          voteType: 'UPVOTE',
+        },
+      });
+      // Update vote counts to reflect the votes
+      await prisma.idea.update({
+        where: { id: trendingIdea.id },
+        data: { upvotesCount: 2 },
       });
 
       // Top idea (older with many upvotes)
       const topIdea = await createTestIdea(otherUser.id, {
-        heading: 'Trending Idea',
+        heading: 'Top Idea',
         description: 'Popular idea',
       });
       await prisma.idea.update({
-        where: { id: trendingIdea.id },
+        where: { id: topIdea.id },
         data: { upvotesCount: 50, createdAt: new Date(now - 1000 * 60 * 60 * 48) }, // 2 days ago
       });
 
