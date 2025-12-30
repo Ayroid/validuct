@@ -11,6 +11,16 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type IdeaStatus = "DRAFT" | "VALIDATED" | "WIP" | "LAUNCHED";
 
@@ -56,6 +66,7 @@ export default function EditIdeaPage() {
 	const [loading, setLoading] = useState(true);
 	const [submitting, setSubmitting] = useState(false);
 	const [idea, setIdea] = useState<Idea | null>(null);
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 	const [formData, setFormData] = useState({
 		heading: "",
 		description: "",
@@ -125,18 +136,9 @@ export default function EditIdeaPage() {
 	};
 
 	const handleDelete = async () => {
-		if (
-			// TODO: Replace with shadcn modal later
-			!confirm(
-				"Are you sure you want to delete this idea? This action cannot be undone."
-			)
-		) {
-			return;
-		}
-
 		try {
 			await ideasApi.deleteIdea(params.id as string);
-			router.push("/");
+			router.push("/home");
 		} catch (error) {
 			console.error("Failed to delete idea:", error);
 			alert("Failed to delete idea. Please try again.");
@@ -316,7 +318,7 @@ export default function EditIdeaPage() {
 							<Button
 								type="button"
 								variant="destructive"
-								onClick={handleDelete}
+								onClick={() => setDeleteDialogOpen(true)}
 								className="w-full"
 							>
 								<HiTrash className="h-4 w-4" />
@@ -326,6 +328,28 @@ export default function EditIdeaPage() {
 					</form>
 				</div>
 			</div>
+
+			{/* Delete Confirmation Dialog */}
+			<AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+						<AlertDialogDescription>
+							This action cannot be undone. This will permanently delete your
+							idea.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={handleDelete}
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90 cursor-pointer"
+						>
+							Delete
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

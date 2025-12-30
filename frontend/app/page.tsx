@@ -21,7 +21,7 @@ export default async function Home() {
 
 			{/* Hero Section */}
 			<div className="py-16">
-				<div className="max-w-5xl mx-auto">
+				<div className="max-w-4xl mx-auto">
 					<div className="border-none">
 						<div className="px-8 py-12 md:py-16 text-center">
 							<div className="flex justify-center mb-6">

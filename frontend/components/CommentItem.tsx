@@ -128,11 +128,7 @@ export default function CommentItem({
 									</button>
 									<button
 										onClick={() => {
-											if (
-												confirm("Are you sure you want to delete this comment?")
-											) {
-												onDelete?.(comment.id);
-											}
+											onDelete?.(comment.id);
 										}}
 										className="text-xs font-medium text-muted-foreground hover:text-muted-foreground/80 transition-colors cursor-pointer"
 									>

@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
-import { IoArrowBackOutline } from "react-icons/io5";
+import { FaCalendarAlt } from "react-icons/fa";
 
 export default function ProfilePage() {
 	const params = useParams();
@@ -69,8 +69,8 @@ export default function ProfilePage() {
 		} catch (err: unknown) {
 			const errorMessage =
 				err instanceof Error && "response" in err
-					? (err as { response?: { data?: { error?: string } } }).response
-							?.data?.error
+					? (err as { response?: { data?: { error?: string } } }).response?.data
+							?.error
 					: undefined;
 			setError(errorMessage || "Failed to load ideas");
 		} finally {
@@ -82,6 +82,7 @@ export default function ProfilePage() {
 		if (profile) {
 			fetchIdeas();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [username, profile, page, sortBy, activeTab]);
 
 	const handlePinChange = () => {
@@ -166,15 +167,25 @@ export default function ProfilePage() {
 									<h1 className="text-3xl font-bold text-foreground">
 										{profile.user.username}
 									</h1>
-									<p className="text-muted-foreground mt-1">
-										{profile.ideasCount} ideas shared
-									</p>
+									{profile.user.bio && (
+										<p className="text-foreground mt-2 max-w-2xl">
+											{profile.user.bio}
+										</p>
+									)}
 								</div>
 								{isOwnProfile && (
 									<div className="flex gap-3 flex-col">
 										<div className="flex gap-3">
-											<Link href={`/${profile.user.username}/edit`} className="flex-1">
-												<Button variant="outline" className="w-full cursor-pointer">Edit Profile</Button>
+											<Link
+												href={`/${profile.user.username}/edit`}
+												className="flex-1"
+											>
+												<Button
+													variant="outline"
+													className="w-full cursor-pointer"
+												>
+													Edit Profile
+												</Button>
 											</Link>
 											<Button
 												variant="destructive"
@@ -185,7 +196,10 @@ export default function ProfilePage() {
 											</Button>
 										</div>
 										<Link href="/idea/new" className="w-full">
-											<Button variant="default" className="w-full cursor-pointer hover:bg-primary/90">
+											<Button
+												variant="default"
+												className="w-full cursor-pointer hover:bg-primary/90"
+											>
 												New Idea
 											</Button>
 										</Link>
@@ -193,14 +207,9 @@ export default function ProfilePage() {
 								)}
 							</div>
 
-							{profile.user.bio && (
-								<p className="text-muted-foreground mt-4 max-w-2xl">
-									{profile.user.bio}
-								</p>
-							)}
-
-							<div className="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
-								<span>
+							<div className="flex flex-col justify-center gap-2 mt-2">
+								<span className="flex items-center gap-2 text-sm text-muted-foreground">
+									<FaCalendarAlt />
 									Joined{" "}
 									{new Date(profile.user.createdAt).toLocaleDateString(
 										"en-US",
@@ -210,6 +219,10 @@ export default function ProfilePage() {
 										}
 									)}
 								</span>
+								<p className="text-foreground mt-1 text-sm">
+									{profile.ideasCount}
+									<span className="text-muted-foreground"> ideas shared</span>
+								</p>
 							</div>
 						</div>
 					</div>

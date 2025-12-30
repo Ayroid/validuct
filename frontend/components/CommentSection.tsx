@@ -4,9 +4,19 @@ import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { commentsApi, Comment } from "@/lib/api/comments";
 import CommentItem from "./CommentItem";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { CommentSectionProps, ErrorResponse } from "@/types";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function CommentSection({
 	ideaId,
@@ -24,6 +34,8 @@ export default function CommentSection({
 	const [totalComments, setTotalComments] = useState(initialCommentsCount);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+	const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
 
 	// Fetch comments
 	const fetchComments = useCallback(async () => {
@@ -151,17 +163,27 @@ export default function CommentSection({
 		}
 	};
 
-	const handleDelete = async (commentId: string) => {
+	const handleDeleteClick = (commentId: string) => {
+		setCommentToDelete(commentId);
+		setDeleteDialogOpen(true);
+	};
+
+	const handleDelete = async () => {
+		if (!commentToDelete) return;
+
 		try {
 			setError(null);
-			await commentsApi.deleteComment(commentId);
+			await commentsApi.deleteComment(commentToDelete);
 
 			// Refresh comments
 			setPage(1);
 			await fetchComments();
+			setDeleteDialogOpen(false);
+			setCommentToDelete(null);
 		} catch (error: unknown) {
 			const err = error as ErrorResponse;
 			setError(err.response?.data?.message || "Failed to delete comment");
+			setDeleteDialogOpen(false);
 		}
 	};
 
@@ -228,7 +250,7 @@ export default function CommentSection({
 							comment={comment}
 							onReply={handleReply}
 							onEdit={handleEdit}
-							onDelete={handleDelete}
+							onDelete={handleDeleteClick}
 							replyToCommentId={replyToCommentId}
 							replyContent={replyContent}
 							setReplyContent={setReplyContent}
@@ -252,6 +274,29 @@ export default function CommentSection({
 					)}
 				</div>
 			)}
+			{/* Delete Confirmation Dialog */}
+			<AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+						<AlertDialogDescription>
+							This action cannot be undone. This will permanently delete your
+							comment.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel className="cursor-pointer">
+							Cancel
+						</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={handleDelete}
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90 cursor-pointer"
+						>
+							Delete
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }
