@@ -81,7 +81,7 @@ The test suite covers:
 
 ### Idea Endpoints
 - ✅ POST /api/v1/ideas - Create idea (with auth)
-- ✅ GET /api/v1/ideas - Get ideas with timeline filtering (hot/new/trending)
+- ✅ GET /api/v1/ideas - Get ideas with timeline filtering (new/trending/top)
 - ✅ GET /api/v1/ideas/:id - Get single idea
 - ✅ PATCH /api/v1/ideas/:id - Update idea (owner only)
 - ✅ DELETE /api/v1/ideas/:id - Delete idea (owner only)
@@ -90,7 +90,7 @@ The test suite covers:
 ### Test Scenarios
 - Authentication/authorization checks
 - Input validation
-- Timeline algorithms (HOT, NEW, TRENDING)
+- Timeline algorithms (NEW, TRENDING, TOP)
 - Pagination
 - Ownership validation
 - Error handling

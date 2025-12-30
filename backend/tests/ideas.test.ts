@@ -96,18 +96,18 @@ describe('Idea API Endpoints', () => {
         description: 'Very recent idea',
       });
 
-      // Hot idea (recent with upvotes)
-      const hotIdea = await createTestIdea(testUser.id, {
-        heading: 'Hot Idea',
+      // Trending idea (recent with upvotes)
+      const trendingIdea = await createTestIdea(testUser.id, {
+        heading: 'Trending Idea',
         description: 'Recent idea with votes',
       });
       await prisma.idea.update({
-        where: { id: hotIdea.id },
+        where: { id: trendingIdea.id },
         data: { upvotesCount: 10, createdAt: new Date(now - 1000 * 60 * 60) }, // 1 hour ago
       });
 
-      // Trending idea (older with many upvotes)
-      const trendingIdea = await createTestIdea(otherUser.id, {
+      // Top idea (older with many upvotes)
+      const topIdea = await createTestIdea(otherUser.id, {
         heading: 'Trending Idea',
         description: 'Popular idea',
       });
@@ -141,22 +141,21 @@ describe('Idea API Endpoints', () => {
       });
     });
 
-    it('should get ideas with HOT timeline', async () => {
-      const response = await request(app).get('/api/v1/ideas?timeline=hot').expect(200);
-
-      expect(response.body.success).toBe(true);
-      // Should only include ideas from last 24 hours
-      const hotIdeas = response.body.data.ideas;
-      expect(hotIdeas.length).toBeGreaterThan(0);
-      expect(hotIdeas[0].heading).toBe('Hot Idea');
-    });
-
     it('should get ideas with TRENDING timeline', async () => {
       const response = await request(app).get('/api/v1/ideas?timeline=trending').expect(200);
 
       expect(response.body.success).toBe(true);
+      // Should only include ideas from last 24 hours
+      const trendingIdeas = response.body.data.ideas;
+      expect(trendingIdeas.length).toBeGreaterThan(0);
+      expect(trendingIdeas[0].heading).toBe('Trending Idea');
+    });
+
+    it('should get ideas with TOP timeline', async () => {
+      const response = await request(app).get('/api/v1/ideas?timeline=top').expect(200);
+      expect(response.body.success).toBe(true);
       const ideas = response.body.data.ideas;
-      expect(ideas[0].heading).toBe('Trending Idea');
+      expect(ideas[0].heading).toBe('Top Idea');
       expect(ideas[0].upvotesCount).toBe(50);
     });
 

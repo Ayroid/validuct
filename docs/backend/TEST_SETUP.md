@@ -64,8 +64,8 @@ PASS tests/ideas.test.ts
       ✓ should create idea with launched status and link
     GET /api/v1/ideas
       ✓ should get ideas with NEW timeline
-      ✓ should get ideas with HOT timeline
       ✓ should get ideas with TRENDING timeline
+      ✓ should get ideas with TOP timeline
       ✓ should return 400 for invalid timeline
       ✓ should support pagination
     GET /api/v1/ideas/:id

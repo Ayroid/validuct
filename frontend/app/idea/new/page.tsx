@@ -75,14 +75,14 @@ export default function NewIdeaPage() {
 
 		try {
 			setSubmitting(true);
-			const idea = await ideasApi.createIdea({
+			await ideasApi.createIdea({
 				heading: formData.heading,
 				description: formData.description,
 				status: formData.status,
 				launchedLink: formData.launchedLink || undefined,
 			});
 
-			router.push(`/idea/${idea.id}`);
+			router.push("/home");
 		} catch (error) {
 			console.error("Failed to create idea:", error);
 			alert("Failed to create idea. Please try again.");

@@ -26,7 +26,7 @@ interface UpdateIdeaData {
  * Parameters for retrieving ideas by timeline
  */
 interface GetIdeasParams {
-  timeline: 'hot' | 'new' | 'trending';
+  timeline: 'new' | 'trending' | 'top';
   page?: number;
   limit?: number;
   userId?: string;
@@ -136,8 +136,8 @@ export class IdeaService {
    * @remarks
    * Timeline options:
    * - 'new': Most recently created ideas
-   * - 'trending': Ideas with most upvotes (all time)
-   * - 'hot': Ideas with most upvotes in the last 24 hours
+   * - 'trending': Ideas that received the most upvotes in the last 24 hours (regardless of creation date)
+   * - 'top': Ideas with most upvotes (all time)
    *
    * If userId is provided, includes user's vote status for each idea
    * Default pagination: page 1, limit 20
@@ -146,6 +146,96 @@ export class IdeaService {
     const { timeline, page = 1, limit = 20, userId } = params;
     const skip = (page - 1) * limit;
 
+    // Special handling for trending - count votes received in last 24 hours
+    if (timeline === 'trending') {
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+      // Group votes by idea and count upvotes from last 24 hours
+      const recentVotes = await prisma.vote.groupBy({
+        by: ['ideaId'],
+        where: {
+          createdAt: { gte: twentyFourHoursAgo },
+          voteType: 'UPVOTE',
+        },
+        _count: { ideaId: true },
+      });
+
+      // Sort by recent upvote count descending
+      recentVotes.sort((a, b) => b._count.ideaId - a._count.ideaId);
+
+      const total = recentVotes.length;
+
+      // Apply pagination to the vote counts
+      const paginatedVotes = recentVotes.slice(skip, skip + limit);
+      const trendingIdeaIds = paginatedVotes.map(v => v.ideaId);
+
+      // If no trending ideas, return early
+      if (trendingIdeaIds.length === 0) {
+        return {
+          ideas: [],
+          pagination: {
+            page,
+            limit,
+            total: 0,
+            total_pages: 0,
+          },
+        };
+      }
+
+      // Fetch the trending ideas
+      const ideas = await prisma.idea.findMany({
+        where: { id: { in: trendingIdeaIds } },
+        include: {
+          user: {
+            select: {
+              username: true,
+              profilePicture: true,
+            },
+          },
+        },
+      });
+
+      // Restore correct order (findMany with 'in' doesn't preserve order)
+      const ideaMap = new Map(ideas.map(idea => [idea.id, idea]));
+      const orderedIdeas = trendingIdeaIds
+        .map(id => ideaMap.get(id))
+        .filter((idea): idea is NonNullable<typeof idea> => idea !== undefined);
+
+      // Add user votes if authenticated
+      let ideasWithVotes = orderedIdeas;
+      if (userId) {
+        const votes = await prisma.vote.findMany({
+          where: {
+            userId,
+            ideaId: { in: trendingIdeaIds },
+          },
+        });
+
+        const voteMap = new Map(votes.map((vote) => [vote.ideaId, vote.voteType.toLowerCase()]));
+
+        ideasWithVotes = orderedIdeas.map((idea) => ({
+          ...idea,
+          userVote: voteMap.get(idea.id) || null,
+        }));
+      } else {
+        ideasWithVotes = orderedIdeas.map((idea) => ({
+          ...idea,
+          userVote: null,
+        }));
+      }
+
+      return {
+        ideas: ideasWithVotes,
+        pagination: {
+          page,
+          limit,
+          total,
+          total_pages: Math.ceil(total / limit),
+        },
+      };
+    }
+
+    // Regular handling for 'new' and 'top' timelines
     let orderBy: any = {};
     let where: any = {};
 
@@ -153,17 +243,7 @@ export class IdeaService {
       case 'new':
         orderBy = { createdAt: 'desc' };
         break;
-      case 'trending':
-        orderBy = { upvotesCount: 'desc' };
-        break;
-      case 'hot':
-        // Ideas with most upvotes in last 24 hours
-        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        where = {
-          createdAt: {
-            gte: twentyFourHoursAgo,
-          },
-        };
+      case 'top':
         orderBy = { upvotesCount: 'desc' };
         break;
       default:

@@ -42,7 +42,7 @@ A community-driven idea validation platform with upvoting, commenting, and statu
 
 ### Additional Tools
 - **File Storage**: AWS S3 or Cloudinary (for profile pictures) | Store these locally in public directory in backend for MVP
-- **Caching**: Redis (for hot/trending calculations)
+- **Caching**: Redis (for trending/top calculations)
 - **API Documentation**: Swagger/OpenAPI
 - **Testing**: Jest + Supertest (backend), Jest + React Testing Library (frontend)
 
@@ -89,8 +89,8 @@ updated_at        TIMESTAMP DEFAULT NOW()
 **Indexes:**
 - `user_id`
 - `created_at` (for NEW timeline)
-- `upvotes_count` (for TOP timeline)
-- `(created_at, upvotes_count)` composite (for HOT timeline)
+- `upvotes_count` (for TRENDING timeline)
+- `(created_at, upvotes_count)` composite (for TOP timeline)
 
 **Constraints:**
 - Each user can pin max 5 ideas (enforced in application logic)
@@ -398,14 +398,14 @@ UNIQUE(user_id, pin_order)
 **Description:** Get ideas feed with timeline filters
 
 **Query Parameters:**
-- `timeline` (required) - values: 'hot', 'new', 'trending'
+- `timeline` (required) - values: 'new', 'trending', 'top'
 - `page` (default: 1)
 - `limit` (default: 20)
 
 **Timeline Logic:**
-- **HOT**: Ideas with most upvotes in last 24 hours
 - **NEW**: Ideas sorted by created_at DESC
-- **TRENDING**: Ideas sorted by upvotes_count DESC (all time)
+- **TOP**: Ideas sorted by upvotes_count DESC (all time)
+- **TRENDING**: Ideas with most upvotes in last 24 hours
 
 **Response:** `200 OK`
 ```json
@@ -647,7 +647,7 @@ frontend/
 
 ### Key Pages/Routes
 
-1. **`/`** - Home Timeline (HOT/NEW/TRENDING tabs)
+1. **`/`** - Home Timeline (NEW/TRENDING/TOP tabs)
 2. **`/login`** - Login page
 3. **`/register`** - Registration page
 4. **`/idea/new`** - Create new idea (protected)
@@ -722,7 +722,7 @@ backend/
 
 ### Phase 2: Core Idea Features (Week 2) ✅
 - [x] CRUD operations for ideas
-- [x] Ideas timeline API (HOT, NEW, TRENDING)
+- [x] Ideas timeline API (NEW, TRENDING, TOP)
 - [x] Idea listing UI with timeline tabs
 - [x] Idea detail page
 - [x] Create/Edit idea UI
@@ -731,7 +731,7 @@ backend/
 - [x] Vote API endpoints
 - [x] Vote UI components
 - [x] Real-time vote count updates
-- [x] Calculate trending/hot algorithms
+- [x] Calculate trending/top algorithms
 
 ### Phase 4: Comments System (Week 4) ✅
 - [x] Comment CRUD APIs
@@ -851,7 +851,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
    - Query optimization
 
 2. **Caching**
-   - Redis for hot/trending calculations
+   - Redis for trending/top calculations
    - Cache user sessions
    - Cache frequent queries
 

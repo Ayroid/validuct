@@ -80,7 +80,7 @@ export class IdeaController {
    * @param next - Express next function for error handling
    *
    * @remarks
-   * Route: GET /api/ideas?timeline=hot|new|trending&page=1&limit=20
+   * Route: GET /api/ideas?timeline=new|trending|top&page=1&limit=20
    * Optional authentication (includes user's votes if authenticated)
    * Query parameters: timeline (required), page, limit
    * Returns paginated ideas with metadata
@@ -90,16 +90,16 @@ export class IdeaController {
       const { timeline, page, limit } = req.query;
       const userId = (req as AuthRequest).userId;
 
-      if (!timeline || !['hot', 'new', 'trending'].includes(timeline as string)) {
+      if (!timeline || !['new', 'trending', 'top'].includes(timeline as string)) {
         res.status(400).json({
           success: false,
-          error: 'Invalid or missing timeline parameter. Must be one of: hot, new, trending',
+          error: 'Invalid or missing timeline parameter. Must be one of: new, trending, top',
         });
         return;
       }
 
       const result = await IdeaService.getIdeas({
-        timeline: timeline as 'hot' | 'new' | 'trending',
+        timeline: timeline as 'new' | 'trending' | 'top',
         page: page ? parseInt(page as string) : undefined,
         limit: limit ? parseInt(limit as string) : undefined,
         userId,

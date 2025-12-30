@@ -3,10 +3,20 @@
 import { useState, useEffect } from "react";
 import IdeaCard from "./IdeaCard";
 import { ideasApi } from "@/lib/api/ideas";
-import { Idea, TimelineType } from "@/types";
+import { Idea } from "@/types";
+
+const TimelineType = {
+	NEW: "new",
+	TRENDING: "trending",
+	TOP: "top",
+} as const;
+
+type TimelineType = (typeof TimelineType)[keyof typeof TimelineType];
 
 export default function Timeline() {
-	const [activeTimeline, setActiveTimeline] = useState<TimelineType>("new");
+	const [activeTimeline, setActiveTimeline] = useState<TimelineType>(
+		TimelineType.NEW
+	);
 	const [ideas, setIdeas] = useState<Idea[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
@@ -14,17 +24,25 @@ export default function Timeline() {
 
 	useEffect(() => {
 		loadIdeas(true);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activeTimeline]);
 
-	const loadIdeas = async (reset = false) => {
+	const loadIdeas = async (reset = false, pageOverride?: number) => {
 		try {
 			setLoading(true);
-			const currentPage = reset ? 1 : page;
+			const currentPage = reset ? 1 : pageOverride ?? page;
 			const response = await ideasApi.getIdeas({
 				timeline: activeTimeline,
 				page: currentPage,
-				limit: 20,
+				limit: 10,
 			});
+
+			console.log(
+				"Timeline Type:",
+				activeTimeline,
+				"Ideas Loaded:",
+				response.ideas.length
+			);
 
 			if (reset) {
 				setIdeas(response.ideas);
@@ -42,14 +60,15 @@ export default function Timeline() {
 	};
 
 	const handleLoadMore = () => {
-		setPage((prev) => prev + 1);
-		loadIdeas();
+		const nextPage = page + 1;
+		setPage(nextPage);
+		loadIdeas(false, nextPage);
 	};
 
 	const tabs = [
-		{ id: "new" as TimelineType, label: "New", icon: "🆕" },
-		{ id: "hot" as TimelineType, label: "Trending", icon: "🔥" },
-		{ id: "trending" as TimelineType, label: "Top", icon: "📈" },
+		{ id: TimelineType.NEW, label: "New", icon: "🆕" },
+		{ id: TimelineType.TRENDING, label: "Trending", icon: "🔥" },
+		{ id: TimelineType.TOP, label: "Top", icon: "📈" },
 	];
 
 	return (

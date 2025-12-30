@@ -28,9 +28,9 @@ VALIDUCT bridges the gap between ideation and execution by creating a collaborat
 - View comment counts and engagement metrics
 
 ### 📊 Discovery Timelines
-- **HOT**: Most upvoted ideas in the last 24 hours
 - **NEW**: Latest ideas submitted to the platform
-- **TRENDING**: All-time top-ranked ideas
+- **TRENDING**: Most upvoted ideas in the last 24 hours
+- **TOP**: All-time top-ranked ideas
 
 ### 👤 User Profiles
 - Personalized profiles with unique usernames and profile pictures

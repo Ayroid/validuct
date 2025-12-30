@@ -3,7 +3,7 @@
 ```mermaid
 flowchart TD
   A[View homepage] --> B[Select timeline]
-  B --> C{Hot / New / Trending?}
+  B --> C{New / Trending / Top?}
   C --> D[GET /api/v1/ideas]
   D --> E[Apply query params]
   E --> F[Fetch from DB]
