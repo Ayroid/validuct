@@ -4,7 +4,7 @@ export const config = {
   matcher: [
     '/home',
     '/idea/new',
-    '/:username',
-    '/settings/:path*',
+    '/idea/:path*/edit',
+    '/:username/edit',
   ],
 };

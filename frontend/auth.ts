@@ -104,6 +104,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 	// Callbacks for handling session and JWT
 	callbacks: {
 		/**
+		 * Authorized callback - runs on middleware requests
+		 * Controls access to protected routes
+		 */
+		authorized({ auth, request: { nextUrl } }) {
+			const isLoggedIn = !!auth?.user;
+			const isOnProtectedRoute =
+				nextUrl.pathname.startsWith('/home') ||
+				nextUrl.pathname.startsWith('/idea/new') ||
+				nextUrl.pathname.endsWith('/edit');
+
+			if (isOnProtectedRoute && !isLoggedIn) {
+				return false; // Redirect to login
+			}
+
+			return true;
+		},
+
+		/**
 		 * JWT callback - runs when a JWT is created or updated
 		 * Adds custom fields to the token
 		 */

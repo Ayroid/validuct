@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -29,25 +29,28 @@ const statusOptions: {
 		value: "VALIDATED",
 		label: "Validated",
 		emoji: "✅",
-		color: "bg-yellow-100 text-yellow-900 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/40",
+		color:
+			"bg-yellow-100 text-yellow-900 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/40",
 	},
 	{
 		value: "WIP",
 		label: "In Progress",
 		emoji: "🚧",
-		color: "bg-orange-100 text-orange-900 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:hover:bg-orange-900/40",
+		color:
+			"bg-orange-100 text-orange-900 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:hover:bg-orange-900/40",
 	},
 	{
 		value: "LAUNCHED",
 		label: "Launched",
 		emoji: "🚀",
-		color: "bg-red-100 text-red-900 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/40",
+		color:
+			"bg-red-100 text-red-900 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/40",
 	},
 ];
 
 export default function NewIdeaPage() {
 	const router = useRouter();
-	const { data: session, status } = useSession();
+	const { status } = useSession();
 	const [submitting, setSubmitting] = useState(false);
 	const [formData, setFormData] = useState({
 		heading: "",
@@ -55,12 +58,6 @@ export default function NewIdeaPage() {
 		status: "DRAFT" as IdeaStatus,
 		launchedLink: "",
 	});
-
-	// Redirect to login if not authenticated
-	if (status === "unauthenticated") {
-		router.push("/login");
-		return null;
-	}
 
 	if (status === "loading") {
 		return (
@@ -226,10 +223,7 @@ export default function NewIdeaPage() {
 									size="lg"
 									asChild
 								>
-									<Link
-										href="/home"
-										className="block text-center text-sm"
-									>
+									<Link href="/home" className="block text-center text-sm">
 										Cancel
 									</Link>
 								</Button>
