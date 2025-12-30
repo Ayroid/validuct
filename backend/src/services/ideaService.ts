@@ -2,6 +2,9 @@ import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { IdeaStatus } from '@prisma/client';
 
+/**
+ * Data required to create a new idea
+ */
 interface CreateIdeaData {
   heading: string;
   description: string;
@@ -9,6 +12,9 @@ interface CreateIdeaData {
   launchedLink?: string;
 }
 
+/**
+ * Data that can be updated on an existing idea
+ */
 interface UpdateIdeaData {
   heading?: string;
   description?: string;
@@ -16,6 +22,9 @@ interface UpdateIdeaData {
   launchedLink?: string;
 }
 
+/**
+ * Parameters for retrieving ideas by timeline
+ */
 interface GetIdeasParams {
   timeline: 'hot' | 'new' | 'trending';
   page?: number;
@@ -23,6 +32,9 @@ interface GetIdeasParams {
   userId?: string;
 }
 
+/**
+ * Parameters for retrieving a specific user's ideas
+ */
 interface GetUserIdeasParams {
   username: string;
   page?: number;
@@ -30,7 +42,21 @@ interface GetUserIdeasParams {
   sort?: 'newest' | 'oldest' | 'popular';
 }
 
+/**
+ * Service class for managing idea-related operations
+ */
 export class IdeaService {
+  /**
+   * Create a new idea
+   *
+   * @param userId - The ID of the user creating the idea
+   * @param data - The idea data including heading, description, status, and launched link
+   * @returns The newly created idea with user information
+   *
+   * @remarks
+   * If no status is provided, defaults to IdeaStatus.DRAFT
+   * Returns idea with user's username and profile picture
+   */
   static async createIdea(userId: string, data: CreateIdeaData) {
     const idea = await prisma.idea.create({
       data: {
@@ -53,6 +79,17 @@ export class IdeaService {
     return idea;
   }
 
+  /**
+   * Retrieve a single idea by its ID
+   *
+   * @param ideaId - The ID of the idea to retrieve
+   * @param userId - Optional user ID to include their vote status
+   * @returns The idea with user information and user's vote (if authenticated)
+   * @throws {AppError} If the idea is not found (404)
+   *
+   * @remarks
+   * If userId is provided, includes the user's vote status (upvote/downvote/null)
+   */
   static async getIdeaById(ideaId: string, userId?: string) {
     const idea = await prisma.idea.findUnique({
       where: { id: ideaId },
@@ -90,6 +127,21 @@ export class IdeaService {
     };
   }
 
+  /**
+   * Retrieve ideas with pagination and filtering by timeline
+   *
+   * @param params - Parameters including timeline, page, limit, and optional userId
+   * @returns Object containing paginated ideas and pagination metadata
+   *
+   * @remarks
+   * Timeline options:
+   * - 'new': Most recently created ideas
+   * - 'trending': Ideas with most upvotes (all time)
+   * - 'hot': Ideas with most upvotes in the last 24 hours
+   *
+   * If userId is provided, includes user's vote status for each idea
+   * Default pagination: page 1, limit 20
+   */
   static async getIdeas(params: GetIdeasParams) {
     const { timeline, page = 1, limit = 20, userId } = params;
     const skip = (page - 1) * limit;
@@ -171,6 +223,21 @@ export class IdeaService {
     };
   }
 
+  /**
+   * Retrieve all ideas created by a specific user
+   *
+   * @param params - Parameters including username, page, limit, and sort order
+   * @returns Object containing user's paginated ideas and pagination metadata
+   * @throws {AppError} If the user is not found (404)
+   *
+   * @remarks
+   * Sort options:
+   * - 'newest': Most recently created first
+   * - 'oldest': Oldest ideas first
+   * - 'popular': Most upvoted first
+   *
+   * Default values: page 1, limit 20, sort 'newest'
+   */
   static async getUserIdeas(params: GetUserIdeasParams) {
     const { username, page = 1, limit = 20, sort = 'newest' } = params;
 
@@ -230,6 +297,20 @@ export class IdeaService {
     };
   }
 
+  /**
+   * Update an existing idea
+   *
+   * @param ideaId - The ID of the idea to update
+   * @param userId - The ID of the user attempting to update the idea
+   * @param data - The data to update (heading, description, status, launchedLink)
+   * @returns The updated idea with user information
+   * @throws {AppError} If the idea is not found (404)
+   * @throws {AppError} If the user is not authorized to update the idea (403)
+   *
+   * @remarks
+   * Only the owner of the idea can update it
+   * Only provided fields will be updated
+   */
   static async updateIdea(ideaId: string, userId: string, data: UpdateIdeaData) {
     // Check if idea exists and belongs to user
     const existingIdea = await prisma.idea.findUnique({
@@ -265,6 +346,19 @@ export class IdeaService {
     return idea;
   }
 
+  /**
+   * Delete an idea
+   *
+   * @param ideaId - The ID of the idea to delete
+   * @param userId - The ID of the user attempting to delete the idea
+   * @returns Promise that resolves when the idea is deleted
+   * @throws {AppError} If the idea is not found (404)
+   * @throws {AppError} If the user is not authorized to delete the idea (403)
+   *
+   * @remarks
+   * Only the owner of the idea can delete it
+   * This will cascade delete all associated votes and comments
+   */
   static async deleteIdea(ideaId: string, userId: string) {
     // Check if idea exists and belongs to user
     const existingIdea = await prisma.idea.findUnique({

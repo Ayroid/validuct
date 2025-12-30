@@ -3,7 +3,23 @@ import { VoteService } from '../services/voteService.js';
 import { AuthRequest } from '../types/index.js';
 import { VoteType } from '@prisma/client';
 
+/**
+ * Controller for handling vote-related HTTP requests
+ */
 export class VoteController {
+  /**
+   * Handle voting on an idea (upvote or downvote)
+   *
+   * @param req - Express request object with authenticated user ID
+   * @param res - Express response object
+   * @param next - Express next function for error handling
+   *
+   * @remarks
+   * Route: POST /api/ideas/:id/vote
+   * Requires authentication
+   * Request body: { vote_type: 'upvote' | 'downvote' }
+   * Returns updated vote status and vote counts
+   */
   static async voteOnIdea(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       if (!req.userId) {
@@ -28,22 +44,6 @@ export class VoteController {
           downvotes_count: result.downvotesCount,
         },
       });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static async removeVote(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
-    try {
-      if (!req.userId) {
-        throw new Error('User ID not found');
-      }
-
-      const { id } = req.params;
-
-      await VoteService.removeVote(req.userId, id);
-
-      res.status(204).send();
     } catch (error) {
       next(error);
     }

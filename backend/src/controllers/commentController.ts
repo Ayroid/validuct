@@ -2,8 +2,23 @@ import { Request, Response, NextFunction } from 'express';
 import { CommentService } from '../services/commentService.js';
 import { AuthRequest } from '../types/index.js';
 
+/**
+ * Controller for handling comment-related HTTP requests
+ */
 export class CommentController {
-  // Create a comment
+  /**
+   * Handle creating a new comment or reply
+   *
+   * @param req - Express request object with authenticated user ID
+   * @param res - Express response object
+   * @param next - Express next function for error handling
+   *
+   * @remarks
+   * Route: POST /api/ideas/:id/comments
+   * Requires authentication
+   * Request body: { content, parentCommentId? }
+   * Returns 201 with created comment
+   */
   static async createComment(
     req: AuthRequest,
     res: Response,
@@ -33,7 +48,19 @@ export class CommentController {
     }
   }
 
-  // Get comments for an idea
+  /**
+   * Handle retrieving all comments for an idea
+   *
+   * @param req - Express request object
+   * @param res - Express response object
+   * @param next - Express next function for error handling
+   *
+   * @remarks
+   * Route: GET /api/ideas/:id/comments?page=1&limit=50
+   * No authentication required
+   * Query parameters: page, limit
+   * Returns nested comment tree with pagination metadata
+   */
   static async getIdeaComments(
     req: Request,
     res: Response,
@@ -59,7 +86,18 @@ export class CommentController {
     }
   }
 
-  // Get a single comment
+  /**
+   * Handle retrieving a single comment by ID
+   *
+   * @param req - Express request object
+   * @param res - Express response object
+   * @param next - Express next function for error handling
+   *
+   * @remarks
+   * Route: GET /api/comments/:id
+   * No authentication required
+   * Returns comment with user information and direct replies
+   */
   static async getComment(
     req: Request,
     res: Response,
@@ -81,7 +119,19 @@ export class CommentController {
     }
   }
 
-  // Update a comment
+  /**
+   * Handle updating an existing comment
+   *
+   * @param req - Express request object with authenticated user ID
+   * @param res - Express response object
+   * @param next - Express next function for error handling
+   *
+   * @remarks
+   * Route: PUT /api/comments/:id
+   * Requires authentication and ownership
+   * Request body: { content }
+   * Returns updated comment
+   */
   static async updateComment(
     req: AuthRequest,
     res: Response,
@@ -110,7 +160,19 @@ export class CommentController {
     }
   }
 
-  // Delete a comment
+  /**
+   * Handle deleting a comment and all its nested replies
+   *
+   * @param req - Express request object with authenticated user ID
+   * @param res - Express response object
+   * @param next - Express next function for error handling
+   *
+   * @remarks
+   * Route: DELETE /api/comments/:id
+   * Requires authentication and ownership
+   * Returns 204 No Content on success
+   * Deletes comment and all nested replies
+   */
   static async deleteComment(
     req: AuthRequest,
     res: Response,

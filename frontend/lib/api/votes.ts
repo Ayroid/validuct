@@ -18,9 +18,4 @@ export const votesApi = {
     );
     return data.data!;
   },
-
-  // Remove vote from an idea
-  async removeVote(ideaId: string): Promise<void> {
-    await apiClient.delete(`/ideas/${ideaId}/vote`);
-  },
 };

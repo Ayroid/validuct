@@ -2,7 +2,21 @@ import { Response } from 'express';
 import { AuthRequest } from '../types/index.js';
 import { UserService } from '../services/userService.js';
 
+/**
+ * Controller for handling user-related HTTP requests
+ */
 export class UserController {
+  /**
+   * Handle retrieving a user's profile by username
+   *
+   * @param req - Express request object
+   * @param res - Express response object
+   *
+   * @remarks
+   * Route: GET /api/users/:username
+   * No authentication required
+   * Returns user profile with ideas count and pinned ideas
+   */
   static async getUserProfile(req: AuthRequest, res: Response) {
     try {
       const { username } = req.params;
@@ -28,6 +42,18 @@ export class UserController {
     }
   }
 
+  /**
+   * Handle updating the authenticated user's profile
+   *
+   * @param req - Express request object with authenticated user ID
+   * @param res - Express response object
+   *
+   * @remarks
+   * Route: PUT /api/users/profile
+   * Requires authentication
+   * Request body: { username?, bio?, profilePicture? }
+   * Returns updated user profile
+   */
   static async updateProfile(req: AuthRequest, res: Response) {
     try {
       const userId = req.userId!;
@@ -58,6 +84,18 @@ export class UserController {
     }
   }
 
+  /**
+   * Handle retrieving all ideas for a specific user
+   *
+   * @param req - Express request object
+   * @param res - Express response object
+   *
+   * @remarks
+   * Route: GET /api/users/:username/ideas?page=1&limit=20&sort=newest
+   * No authentication required
+   * Query parameters: page, limit, sort
+   * Returns user's paginated ideas with metadata
+   */
   static async getUserIdeas(req: AuthRequest, res: Response) {
     try {
       const { username } = req.params;
@@ -86,6 +124,18 @@ export class UserController {
     }
   }
 
+  /**
+   * Handle pinning an idea to the authenticated user's profile
+   *
+   * @param req - Express request object with authenticated user ID
+   * @param res - Express response object
+   *
+   * @remarks
+   * Route: POST /api/users/pinned-ideas/:id
+   * Requires authentication
+   * Maximum 5 pinned ideas per user
+   * Returns pinned status
+   */
   static async pinIdea(req: AuthRequest, res: Response) {
     try {
       const userId = req.userId!;
@@ -116,6 +166,17 @@ export class UserController {
     }
   }
 
+  /**
+   * Handle unpinning an idea from the authenticated user's profile
+   *
+   * @param req - Express request object with authenticated user ID
+   * @param res - Express response object
+   *
+   * @remarks
+   * Route: DELETE /api/users/pinned-ideas/:id
+   * Requires authentication
+   * Returns 204 No Content on success
+   */
   static async unpinIdea(req: AuthRequest, res: Response) {
     try {
       const userId = req.userId!;
@@ -139,6 +200,17 @@ export class UserController {
     }
   }
 
+  /**
+   * Handle retrieving the authenticated user's pinned ideas
+   *
+   * @param req - Express request object with authenticated user ID
+   * @param res - Express response object
+   *
+   * @remarks
+   * Route: GET /api/users/pinned-ideas
+   * Requires authentication
+   * Returns array of pinned ideas ordered by pin order
+   */
   static async getPinnedIdeas(req: AuthRequest, res: Response) {
     try {
       const userId = req.userId!;

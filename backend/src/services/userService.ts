@@ -2,7 +2,21 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+/**
+ * Service class for managing user-related operations
+ */
 export class UserService {
+  /**
+   * Retrieve a user's profile by username
+   *
+   * @param username - The username of the user to retrieve
+   * @returns Object containing user profile data, ideas count, and pinned ideas, or null if not found
+   *
+   * @remarks
+   * Returns user information along with:
+   * - Total count of ideas created by the user
+   * - List of pinned ideas (up to 5) ordered by pin order
+   */
   static async getUserByUsername(username: string) {
     const user = await prisma.user.findUnique({
       where: { username },
@@ -55,6 +69,18 @@ export class UserService {
     };
   }
 
+  /**
+   * Update a user's profile information
+   *
+   * @param userId - The ID of the user to update
+   * @param data - Object containing optional username, bio, and profilePicture fields
+   * @returns The updated user profile
+   * @throws {Error} If the new username is already taken by another user
+   *
+   * @remarks
+   * Only provided fields will be updated
+   * Username uniqueness is validated before updating
+   */
   static async updateUserProfile(
     userId: string,
     data: {
@@ -97,6 +123,21 @@ export class UserService {
     return user;
   }
 
+  /**
+   * Retrieve paginated ideas for a specific user
+   *
+   * @param username - The username of the user whose ideas to retrieve
+   * @param page - The page number (default: 1)
+   * @param limit - Number of ideas per page (default: 20)
+   * @param sort - Sort order: 'newest', 'oldest', or 'popular' (default: 'newest')
+   * @returns Object containing paginated ideas and pagination metadata, or null if user not found
+   *
+   * @remarks
+   * Sort options:
+   * - 'newest': Most recently created first
+   * - 'oldest': Oldest ideas first
+   * - 'popular': Most upvoted first
+   */
   static async getUserIdeas(
     username: string,
     page: number = 1,
@@ -157,6 +198,20 @@ export class UserService {
     };
   }
 
+  /**
+   * Pin an idea to a user's profile
+   *
+   * @param userId - The ID of the user pinning the idea
+   * @param ideaId - The ID of the idea to pin
+   * @returns Object with pinned status
+   * @throws {Error} If the idea is not found
+   * @throws {Error} If the user already has 5 pinned ideas (maximum limit)
+   * @throws {Error} If the idea is already pinned
+   *
+   * @remarks
+   * Users can pin up to 5 ideas on their profile
+   * Pinned ideas are ordered by pinOrder (1-5)
+   */
   static async pinIdea(userId: string, ideaId: string) {
     // Check if idea exists
     const idea = await prisma.idea.findUnique({
@@ -211,6 +266,18 @@ export class UserService {
     return { pinned: true };
   }
 
+  /**
+   * Unpin an idea from a user's profile
+   *
+   * @param userId - The ID of the user unpinning the idea
+   * @param ideaId - The ID of the idea to unpin
+   * @returns Object with pinned status
+   * @throws {Error} If the idea is not currently pinned
+   *
+   * @remarks
+   * After unpinning, remaining pinned ideas are automatically reordered
+   * to maintain sequential pinOrder values (1, 2, 3, etc.)
+   */
   static async unpinIdea(userId: string, ideaId: string) {
     // Check if the pin exists
     const pin = await prisma.pinnedIdea.findUnique({
@@ -254,6 +321,16 @@ export class UserService {
     return { pinned: false };
   }
 
+  /**
+   * Retrieve all pinned ideas for a user
+   *
+   * @param userId - The ID of the user whose pinned ideas to retrieve
+   * @returns Array of pinned ideas ordered by pinOrder
+   *
+   * @remarks
+   * Returns ideas with full user information
+   * Ideas are sorted by pinOrder in ascending order
+   */
   static async getPinnedIdeas(userId: string) {
     const pinnedIdeas = await prisma.pinnedIdea.findMany({
       where: { userId },

@@ -3,7 +3,23 @@ import { IdeaService } from '../services/ideaService.js';
 import { AuthRequest } from '../types/index.js';
 import { IdeaStatus } from '@prisma/client';
 
+/**
+ * Controller for handling idea-related HTTP requests
+ */
 export class IdeaController {
+  /**
+   * Handle creating a new idea
+   *
+   * @param req - Express request object with authenticated user ID
+   * @param res - Express response object
+   * @param next - Express next function for error handling
+   *
+   * @remarks
+   * Route: POST /api/ideas
+   * Requires authentication
+   * Request body: { heading, description, status?, launchedLink? }
+   * Returns 201 with created idea
+   */
   static async createIdea(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       if (!req.userId) {
@@ -28,6 +44,18 @@ export class IdeaController {
     }
   }
 
+  /**
+   * Handle retrieving a single idea by ID
+   *
+   * @param req - Express request object
+   * @param res - Express response object
+   * @param next - Express next function for error handling
+   *
+   * @remarks
+   * Route: GET /api/ideas/:id
+   * Optional authentication (includes user's vote if authenticated)
+   * Returns idea with user information and vote status
+   */
   static async getIdeaById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
@@ -44,6 +72,19 @@ export class IdeaController {
     }
   }
 
+  /**
+   * Handle retrieving ideas with pagination and filtering
+   *
+   * @param req - Express request object
+   * @param res - Express response object
+   * @param next - Express next function for error handling
+   *
+   * @remarks
+   * Route: GET /api/ideas?timeline=hot|new|trending&page=1&limit=20
+   * Optional authentication (includes user's votes if authenticated)
+   * Query parameters: timeline (required), page, limit
+   * Returns paginated ideas with metadata
+   */
   static async getIdeas(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { timeline, page, limit } = req.query;
@@ -73,6 +114,19 @@ export class IdeaController {
     }
   }
 
+  /**
+   * Handle retrieving all ideas for a specific user
+   *
+   * @param req - Express request object
+   * @param res - Express response object
+   * @param next - Express next function for error handling
+   *
+   * @remarks
+   * Route: GET /api/users/:username/ideas?page=1&limit=20&sort=newest
+   * No authentication required
+   * Query parameters: page, limit, sort
+   * Returns user's paginated ideas with metadata
+   */
   static async getUserIdeas(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { username } = req.params;
@@ -94,6 +148,19 @@ export class IdeaController {
     }
   }
 
+  /**
+   * Handle updating an existing idea
+   *
+   * @param req - Express request object with authenticated user ID
+   * @param res - Express response object
+   * @param next - Express next function for error handling
+   *
+   * @remarks
+   * Route: PUT /api/ideas/:id
+   * Requires authentication and ownership
+   * Request body: { heading?, description?, status?, launchedLink? }
+   * Returns updated idea
+   */
   static async updateIdea(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       if (!req.userId) {
@@ -119,6 +186,18 @@ export class IdeaController {
     }
   }
 
+  /**
+   * Handle deleting an idea
+   *
+   * @param req - Express request object with authenticated user ID
+   * @param res - Express response object
+   * @param next - Express next function for error handling
+   *
+   * @remarks
+   * Route: DELETE /api/ideas/:id
+   * Requires authentication and ownership
+   * Returns 204 No Content on success
+   */
   static async deleteIdea(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       if (!req.userId) {

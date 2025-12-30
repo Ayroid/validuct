@@ -1,23 +1,50 @@
 import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
 
+/**
+ * Data required to create a new comment
+ */
 interface CreateCommentData {
   content: string;
   parentCommentId?: string;
 }
 
+/**
+ * Data that can be updated on an existing comment
+ */
 interface UpdateCommentData {
   content: string;
 }
 
+/**
+ * Parameters for retrieving comments for an idea
+ */
 interface GetCommentsParams {
   ideaId: string;
   page?: number;
   limit?: number;
 }
 
+/**
+ * Service class for managing comment-related operations
+ */
 export class CommentService {
-  // Create a new comment
+  /**
+   * Create a new comment on an idea or as a reply to another comment
+   *
+   * @param userId - The ID of the user creating the comment
+   * @param ideaId - The ID of the idea being commented on
+   * @param data - Comment data including content and optional parent comment ID
+   * @returns The newly created comment with user information
+   * @throws {AppError} If the idea is not found (404)
+   * @throws {AppError} If the parent comment is not found (404)
+   * @throws {AppError} If the parent comment doesn't belong to the idea (400)
+   *
+   * @remarks
+   * - For top-level comments: omit parentCommentId
+   * - For replies: provide parentCommentId
+   * - Automatically increments the idea's comment count
+   */
   static async createComment(
     userId: string,
     ideaId: string,
@@ -79,7 +106,17 @@ export class CommentService {
     return comment;
   }
 
-  // Helper method to recursively build comment tree
+  /**
+   * Recursively build a nested comment tree structure
+   *
+   * @param comments - Flat array of all comments
+   * @param parentId - The parent comment ID to filter by (null for top-level)
+   * @returns Nested array of comments with their replies
+   *
+   * @remarks
+   * This is a private helper method that recursively builds a tree structure
+   * from a flat list of comments, organizing them by parent-child relationships
+   */
   private static buildCommentTree(
     comments: any[],
     parentId: string | null = null
@@ -92,7 +129,20 @@ export class CommentService {
       }));
   }
 
-  // Get comments for an idea (with nested structure)
+  /**
+   * Retrieve all comments for an idea with nested replies structure
+   *
+   * @param params - Parameters including ideaId, page, and limit
+   * @returns Object containing nested comment tree and pagination metadata
+   * @throws {AppError} If the idea is not found (404)
+   *
+   * @remarks
+   * - Fetches all comments for the idea and builds a nested tree structure
+   * - Pagination applies only to top-level comments
+   * - All replies to paginated comments are included
+   * - Top-level comments are sorted by creation date (newest first)
+   * - Default pagination: page 1, limit 50
+   */
   static async getIdeaComments(params: GetCommentsParams) {
     const { ideaId, page = 1, limit = 50 } = params;
     const skip = (page - 1) * limit;
@@ -147,7 +197,17 @@ export class CommentService {
     };
   }
 
-  // Get a single comment by ID
+  /**
+   * Retrieve a single comment by its ID with direct replies
+   *
+   * @param commentId - The ID of the comment to retrieve
+   * @returns The comment with user information and direct replies
+   * @throws {AppError} If the comment is not found (404)
+   *
+   * @remarks
+   * Returns the comment with only its direct replies (not deeply nested)
+   * Replies are sorted by creation date (oldest first)
+   */
   static async getCommentById(commentId: string) {
     const comment = await prisma.comment.findUnique({
       where: { id: commentId },
@@ -183,7 +243,19 @@ export class CommentService {
     return comment;
   }
 
-  // Update a comment
+  /**
+   * Update the content of an existing comment
+   *
+   * @param commentId - The ID of the comment to update
+   * @param userId - The ID of the user attempting to update the comment
+   * @param data - Object containing the new comment content
+   * @returns The updated comment with user information
+   * @throws {AppError} If the comment is not found (404)
+   * @throws {AppError} If the user is not authorized to update the comment (403)
+   *
+   * @remarks
+   * Only the owner of the comment can update it
+   */
   static async updateComment(
     commentId: string,
     userId: string,
@@ -223,7 +295,20 @@ export class CommentService {
     return updatedComment;
   }
 
-  // Delete a comment
+  /**
+   * Delete a comment and all its nested replies
+   *
+   * @param commentId - The ID of the comment to delete
+   * @param userId - The ID of the user attempting to delete the comment
+   * @returns Object with success message
+   * @throws {AppError} If the comment is not found (404)
+   * @throws {AppError} If the user is not authorized to delete the comment (403)
+   *
+   * @remarks
+   * - Only the owner of the comment can delete it
+   * - Deletes the comment and all nested replies (cascade delete)
+   * - Automatically decrements the idea's comment count by the total deleted
+   */
   static async deleteComment(commentId: string, userId: string) {
     // Find comment
     const comment = await prisma.comment.findUnique({
@@ -263,7 +348,16 @@ export class CommentService {
     return { message: 'Comment deleted successfully' };
   }
 
-  // Helper method to count all comments in a tree
+  /**
+   * Recursively count all comments in a comment tree
+   *
+   * @param commentId - The ID of the root comment to count from
+   * @returns Total count of the comment and all its nested replies
+   *
+   * @remarks
+   * This is a private helper method used when deleting comments to determine
+   * how much to decrement the idea's comment count
+   */
   private static async countCommentTree(commentId: string): Promise<number> {
     const comment = await prisma.comment.findUnique({
       where: { id: commentId },

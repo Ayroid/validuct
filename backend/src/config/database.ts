@@ -1,9 +1,25 @@
 import { PrismaClient } from '@prisma/client';
 
+/**
+ * Prisma Client instance for database operations
+ *
+ * @remarks
+ * Configured with logging based on environment:
+ * - Development: logs queries, errors, and warnings
+ * - Production: logs only errors
+ */
 export const prisma = new PrismaClient({
   log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
 });
 
+/**
+ * Establish connection to the database
+ *
+ * @remarks
+ * Attempts to connect to the database using Prisma
+ * Logs success message if connection succeeds
+ * Logs error and exits process if connection fails
+ */
 export const connectDatabase = async (): Promise<void> => {
   try {
     await prisma.$connect();
@@ -14,6 +30,13 @@ export const connectDatabase = async (): Promise<void> => {
   }
 };
 
+/**
+ * Disconnect from the database
+ *
+ * @remarks
+ * Gracefully closes the Prisma database connection
+ * Should be called during application shutdown
+ */
 export const disconnectDatabase = async (): Promise<void> => {
   await prisma.$disconnect();
   console.log('Database disconnected');

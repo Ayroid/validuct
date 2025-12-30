@@ -3,6 +3,19 @@ import { AuthRequest } from '../types/index.js';
 import { verifyToken } from '../utils/jwt.js';
 import { AppError } from './errorHandler.js';
 
+/**
+ * Authentication middleware that requires a valid JWT token
+ *
+ * @param req - Express request object
+ * @param _res - Express response object (unused)
+ * @param next - Express next function
+ * @throws {AppError} If no token is provided or token is invalid (401)
+ *
+ * @remarks
+ * Extracts JWT token from Authorization header (format: "Bearer <token>")
+ * Verifies the token and attaches userId to the request object
+ * Use this middleware for routes that require authentication
+ */
 export const protect = async (
   req: AuthRequest,
   _res: Response,
@@ -34,6 +47,19 @@ export const protect = async (
   }
 };
 
+/**
+ * Optional authentication middleware that attaches userId if valid token is present
+ *
+ * @param req - Express request object
+ * @param _res - Express response object (unused)
+ * @param next - Express next function
+ *
+ * @remarks
+ * Extracts JWT token from Authorization header (format: "Bearer <token>")
+ * If token is valid, attaches userId to the request object
+ * If no token or invalid token, continues without setting userId
+ * Use this middleware for routes that work for both authenticated and non-authenticated users
+ */
 export const optionalProtect = async (
   req: AuthRequest,
   _res: Response,

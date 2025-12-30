@@ -2,7 +2,26 @@ import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { VoteType } from '@prisma/client';
 
+/**
+ * Service class for managing vote-related operations on ideas
+ */
 export class VoteService {
+  /**
+   * Vote on an idea (upvote or downvote) with toggle functionality
+   *
+   * @param userId - The ID of the user casting the vote
+   * @param ideaId - The ID of the idea being voted on
+   * @param voteType - The type of vote (UPVOTE or DOWNVOTE)
+   * @returns Object containing the vote type and updated vote counts
+   * @throws {AppError} If the idea is not found (404)
+   *
+   * @remarks
+   * This method implements toggle behavior:
+   * - If user hasn't voted: creates a new vote
+   * - If user votes the same way again: removes the vote (toggle off)
+   * - If user votes differently: updates the existing vote
+   * All operations are executed in a database transaction to maintain data consistency
+   */
   static async voteOnIdea(userId: string, ideaId: string, voteType: VoteType) {
     // Check if idea exists
     const idea = await prisma.idea.findUnique({
@@ -117,48 +136,5 @@ export class VoteService {
       upvotesCount: updatedIdea!.upvotesCount,
       downvotesCount: updatedIdea!.downvotesCount,
     };
-  }
-
-  static async removeVote(userId: string, ideaId: string) {
-    // Check if idea exists
-    const idea = await prisma.idea.findUnique({
-      where: { id: ideaId },
-    });
-
-    if (!idea) {
-      throw new AppError('Idea not found', 404);
-    }
-
-    // Check if user has voted
-    const existingVote = await prisma.vote.findUnique({
-      where: {
-        userId_ideaId: {
-          userId,
-          ideaId,
-        },
-      },
-    });
-
-    if (!existingVote) {
-      throw new AppError('No vote found to remove', 404);
-    }
-
-    await prisma.$transaction(async (tx) => {
-      // Delete the vote
-      await tx.vote.delete({
-        where: { id: existingVote.id },
-      });
-
-      // Update idea vote counts
-      const updateData =
-        existingVote.voteType === VoteType.UPVOTE
-          ? { upvotesCount: { decrement: 1 } }
-          : { downvotesCount: { decrement: 1 } };
-
-      await tx.idea.update({
-        where: { id: ideaId },
-        data: updateData,
-      });
-    });
   }
 }

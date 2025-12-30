@@ -3,6 +3,9 @@ import { hashPassword } from '../utils/bcrypt.js';
 import { generateToken } from '../utils/jwt.js';
 import { AppError } from '../middleware/errorHandler.js';
 
+/**
+ * Data required for OAuth authentication
+ */
 interface OAuthData {
   email: string;
   username: string;
@@ -10,6 +13,9 @@ interface OAuthData {
   provider: string;
 }
 
+/**
+ * Authentication response containing user data and JWT token
+ */
 interface AuthResponse {
   user: {
     id: string;
@@ -21,7 +27,17 @@ interface AuthResponse {
   token: string;
 }
 
+/**
+ * Service class for managing authentication-related operations
+ */
 export class AuthService {
+  /**
+   * Retrieve the current authenticated user's information
+   *
+   * @param userId - The ID of the authenticated user
+   * @returns The user's profile information
+   * @throws {AppError} If the user is not found (404)
+   */
   static async getCurrentUser(userId: string) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -42,6 +58,25 @@ export class AuthService {
     return user;
   }
 
+  /**
+   * Authenticate or register a user via OAuth provider
+   *
+   * @param data - OAuth data including email, username, profile picture, and provider
+   * @returns Object containing user information and JWT authentication token
+   * @throws {AppError} If unable to generate a unique username after 10 attempts (400)
+   *
+   * @remarks
+   * This method handles both login and registration:
+   * - If user exists (matched by email): Returns existing user with new token
+   * - If user doesn't exist: Creates new user account with random password
+   *
+   * For new users:
+   * - Generates a unique username by appending random numbers if needed
+   * - Creates a random password (OAuth users won't use it)
+   * - Sets profile picture from OAuth provider if available
+   *
+   * Supported providers: Google, GitHub, Facebook
+   */
   static async oauth(data: OAuthData): Promise<AuthResponse> {
     // Check if user exists by email
     let user = await prisma.user.findUnique({
