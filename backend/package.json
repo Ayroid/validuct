@@ -12,9 +12,15 @@
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
     "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
     "setup-test-db": "bash scripts/setup-test-db.sh",
+    "seed": "tsx prisma/seed.ts",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:verify": "tsx prisma/verify-seed.ts",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "format": "prettier --write \"src/**/*.ts\""
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "keywords": [
     "api",
