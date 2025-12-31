@@ -102,7 +102,7 @@ export default async function Home() {
 
 				<div className="flex gap-6 max-w-5xl mx-auto">
 					{/* Collect Feedback Card */}
-					<Card className="bg-primary text-primary-foreground w-full">
+					<Card className="bg-primary text-primary-foreground w-full border">
 						<CardContent className="p-8 text-left">
 							<h4 className="text-2xl font-bold mb-4">Collect user feedback</h4>
 							<p className="mb-6 opacity-90">
@@ -127,7 +127,7 @@ export default async function Home() {
 					</Card>
 
 					{/* Prioritize Features Card */}
-					<Card className="bg-secondary text-secondary-foreground w-full">
+					<Card className="bg-secondary text-secondary-foreground w-full border">
 						<CardContent className="p-8 text-left">
 							<h4 className="text-2xl font-bold mb-4">Prioritize features</h4>
 							<p className="text-secondary-foreground/80 mb-6">
@@ -153,7 +153,7 @@ export default async function Home() {
 			</div>
 
 			{/* How It Works Section */}
-			<div className="py-16 bg-muted border-y">
+			<div className="py-16 bg-muted border">
 				<div className="max-w-4xl mx-auto px-6">
 					<h3 className="text-3xl md:text-4xl font-bold mb-12 text-center">
 						How it works
