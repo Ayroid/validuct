@@ -2,6 +2,7 @@ import NextAuth, { DefaultSession } from "next-auth";
 import type { Session } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
+import TwitterProvider from "next-auth/providers/twitter";
 import { API_URL } from "@/lib/constants";
 import { AuthResponse } from "@/types";
 
@@ -49,7 +50,8 @@ interface ExtendedJWT extends JWT {
 async function handleOAuthBackend(
 	email: string,
 	username: string,
-	profilePicture?: string | null
+	profilePicture: string | null,
+	provider: "google" | "twitter"
 ): Promise<AuthResponse> {
 	const response = await fetch(`${API_URL}/auth/oauth`, {
 		method: "POST",
@@ -60,19 +62,16 @@ async function handleOAuthBackend(
 			email,
 			username,
 			profilePicture,
-			provider: "google",
+			provider,
 		}),
 	});
 
 	if (!response.ok) {
 		const errorData = await response.json().catch(() => ({}));
-		throw new Error(
-			errorData.error || "Failed to authenticate with backend"
-		);
+		throw new Error(errorData.error || "Failed to authenticate with backend");
 	}
 
-	const data: { success: boolean; data: AuthResponse } =
-		await response.json();
+	const data: { success: boolean; data: AuthResponse } = await response.json();
 
 	if (!data.success || !data.data) {
 		throw new Error("Backend authentication failed");
@@ -99,6 +98,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				},
 			},
 		}),
+		TwitterProvider({
+			clientId: process.env.TWITTER_CLIENT_ID!,
+			clientSecret: process.env.TWITTER_CLIENT_SECRET!,
+		}),
 	],
 
 	// Callbacks for handling session and JWT
@@ -110,9 +113,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		authorized({ auth, request: { nextUrl } }) {
 			const isLoggedIn = !!auth?.user;
 			const isOnProtectedRoute =
-				nextUrl.pathname.startsWith('/home') ||
-				nextUrl.pathname.startsWith('/idea/new') ||
-				nextUrl.pathname.endsWith('/edit');
+				nextUrl.pathname.startsWith("/home") ||
+				nextUrl.pathname.startsWith("/idea/new") ||
+				nextUrl.pathname.endsWith("/edit");
 
 			if (isOnProtectedRoute && !isLoggedIn) {
 				return false; // Redirect to login
@@ -128,7 +131,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		async jwt({ token, user, account, profile }) {
 			// Initial sign in - user object is available
 			if (user) {
-				// Google OAuth sign-in
+				// Google & Twitter OAuth sign-in
 				if (account?.provider === "google" && profile?.email) {
 					try {
 						// Generate username from Google profile
@@ -144,7 +147,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 						const backendAuth = await handleOAuthBackend(
 							profile.email,
 							username,
-							profilePicture
+							profilePicture,
+							"google"
 						);
 
 						// Populate token with backend user data
@@ -152,8 +156,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 						extendedToken.id = backendAuth.user.id;
 						extendedToken.email = backendAuth.user.email;
 						extendedToken.username = backendAuth.user.username;
-						extendedToken.profilePicture =
-							backendAuth.user.profilePicture;
+						extendedToken.profilePicture = backendAuth.user.profilePicture;
 						extendedToken.bio = backendAuth.user.bio ?? null;
 						extendedToken.createdAt = backendAuth.user.createdAt;
 						extendedToken.backendToken = backendAuth.token;
@@ -161,6 +164,43 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 					} catch (error) {
 						console.error("OAuth backend error:", error);
 						throw new Error("Failed to complete Google sign-in");
+					}
+				}
+
+				console.log("Account provider:", account?.provider);
+				console.log("Profile data:", profile);
+				if (account?.provider === "twitter" && profile) {
+					try {
+						// Generate username from Twitter profile
+						const twitterProfile = profile.data as { username?: string; profile_image_url?: string };
+						const username =
+							twitterProfile.username?.toLowerCase() ||
+							"user";
+
+						const email = `${twitterProfile.username}@twitter.oauth`;
+						const profilePicture = twitterProfile.profile_image_url || null;
+
+						// Authenticate with backend
+						const backendAuth = await handleOAuthBackend(
+							email,
+							username,
+							profilePicture,
+							"twitter"
+						);
+
+						// Populate token with backend user data
+						const extendedToken = token as ExtendedJWT;
+						extendedToken.id = backendAuth.user.id;
+						extendedToken.email = backendAuth.user.email;
+						extendedToken.username = backendAuth.user.username;
+						extendedToken.profilePicture = backendAuth.user.profilePicture;
+						extendedToken.bio = backendAuth.user.bio ?? null;
+						extendedToken.createdAt = backendAuth.user.createdAt;
+						extendedToken.backendToken = backendAuth.token;
+						extendedToken.provider = "twitter";
+					} catch (error) {
+						console.error("OAuth backend error:", error);
+						throw new Error("Failed to complete Twitter sign-in");
 					}
 				}
 			}

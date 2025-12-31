@@ -52,6 +52,14 @@ export class AuthController {
   static async oauth(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, username, profilePicture, provider } = req.body;
+
+      console.log('AuthController.oauth called with:', {
+        email,
+        username,
+        profilePicture,
+        provider,
+      });
+
       const result = await AuthService.oauth({ email, username, profilePicture, provider });
 
       res.status(200).json({

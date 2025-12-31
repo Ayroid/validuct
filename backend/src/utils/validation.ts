@@ -5,7 +5,7 @@ export const oauthSchema = z.object({
   email: z.string().email('Invalid email address'),
   username: z.string().min(1, 'Username is required'),
   profilePicture: z.string().url().optional().nullable(),
-  provider: z.enum(['google', 'github', 'facebook']),
+  provider: z.enum(['google', 'github', 'facebook', 'twitter']),
 });
 
 // User validation schemas

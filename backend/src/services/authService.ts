@@ -78,6 +78,7 @@ export class AuthService {
    * Supported providers: Google, GitHub, Facebook
    */
   static async oauth(data: OAuthData): Promise<AuthResponse> {
+    console.log('OAuth data received:', data);
     // Check if user exists by email
     let user = await prisma.user.findUnique({
       where: { email: data.email },
