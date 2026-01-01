@@ -20,11 +20,9 @@ import { AnyZodObject, ZodError } from 'zod';
 export const validate = (schema: AnyZodObject) => {
   return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     try {
-      console.log('Validating request body:', req.body);
       await schema.parseAsync(req.body);
       next();
     } catch (error) {
-      console.error('Validation error:', error);
       if (error instanceof ZodError) {
         next(error);
       } else {

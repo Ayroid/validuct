@@ -12,7 +12,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FaGoogle } from "react-icons/fa";
+import { FaGoogle, FaGithub } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 
 export function LoginForm({
@@ -21,13 +21,14 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
 	const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 	const [isTwitterLoading, setIsTwitterLoading] = useState(false);
+	const [isGithubLoading, setIsGithubLoading] = useState(false);
 	const [error, setError] = useState("");
 
 	const handleGoogleSignIn = async () => {
 		try {
 			setError("");
 			setIsGoogleLoading(true);
-			await signIn("google", { callbackUrl: "/home" });
+			await signIn("google", { redirectTo: "/home" });
 		} catch (err: unknown) {
 			const errorMessage =
 				err instanceof Error && "response" in err
@@ -43,7 +44,7 @@ export function LoginForm({
 		try {
 			setError("");
 			setIsTwitterLoading(true);
-			await signIn("twitter", { callbackUrl: "/home" });
+			await signIn("twitter", { redirectTo: "/home" });
 		} catch (err: unknown) {
 			const errorMessage =
 				err instanceof Error && "response" in err
@@ -52,6 +53,22 @@ export function LoginForm({
 					: undefined;
 			setError(errorMessage || "Twitter sign-in failed");
 			setIsTwitterLoading(false);
+		}
+	};
+
+	const handleGithubSignIn = async () => {
+		try {
+			setError("");
+			setIsGithubLoading(true);
+			await signIn("github", { redirectTo: "/home" });
+		} catch (err: unknown) {
+			const errorMessage =
+				err instanceof Error && "response" in err
+					? (err as { response?: { data?: { error?: string } } }).response?.data
+							?.error
+					: undefined;
+			setError(errorMessage || "Github sign-in failed");
+			setIsGithubLoading(false);
 		}
 	};
 
@@ -90,6 +107,16 @@ export function LoginForm({
 						{/* Twitter SVG Icon */}
 						<FaXTwitter />
 						{isTwitterLoading ? "Signing in..." : "Sign in with Twitter"}
+					</Button>
+					<Button
+						onClick={handleGithubSignIn}
+						disabled={isGithubLoading}
+						type="button"
+						variant="outline"
+						className="w-full h-10 text-sm mt-4"
+					>
+						<FaGithub />
+						{isGithubLoading ? "Signing in..." : "Sign in with Github"}
 					</Button>
 					<div className="mt-4 text-center text-sm">
 						Don&apos;t have an account?{" "}

@@ -3,6 +3,7 @@ import type { Session } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
 import TwitterProvider from "next-auth/providers/twitter";
+import GithubProvider from "next-auth/providers/github";
 import { API_URL } from "@/lib/constants";
 import { AuthResponse } from "@/types";
 
@@ -51,7 +52,7 @@ async function handleOAuthBackend(
 	email: string,
 	username: string,
 	profilePicture: string | null,
-	provider: "google" | "twitter"
+	provider: "google" | "twitter" | "github"
 ): Promise<AuthResponse> {
 	const response = await fetch(`${API_URL}/auth/oauth`, {
 		method: "POST",
@@ -101,6 +102,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		TwitterProvider({
 			clientId: process.env.TWITTER_CLIENT_ID!,
 			clientSecret: process.env.TWITTER_CLIENT_SECRET!,
+		}),
+		GithubProvider({
+			clientId: process.env.GITHUB_ID!,
+			clientSecret: process.env.GITHUB_SECRET!,
 		}),
 	],
 
@@ -167,15 +172,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 					}
 				}
 
-				console.log("Account provider:", account?.provider);
-				console.log("Profile data:", profile);
 				if (account?.provider === "twitter" && profile) {
 					try {
 						// Generate username from Twitter profile
-						const twitterProfile = profile.data as { username?: string; profile_image_url?: string };
-						const username =
-							twitterProfile.username?.toLowerCase() ||
-							"user";
+						const twitterProfile = profile.data as {
+							username?: string;
+							profile_image_url?: string;
+						};
+						const username = twitterProfile.username?.toLowerCase() || "user";
 
 						const email = `${twitterProfile.username}@twitter.oauth`;
 						const profilePicture = twitterProfile.profile_image_url || null;
@@ -201,6 +205,47 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 					} catch (error) {
 						console.error("OAuth backend error:", error);
 						throw new Error("Failed to complete Twitter sign-in");
+					}
+				}
+
+				if (account?.provider === "github" && profile?.email) {
+					try {
+						// Generate username from GitHub profile
+						const _profile = profile as {
+							login?: string;
+							name?: string;
+							email: string;
+						};
+
+						const username =
+							_profile.login?.toLowerCase() ||
+							_profile.name?.replace(/\s+/g, "_").toLowerCase() ||
+							"user";
+
+						const githubProfile = profile as { avatar_url?: string };
+						const profilePicture = githubProfile.avatar_url || null;
+
+						// Authenticate with backend
+						const backendAuth = await handleOAuthBackend(
+							profile.email,
+							username,
+							profilePicture,
+							"github"
+						);
+
+						// Populate token with backend user data
+						const extendedToken = token as ExtendedJWT;
+						extendedToken.id = backendAuth.user.id;
+						extendedToken.email = backendAuth.user.email;
+						extendedToken.username = backendAuth.user.username;
+						extendedToken.profilePicture = backendAuth.user.profilePicture;
+						extendedToken.bio = backendAuth.user.bio ?? null;
+						extendedToken.createdAt = backendAuth.user.createdAt;
+						extendedToken.backendToken = backendAuth.token;
+						extendedToken.provider = "github";
+					} catch (error) {
+						console.error("OAuth backend error:", error);
+						throw new Error("Failed to complete GitHub sign-in");
 					}
 				}
 			}
