@@ -1,6 +1,7 @@
 import app from './app.js';
 import { config } from './config/env.js';
 import { connectDatabase, disconnectDatabase } from './config/database.js';
+import { closeRedis } from './config/redis.js';
 
 const startServer = async () => {
   try {
@@ -18,6 +19,7 @@ const startServer = async () => {
     const shutdown = async (signal: string) => {
       console.log(`\n${signal} received. Closing server gracefully...`);
       server.close(async () => {
+        await closeRedis();
         await disconnectDatabase();
         process.exit(0);
       });

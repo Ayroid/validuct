@@ -12,6 +12,7 @@ interface EnvConfig {
   JWT_SECRET: string;
   JWT_EXPIRE: string;
   CORS_ORIGIN: string;
+  REDIS_URL: string;
 }
 
 /**
@@ -49,4 +50,5 @@ export const config: EnvConfig = {
   JWT_SECRET: getEnvVariable('JWT_SECRET'),
   JWT_EXPIRE: getEnvVariable('JWT_EXPIRE', '7d'),
   CORS_ORIGIN: getEnvVariable('CORS_ORIGIN', '*'),
+  REDIS_URL: getEnvVariable('REDIS_URL', 'redis://localhost:6379'),
 };

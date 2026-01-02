@@ -2,6 +2,8 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import { config } from './config/env.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
+import { generalLimiter } from './middleware/rateLimiter.js';
+import { isRedisConnected } from './config/redis.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import ideaRoutes from './routes/ideaRoutes.js';
@@ -20,12 +22,19 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Global rate limiter for GET requests
+app.use(generalLimiter);
+
 // Health check route
 app.get('/health', (_req, res) => {
-  res.status(200).json({
-    success: true,
+  const redisStatus = isRedisConnected();
+  res.status(redisStatus ? 200 : 503).json({
+    success: redisStatus,
     message: 'Server is running',
     timestamp: new Date().toISOString(),
+    services: {
+      redis: redisStatus ? 'connected' : 'disconnected',
+    },
   });
 });
 

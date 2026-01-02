@@ -6,6 +6,7 @@ import {
   createCommentSchema,
   updateCommentSchema,
 } from '../utils/validation.js';
+import { commentLimiter } from '../middleware/rateLimiter.js';
 
 const router = Router();
 
@@ -13,6 +14,7 @@ const router = Router();
 router.post(
   '/ideas/:id/comments',
   protect,
+  commentLimiter,
   validate(createCommentSchema),
   CommentController.createComment
 );
