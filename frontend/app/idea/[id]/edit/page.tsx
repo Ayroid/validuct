@@ -158,8 +158,8 @@ export default function EditIdeaPage() {
 
 	if (loading || status === "loading") {
 		return (
-			<div className="min-h-screen bg-background flex items-center justify-center">
-				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+			<div className="bg-background flex min-h-screen items-center justify-center">
+				<div className="border-primary h-12 w-12 animate-spin rounded-full border-b-2"></div>
 			</div>
 		);
 	}
@@ -169,16 +169,16 @@ export default function EditIdeaPage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-background">
-			<div className="max-w-5xl mx-auto px-4 py-8">
+		<div className="bg-background min-h-screen">
+			<div className="mx-auto max-w-5xl px-4 py-8">
 				{/* Header */}
 				<div className="mb-10">
 					<Link
 						href={`/idea/${params.id}`}
-						className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground mb-8 text-sm"
+						className="text-muted-foreground hover:text-foreground mb-8 inline-flex items-center gap-1 text-sm"
 					>
 						<svg
-							className="w-4 h-4"
+							className="h-4 w-4"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -192,11 +192,11 @@ export default function EditIdeaPage() {
 						</svg>
 						<span>BACK</span>
 					</Link>
-					<h1 className="text-3xl font-bold mb-2">Edit your idea</h1>
+					<h1 className="mb-2 text-3xl font-bold">Edit your idea</h1>
 				</div>
 
 				{/* Form */}
-				<div className="bg-card border rounded-lg p-8 md:p-10">
+				<div className="bg-card rounded-lg border p-8 md:p-10">
 					<form onSubmit={handleSubmit} className="space-y-8">
 						{/* Heading */}
 						<div className="space-y-2">
@@ -213,7 +213,7 @@ export default function EditIdeaPage() {
 								maxLength={100}
 								placeholder="A tool that helps..."
 							/>
-							<div className="text-xs text-gray-400 text-right">
+							<div className="text-right text-xs text-gray-400">
 								{formData.heading.length}/100
 							</div>
 						</div>
@@ -234,7 +234,7 @@ export default function EditIdeaPage() {
 								placeholder="Describe your idea, the problem it solves, and who it's for..."
 								className="resize-none"
 							/>
-							<div className="text-xs text-gray-400 text-right">
+							<div className="text-right text-xs text-gray-400">
 								{formData.description.length}/500
 							</div>
 						</div>
@@ -267,7 +267,7 @@ export default function EditIdeaPage() {
 							<div className="space-y-2">
 								<Label htmlFor="launchedLink">
 									Project Link
-									<span className="text-gray-400 ml-1">(Optional)</span>
+									<span className="ml-1 text-gray-400">(Optional)</span>
 								</Label>
 								<Input
 									type="url"
@@ -302,7 +302,7 @@ export default function EditIdeaPage() {
 								>
 									{submitting ? (
 										<>
-											<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+											<div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
 											<span>Updating...</span>
 										</>
 									) : (
@@ -340,7 +340,9 @@ export default function EditIdeaPage() {
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
+						<AlertDialogCancel className="cursor-pointer">
+							Cancel
+						</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={handleDelete}
 							className="bg-destructive text-destructive-foreground hover:bg-destructive/90 cursor-pointer"

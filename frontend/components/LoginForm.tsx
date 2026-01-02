@@ -83,7 +83,7 @@ export function LoginForm({
 				</CardHeader>
 				<CardContent>
 					{error && (
-						<div className="mb-4 rounded-md bg-red-50 border border-red-400 text-red-700 px-4 py-3 text-sm">
+						<div className="mb-4 rounded-md border border-red-400 bg-red-50 px-4 py-3 text-sm text-red-700">
 							{error}
 						</div>
 					)}
@@ -92,7 +92,7 @@ export function LoginForm({
 						disabled={isGoogleLoading}
 						type="button"
 						variant="outline"
-						className="w-full h-10 text-sm"
+						className="h-10 w-full text-sm"
 					>
 						<FaGoogle />
 						{isGoogleLoading ? "Signing in..." : "Sign in with Google"}
@@ -102,7 +102,7 @@ export function LoginForm({
 						disabled={isTwitterLoading}
 						type="button"
 						variant="outline"
-						className="w-full h-10 text-sm mt-4"
+						className="mt-4 h-10 w-full text-sm"
 					>
 						{/* Twitter SVG Icon */}
 						<FaXTwitter />
@@ -113,7 +113,7 @@ export function LoginForm({
 						disabled={isGithubLoading}
 						type="button"
 						variant="outline"
-						className="w-full h-10 text-sm mt-4"
+						className="mt-4 h-10 w-full text-sm"
 					>
 						<FaGithub />
 						{isGithubLoading ? "Signing in..." : "Sign in with Github"}
@@ -122,14 +122,14 @@ export function LoginForm({
 						Don&apos;t have an account?{" "}
 						<Link
 							href="/register"
-							className="underline underline-offset-4 hover:text-primary"
+							className="hover:text-primary underline underline-offset-4"
 						>
 							Sign up
 						</Link>
 					</div>
 				</CardContent>
 			</Card>
-			<div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary px-6">
+			<div className="text-muted-foreground hover:[&_a]:text-primary px-6 text-center text-xs text-balance [&_a]:underline [&_a]:underline-offset-4">
 				By clicking continue, you agree to our{" "}
 				<Link href="/terms">Terms of Service</Link> and{" "}
 				<Link href="/privacy">Privacy Policy</Link>.

@@ -75,15 +75,15 @@ export default function ProfileSettingsPage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-background py-12">
-			<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div className="bg-background min-h-screen py-12">
+			<div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
 				<div className="max-w-5xl">
 					<Link
 						href={`/${session.user.username}`}
-						className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground mb-8 text-sm"
+						className="text-muted-foreground hover:text-foreground mb-8 inline-flex items-center gap-1 text-sm"
 					>
 						<svg
-							className="w-4 h-4"
+							className="h-4 w-4"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -98,17 +98,17 @@ export default function ProfileSettingsPage() {
 						<span>BACK</span>
 					</Link>
 				</div>
-				<div className="bg-card border rounded-lg p-8">
-					<h1 className="text-3xl font-bold mb-6">Edit Profile</h1>
+				<div className="bg-card rounded-lg border p-8">
+					<h1 className="mb-6 text-3xl font-bold">Edit Profile</h1>
 
 					{error && (
-						<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
+						<div className="mb-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-red-700">
 							{error}
 						</div>
 					)}
 
 					{success && (
-						<div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md mb-6">
+						<div className="mb-6 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-green-700">
 							Profile updated successfully! Redirecting...
 						</div>
 					)}
@@ -118,7 +118,7 @@ export default function ProfileSettingsPage() {
 						<div>
 							<label
 								htmlFor="username"
-								className="block text-sm font-medium text-gray-700 mb-2"
+								className="mb-2 block text-sm font-medium text-gray-700"
 							>
 								Username
 							</label>
@@ -136,7 +136,7 @@ export default function ProfileSettingsPage() {
 								pattern="^[a-zA-Z0-9_]+$"
 								title="Username can only contain letters, numbers, and underscores"
 							/>
-							<p className="text-sm text-gray-500 mt-1">
+							<p className="mt-1 text-sm text-gray-500">
 								Letters, numbers, and underscores only. 3-50 characters.
 							</p>
 						</div>
@@ -145,7 +145,7 @@ export default function ProfileSettingsPage() {
 						<div>
 							<label
 								htmlFor="bio"
-								className="block text-sm font-medium text-gray-700 mb-2"
+								className="mb-2 block text-sm font-medium text-gray-700"
 							>
 								Bio
 							</label>
@@ -158,9 +158,9 @@ export default function ProfileSettingsPage() {
 								placeholder="Tell us about yourself"
 								rows={4}
 								maxLength={500}
-								className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+								className="w-full resize-none rounded-md border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
 							/>
-							<p className="text-sm text-gray-500 mt-1">
+							<p className="mt-1 text-sm text-gray-500">
 								{formData.bio?.length || 0}/500 characters
 							</p>
 						</div>
@@ -169,7 +169,7 @@ export default function ProfileSettingsPage() {
 						<div>
 							<label
 								htmlFor="profilePicture"
-								className="block text-sm font-medium text-gray-700 mb-2"
+								className="mb-2 block text-sm font-medium text-gray-700"
 							>
 								Profile Picture URL
 							</label>
@@ -184,11 +184,11 @@ export default function ProfileSettingsPage() {
 							/>
 							{formData.profilePicture && (
 								<div className="mt-4">
-									<p className="text-sm text-gray-700 mb-2">Preview:</p>
+									<p className="mb-2 text-sm text-gray-700">Preview:</p>
 									<Image
 										src={formData.profilePicture}
 										alt="Profile preview"
-										className="w-24 h-24 rounded-full object-cover"
+										className="h-24 w-24 rounded-full object-cover"
 										height={96}
 										width={96}
 										onError={(e) => {

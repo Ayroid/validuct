@@ -44,8 +44,8 @@ export default function CommentItem({
 	return (
 		<div
 			className={`${
-				depth > 0 ? "ml-8 mt-4" : "mt-4"
-			} border-l-2 border-border pl-4`}
+				depth > 0 ? "mt-4 ml-8" : "mt-4"
+			} border-border border-l-2 pl-4`}
 		>
 			<div className="flex items-start gap-3">
 				{/* User Avatar */}
@@ -59,26 +59,26 @@ export default function CommentItem({
 							className="rounded-full"
 						/>
 					) : (
-						<div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center text-sm font-semibold text-foreground">
+						<div className="bg-muted text-foreground flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold">
 							{comment.user.username[0].toUpperCase()}
 						</div>
 					)}
 				</div>
 
 				{/* Comment Content */}
-				<div className="flex-1 min-w-0">
+				<div className="min-w-0 flex-1">
 					{/* User Info and Timestamp */}
-					<div className="flex items-center gap-2 mb-1">
-						<span className="font-semibold text-sm text-foreground">
+					<div className="mb-1 flex items-center gap-2">
+						<span className="text-foreground text-sm font-semibold">
 							{comment.user.username}
 						</span>
-						<span className="text-xs text-muted-foreground">
+						<span className="text-muted-foreground text-xs">
 							{formatDistanceToNow(new Date(comment.createdAt), {
 								addSuffix: true,
 							})}
 						</span>
 						{comment.updatedAt !== comment.createdAt && (
-							<span className="text-xs text-muted-foreground/70">(edited)</span>
+							<span className="text-muted-foreground/70 text-xs">(edited)</span>
 						)}
 					</div>
 
@@ -88,11 +88,11 @@ export default function CommentItem({
 							<textarea
 								value={editedContent}
 								onChange={(e) => setEditedContent(e.target.value)}
-								className="w-full px-3 py-2 border bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+								className="bg-background focus:ring-ring w-full resize-none rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
 								rows={3}
 								autoFocus
 							/>
-							<div className="flex gap-2 mt-2">
+							<div className="mt-2 flex gap-2">
 								<Button onClick={handleEdit} size="sm">
 									Save
 								</Button>
@@ -102,18 +102,18 @@ export default function CommentItem({
 							</div>
 						</div>
 					) : (
-						<p className="text-sm text-muted-foreground whitespace-pre-wrap wrap-break-word">
+						<p className="text-muted-foreground text-sm wrap-break-word whitespace-pre-wrap">
 							{comment.content}
 						</p>
 					)}
 
 					{/* Action Buttons */}
 					{!isEditing && (
-						<div className="flex items-center gap-3 mt-2">
+						<div className="mt-2 flex items-center gap-3">
 							{session && depth < maxDepth && (
 								<button
 									onClick={() => onReply?.(comment.id)}
-									className="text-xs font-medium text-muted-foreground hover:text-muted-foreground/80 transition-colors cursor-pointer"
+									className="text-muted-foreground hover:text-muted-foreground/80 cursor-pointer text-xs font-medium transition-colors"
 								>
 									Reply
 								</button>
@@ -122,7 +122,7 @@ export default function CommentItem({
 								<>
 									<button
 										onClick={() => setIsEditing(true)}
-										className="text-xs font-medium text-muted-foreground hover:text-muted-foreground/80 transition-colors cursor-pointer"
+										className="text-muted-foreground hover:text-muted-foreground/80 cursor-pointer text-xs font-medium transition-colors"
 									>
 										Edit
 									</button>
@@ -130,7 +130,7 @@ export default function CommentItem({
 										onClick={() => {
 											onDelete?.(comment.id);
 										}}
-										className="text-xs font-medium text-muted-foreground hover:text-muted-foreground/80 transition-colors cursor-pointer"
+										className="text-muted-foreground hover:text-muted-foreground/80 cursor-pointer text-xs font-medium transition-colors"
 									>
 										Delete
 									</button>
@@ -145,7 +145,7 @@ export default function CommentItem({
 							{comment.replies.length > 0 && (
 								<button
 									onClick={() => setShowReplies(!showReplies)}
-									className="text-xs font-medium text-foreground hover:text-foreground/80 mb-2 cursor-pointer"
+									className="text-foreground hover:text-foreground/80 mb-2 cursor-pointer text-xs font-medium"
 								>
 									{showReplies ? "Hide" : "Show"} {comment.replies.length}{" "}
 									{comment.replies.length === 1 ? "reply" : "replies"}
@@ -178,11 +178,11 @@ export default function CommentItem({
 								value={replyContent}
 								onChange={(e) => setReplyContent?.(e.target.value)}
 								placeholder="Write a reply..."
-								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+								className="w-full resize-none rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 								rows={2}
 								autoFocus
 							/>
-							<div className="flex gap-2 mt-2">
+							<div className="mt-2 flex gap-2">
 								<Button
 									onClick={() => handleSubmitReply?.(comment.id)}
 									size="sm"

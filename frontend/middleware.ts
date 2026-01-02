@@ -1,10 +1,5 @@
-export { auth as middleware } from '@/auth';
+export { auth as middleware } from "@/auth";
 
 export const config = {
-  matcher: [
-    '/home',
-    '/idea/new',
-    '/idea/:path*/edit',
-    '/:username/edit',
-  ],
+	matcher: ["/home", "/idea/new", "/idea/:path*/edit", "/:username/edit"],
 };

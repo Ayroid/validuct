@@ -102,7 +102,7 @@ export default function ProfilePage() {
 
 	if (loading) {
 		return (
-			<div className="min-h-screen flex items-center justify-center">
+			<div className="flex min-h-screen items-center justify-center">
 				<div className="text-lg">Loading profile...</div>
 			</div>
 		);
@@ -110,24 +110,24 @@ export default function ProfilePage() {
 
 	if (error || !profile) {
 		return (
-			<div className="min-h-screen flex items-center justify-center">
+			<div className="flex min-h-screen items-center justify-center">
 				<div className="text-destructive">{error || "Profile not found"}</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="min-h-screen bg-background">
+		<div className="bg-background min-h-screen">
 			{/* Profile Header */}
 			<div className="bg-card border-b">
-				<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+				<div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
 					<div className="max-w-5xl">
 						<Link
 							href="/home"
-							className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground mb-8 text-sm"
+							className="text-muted-foreground hover:text-foreground mb-8 inline-flex items-center gap-1 text-sm"
 						>
 							<svg
-								className="w-4 h-4"
+								className="h-4 w-4"
 								fill="none"
 								stroke="currentColor"
 								viewBox="0 0 24 24"
@@ -151,10 +151,10 @@ export default function ProfilePage() {
 									alt={profile.user.username}
 									width={96}
 									height={96}
-									className="w-24 h-24 rounded-full object-cover"
+									className="h-24 w-24 rounded-full object-cover"
 								/>
 							) : (
-								<div className="w-24 h-24 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold">
+								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-purple-600 text-3xl font-bold text-white">
 									{profile.user.username[0].toUpperCase()}
 								</div>
 							)}
@@ -164,7 +164,7 @@ export default function ProfilePage() {
 						<div className="flex-1">
 							<div className="flex items-center justify-between">
 								<div>
-									<h1 className="text-3xl font-bold text-foreground">
+									<h1 className="text-foreground text-3xl font-bold">
 										{profile.user.username}
 									</h1>
 									{profile.user.bio && (
@@ -174,7 +174,7 @@ export default function ProfilePage() {
 									)}
 								</div>
 								{isOwnProfile && (
-									<div className="flex gap-3 flex-col">
+									<div className="flex flex-col gap-3">
 										<div className="flex gap-3">
 											<Link
 												href={`/${profile.user.username}/edit`}
@@ -189,7 +189,7 @@ export default function ProfilePage() {
 											</Link>
 											<Button
 												variant="destructive"
-												className="flex-1 w-full cursor-pointer"
+												className="w-full flex-1 cursor-pointer"
 												onClick={() => signOut({ callbackUrl: "/" })}
 											>
 												Logout
@@ -198,7 +198,7 @@ export default function ProfilePage() {
 										<Link href="/idea/new" className="w-full">
 											<Button
 												variant="default"
-												className="w-full cursor-pointer hover:bg-primary/90"
+												className="hover:bg-primary/90 w-full cursor-pointer"
 											>
 												New Idea
 											</Button>
@@ -207,8 +207,8 @@ export default function ProfilePage() {
 								)}
 							</div>
 
-							<div className="flex flex-col justify-center gap-2 mt-2">
-								<span className="flex items-center gap-2 text-sm text-muted-foreground">
+							<div className="mt-2 flex flex-col justify-center gap-2">
+								<span className="text-muted-foreground flex items-center gap-2 text-sm">
 									<FaCalendarAlt />
 									Joined{" "}
 									{new Date(profile.user.createdAt).toLocaleDateString(
@@ -230,9 +230,9 @@ export default function ProfilePage() {
 			</div>
 
 			{/* Ideas Section */}
-			<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+			<div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
 				{/* Tabs */}
-				<div className="flex items-center justify-between mb-6">
+				<div className="mb-6 flex items-center justify-between">
 					<div className="flex gap-4 border-b">
 						<button
 							onClick={() => {
@@ -241,7 +241,7 @@ export default function ProfilePage() {
 							}}
 							className={`px-4 py-2 font-medium transition-colors ${
 								activeTab === "all"
-									? "text-primary border-b-2 border-primary"
+									? "text-primary border-primary border-b-2"
 									: "text-muted-foreground hover:text-foreground"
 							}`}
 						>
@@ -255,7 +255,7 @@ export default function ProfilePage() {
 								}}
 								className={`px-4 py-2 font-medium transition-colors ${
 									activeTab === "pinned"
-										? "text-primary border-b-2 border-primary"
+										? "text-primary border-primary border-b-2"
 										: "text-muted-foreground hover:text-foreground"
 								}`}
 							>
@@ -303,18 +303,18 @@ export default function ProfilePage() {
 
 				{/* Ideas List */}
 				{ideasLoading ? (
-					<div className="text-center py-12">
-						<div className="text-lg text-muted-foreground">
+					<div className="py-12 text-center">
+						<div className="text-muted-foreground text-lg">
 							Loading ideas...
 						</div>
 					</div>
 				) : ideas.length === 0 ? (
-					<div className="text-center py-12">
+					<div className="py-12 text-center">
 						<p className="text-muted-foreground">
 							{activeTab === "pinned" ? "No pinned ideas yet" : "No ideas yet"}
 						</p>
 						{isOwnProfile && activeTab === "all" && (
-							<Link href="/idea/new" className="inline-block mt-4">
+							<Link href="/idea/new" className="mt-4 inline-block">
 								<Button>Share Your First Idea</Button>
 							</Link>
 						)}
@@ -332,7 +332,7 @@ export default function ProfilePage() {
 
 						{/* Load More */}
 						{activeTab === "all" && hasMore && (
-							<div className="text-center pt-6">
+							<div className="pt-6 text-center">
 								<Button
 									variant="outline"
 									onClick={() => setPage((p) => p + 1)}

@@ -2,10 +2,10 @@
 
 export default function AnimatedLogo() {
 	return (
-		<div className="group relative w-55 h-55 flex items-center justify-center cursor-pointer">
+		<div className="group relative flex h-55 w-55 cursor-pointer items-center justify-center">
 			{/* Outer Polygon - Orange */}
 			<svg
-				className="absolute transition-all duration-500 ease-out group-hover:-rotate-12 group-hover:-translate-x-8"
+				className="absolute transition-all duration-500 ease-out group-hover:-translate-x-8 group-hover:-rotate-12"
 				width="220"
 				height="220"
 				viewBox="0 0 256 256"
@@ -42,7 +42,7 @@ export default function AnimatedLogo() {
 
 			{/* Inner Polygon - Yellow */}
 			<svg
-				className="absolute transition-all duration-500 ease-out group-hover:rotate-12 group-hover:translate-x-8"
+				className="absolute transition-all duration-500 ease-out group-hover:translate-x-8 group-hover:rotate-12"
 				width="160"
 				height="156"
 				viewBox="0 0 262 256"

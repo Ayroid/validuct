@@ -34,7 +34,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" className={jetbrainsMono.variable} suppressHydrationWarning>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground min-h-screen`}
+				className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground min-h-screen antialiased`}
 			>
 				<SessionProvider>
 					<AuthProvider>

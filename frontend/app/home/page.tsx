@@ -4,7 +4,7 @@ import IdeaShare from "@/components/IdeaShare";
 
 export default function TimelinePage() {
 	return (
-		<div className="min-h-screen bg-background max-w-5xl mx-auto">
+		<div className="bg-background mx-auto min-h-screen max-w-5xl">
 			<Navbar />
 			<IdeaShare />
 			<Timeline />

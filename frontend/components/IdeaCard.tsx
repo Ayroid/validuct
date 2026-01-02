@@ -9,7 +9,11 @@ import VoteButtons from "./VoteButtons";
 import PinButton from "./PinButton";
 import { HiUserCircle } from "react-icons/hi2";
 
-export default function IdeaCard({ idea, showPinButton = false, onPinChange }: IdeaCardProps) {
+export default function IdeaCard({
+	idea,
+	showPinButton = false,
+	onPinChange,
+}: IdeaCardProps) {
 	const router = useRouter();
 
 	const getStatusBadgeColor = (status: string) => {
@@ -54,16 +58,16 @@ export default function IdeaCard({ idea, showPinButton = false, onPinChange }: I
 
 	return (
 		<div
-			className="bg-card border hover:shadow-md transition-shadow p-6 cursor-pointer"
+			className="bg-card cursor-pointer border p-6 transition-shadow hover:shadow-md"
 			onClick={handleCardClick}
 		>
-			<div className="flex gap-4 min-h-32">
+			<div className="flex min-h-32 gap-4">
 				{/* Content Section */}
-				<div className="flex-1 min-w-0 flex flex-col justify-between">
+				<div className="flex min-w-0 flex-1 flex-col justify-between">
 					<div>
 						{/* Header */}
-						<div className="flex items-start justify-between mb-2">
-							<h2 className="text-xl font-semibold transition-colors wrap-break-word min-w-0 pr-2">
+						<div className="mb-2 flex items-start justify-between">
+							<h2 className="min-w-0 pr-2 text-xl font-semibold wrap-break-word transition-colors">
 								{idea.heading}
 							</h2>
 						</div>
@@ -75,11 +79,11 @@ export default function IdeaCard({ idea, showPinButton = false, onPinChange }: I
 					</div>
 
 					{/* Footer */}
-					<div className="flex items-center justify-between text-sm text-muted-foreground">
+					<div className="text-muted-foreground flex items-center justify-between text-sm">
 						<div className="flex items-center gap-2">
 							<Link
 								href={`/${idea.user.username}`}
-								className="flex items-center gap-2 transition-colors font-bold"
+								className="flex items-center gap-2 font-bold transition-colors"
 								onClick={(e) => e.stopPropagation()}
 							>
 								{idea.user.profilePicture ? (
@@ -91,7 +95,7 @@ export default function IdeaCard({ idea, showPinButton = false, onPinChange }: I
 										className="rounded-full"
 									/>
 								) : (
-									<HiUserCircle className="w-6 h-6 text-muted-foreground" />
+									<HiUserCircle className="text-muted-foreground h-6 w-6" />
 								)}
 								<span className="hover:underline">{idea.user.username}</span>
 							</Link>
@@ -124,14 +128,14 @@ export default function IdeaCard({ idea, showPinButton = false, onPinChange }: I
 								href={idea.launchedLink}
 								target="_blank"
 								rel="noopener noreferrer"
-								className={`px-3 py-1 rounded-full text-xs font-medium flex gap-2 ${getStatusBadgeColor(
+								className={`flex gap-2 rounded-full px-3 py-1 text-xs font-medium ${getStatusBadgeColor(
 									"LAUNCHED"
 								)}`}
 								onClick={(e) => e.stopPropagation()}
 							>
 								Visit{" "}
 								<svg
-									className="w-4 h-4"
+									className="h-4 w-4"
 									fill="none"
 									stroke="currentColor"
 									viewBox="0 0 24 24"
@@ -146,7 +150,7 @@ export default function IdeaCard({ idea, showPinButton = false, onPinChange }: I
 							</Link>
 						)}
 						<span
-							className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
+							className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusBadgeColor(
 								idea.status
 							)}`}
 						>

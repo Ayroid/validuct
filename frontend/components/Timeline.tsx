@@ -30,7 +30,7 @@ export default function Timeline() {
 	const loadIdeas = async (reset = false, pageOverride?: number) => {
 		try {
 			setLoading(true);
-			const currentPage = reset ? 1 : pageOverride ?? page;
+			const currentPage = reset ? 1 : (pageOverride ?? page);
 			const response = await ideasApi.getIdeas({
 				timeline: activeTimeline,
 				page: currentPage,
@@ -72,10 +72,10 @@ export default function Timeline() {
 	];
 
 	return (
-		<div className="max-w-5xl mx-auto px-6 py-8">
+		<div className="mx-auto max-w-5xl px-6 py-8">
 			<div className="w-full">
 				{/* Centered Tabs */}
-				<div className="flex justify-between border-b mb-8">
+				<div className="mb-8 flex justify-between border-b">
 					{tabs.map((tab) => (
 						<button
 							key={tab.id}
@@ -83,18 +83,18 @@ export default function Timeline() {
 								setActiveTimeline(tab.id);
 								setPage(1);
 							}}
-							className={`px-12 py-3 font-medium transition-all relative flex-1 w-full${
+							className={`relative flex-1 px-12 py-3 font-medium transition-all w-full${
 								activeTimeline === tab.id
 									? "text-foreground bg-primary/10"
 									: "text-muted-foreground hover:text-foreground/80"
 							}`}
 						>
-							<span className="flex items-center gap-2 justify-center">
+							<span className="flex items-center justify-center gap-2">
 								<span>{tab.icon}</span>
 								<span>{tab.label}</span>
 							</span>
 							{activeTimeline === tab.id && (
-								<div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>
+								<div className="bg-primary absolute right-0 bottom-0 left-0 h-0.5"></div>
 							)}
 						</button>
 					))}
@@ -103,13 +103,13 @@ export default function Timeline() {
 				{/* Ideas List */}
 				<div className="space-y-4">
 					{loading && ideas.length === 0 ? (
-						<div className="flex justify-center items-center py-12">
-							<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+						<div className="flex items-center justify-center py-12">
+							<div className="border-primary h-12 w-12 animate-spin rounded-full border-b-2"></div>
 						</div>
 					) : ideas.length === 0 ? (
-						<div className="text-center py-12 text-muted-foreground">
+						<div className="text-muted-foreground py-12 text-center">
 							<p className="text-lg">No ideas found</p>
-							<p className="text-sm mt-2">Be the first to share an idea!</p>
+							<p className="mt-2 text-sm">Be the first to share an idea!</p>
 						</div>
 					) : (
 						<>
@@ -123,7 +123,7 @@ export default function Timeline() {
 									<button
 										onClick={handleLoadMore}
 										disabled={loading}
-										className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+										className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg px-6 py-3 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
 									>
 										{loading ? "Loading..." : "Load More"}
 									</button>

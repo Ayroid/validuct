@@ -193,12 +193,12 @@ export default function CommentSection({
 
 	return (
 		<div className="mt-8">
-			<h2 className="text-xl font-bold mb-6">
+			<h2 className="mb-6 text-xl font-bold">
 				{totalComments} Comment{totalComments !== 1 ? "s" : ""}
 			</h2>
 
 			{error && (
-				<div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">
+				<div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
 					{error}
 				</div>
 			)}
@@ -210,11 +210,11 @@ export default function CommentSection({
 						value={newCommentContent}
 						onChange={(e) => setNewCommentContent(e.target.value)}
 						placeholder="Share your thoughts..."
-						className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+						className="focus:ring-primary w-full resize-none rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:outline-none"
 						rows={3}
 						disabled={isSubmitting}
 					/>
-					<div className="flex justify-end mt-2">
+					<div className="mt-2 flex justify-end">
 						<Button
 							type="submit"
 							disabled={isSubmitting || !newCommentContent.trim()}
@@ -224,8 +224,8 @@ export default function CommentSection({
 					</div>
 				</form>
 			) : (
-				<div className="mb-8 p-4 bg-background border border-gray-200 rounded-lg text-center">
-					<p className="text-gray-600 mb-2">Sign in to join the conversation</p>
+				<div className="bg-background mb-8 rounded-lg border border-gray-200 p-4 text-center">
+					<p className="mb-2 text-gray-600">Sign in to join the conversation</p>
 					<Button onClick={() => router.push("/login")} size="sm">
 						Sign In
 					</Button>
@@ -234,12 +234,12 @@ export default function CommentSection({
 
 			{/* Comments List */}
 			{isLoading && page === 1 ? (
-				<div className="text-center py-8">
+				<div className="py-8 text-center">
 					<div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
 					<p className="mt-2 text-gray-600">Loading comments...</p>
 				</div>
 			) : comments.length === 0 ? (
-				<div className="text-center py-2 text-gray-500">
+				<div className="py-2 text-center text-gray-500">
 					<p>No comments yet. Be the first to share your thoughts!</p>
 				</div>
 			) : (

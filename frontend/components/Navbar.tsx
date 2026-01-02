@@ -9,8 +9,8 @@ const Navbar = async () => {
 
 	return (
 		<div className="sticky top-0 z-50">
-			<div className="max-w-5xl mx-auto px-6 py-4">
-				<div className="flex items-center justify-between bg-card rounded-full px-6 py-3 shadow-sm border">
+			<div className="mx-auto max-w-5xl px-6 py-4">
+				<div className="bg-card flex items-center justify-between rounded-full border px-6 py-3 shadow-sm">
 					<Link
 						href={session?.user ? "/home" : "/landing"}
 						className="flex items-center gap-3"
@@ -23,19 +23,19 @@ const Navbar = async () => {
 								height={40}
 								className="object-contain"
 							/>
-							<div className="flex flex-col leading-tight justify-center">
-								<h1 className="text-xl font-bold text-foreground">VALIDUCT</h1>
+							<div className="flex flex-col justify-center leading-tight">
+								<h1 className="text-foreground text-xl font-bold">VALIDUCT</h1>
 							</div>
 						</div>
 					</Link>
 
-					<div className="flex-1 flex justify-end items-center gap-2">
+					<div className="flex flex-1 items-center justify-end gap-2">
 						<ThemeToggle />
 
 						{session?.user ? (
 							<Link
 								href={`/${session.user.username}`}
-								className="p-2 hover:bg-muted rounded-full transition-colors"
+								className="hover:bg-muted rounded-full p-2 transition-colors"
 								title="Profile"
 							>
 								{session.user.profilePicture ? (
@@ -44,16 +44,16 @@ const Navbar = async () => {
 										alt="User Avatar"
 										width={32}
 										height={32}
-										className="rounded-full object-cover h-8 w-8"
+										className="h-8 w-8 rounded-full object-cover"
 									/>
 								) : (
-									<HiUserCircle className="h-8 w-8 text-muted-foreground" />
+									<HiUserCircle className="text-muted-foreground h-8 w-8" />
 								)}
 							</Link>
 						) : (
 							<Link
 								href="/login"
-								className="px-6 py-2 bg-foreground text-background rounded-full hover:bg-foreground/90 transition-colors font-medium"
+								className="bg-foreground text-background hover:bg-foreground/90 rounded-full px-6 py-2 font-medium transition-colors"
 							>
 								Sign In
 							</Link>

@@ -5,10 +5,10 @@ import { HiSparkles } from "react-icons/hi2";
 const CTA = () => {
 	return (
 		<div className="py-16">
-			<div className="max-w-5xl mx-auto px-6">
-				<div className="relative overflow-hidden rounded-3xl ">
-					<div className="relative px-8 py-12 md:py-16 text-center">
-						<div className="flex justify-center mb-6">
+			<div className="mx-auto max-w-5xl px-6">
+				<div className="relative overflow-hidden rounded-3xl">
+					<div className="relative px-8 py-12 text-center md:py-16">
+						<div className="mb-6 flex justify-center">
 							<Image
 								src="/logo.svg"
 								alt="Validuct Logo"
@@ -18,33 +18,33 @@ const CTA = () => {
 							/>
 						</div>
 
-						<h2 className="text-4xl md:text-5xl font-bold mb-4">
+						<h2 className="mb-4 text-4xl font-bold md:text-5xl">
 							Validate your idea before you build it
 						</h2>
-						<p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+						<p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-xl md:text-2xl">
 							Get honest feedback, votes, and insights from a focused
 							community—so you don't ship something nobody wants.
 						</p>
 
 						<Link
 							href="/idea/new"
-							className="inline-flex items-center gap-2 px-10 py-4 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-all duration-300 font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transform"
+							className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex transform items-center gap-2 rounded-full px-10 py-4 text-lg font-bold shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl"
 						>
 							<span>Share Your Idea</span>
 							<HiSparkles className="h-5 w-5" />
 						</Link>
 
-						<div className="mt-8 flex items-center justify-center gap-8 text-foreground text-sm font-medium">
+						<div className="text-foreground mt-8 flex items-center justify-center gap-8 text-sm font-medium">
 							<div className="flex items-center gap-2">
-								<div className="h-2 w-2 bg-(--brand-red) rounded-full shadow-sm"></div>
+								<div className="h-2 w-2 rounded-full bg-(--brand-red) shadow-sm"></div>
 								<span>Real Analytics</span>
 							</div>
 							<div className="flex items-center gap-2">
-								<div className="h-2 w-2 bg-(--brand-orange) rounded-full shadow-sm"></div>
+								<div className="h-2 w-2 rounded-full bg-(--brand-orange) shadow-sm"></div>
 								<span>Team Collaboration</span>
 							</div>
 							<div className="flex items-center gap-2">
-								<div className="h-2 w-2 bg-(--brand-yellow) rounded-full shadow-sm"></div>
+								<div className="h-2 w-2 rounded-full bg-(--brand-yellow) shadow-sm"></div>
 								<span>Community Support</span>
 							</div>
 						</div>
