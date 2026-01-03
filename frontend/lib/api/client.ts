@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getSession } from "next-auth/react";
+import { toast } from "react-toastify";
 import { API_URL } from "../constants";
 
 const apiClient = axios.create({
@@ -29,6 +30,9 @@ apiClient.interceptors.response.use(
 	(error) => {
 		if (error.response?.status === 401) {
 			window.location.href = "/login";
+		}
+		if (error.response?.status === 429) {
+			toast.error("Too many requests.");
 		}
 		return Promise.reject(error);
 	}

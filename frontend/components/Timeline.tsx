@@ -37,13 +37,6 @@ export default function Timeline() {
 				limit: 10,
 			});
 
-			console.log(
-				"Timeline Type:",
-				activeTimeline,
-				"Ideas Loaded:",
-				response.ideas.length
-			);
-
 			if (reset) {
 				setIdeas(response.ideas);
 				setPage(1);

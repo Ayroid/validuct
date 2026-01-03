@@ -37,7 +37,6 @@ export default function VoteButtons({
 			setDownvotesCount(result.downvotes_count);
 			setUserVote(result.vote.vote_type);
 
-			// Notify parent component of the update
 			if (onVoteUpdate) {
 				onVoteUpdate(
 					result.upvotes_count,
@@ -45,8 +44,7 @@ export default function VoteButtons({
 					result.vote.vote_type
 				);
 			}
-		} catch (error) {
-			console.error("Error voting:", error);
+		} catch {
 		} finally {
 			setIsLoading(false);
 		}

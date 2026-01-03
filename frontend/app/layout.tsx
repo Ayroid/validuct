@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
+import { Slide, ToastContainer } from "react-toastify";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import SessionProvider from "@/components/providers/SessionProvider";
@@ -45,6 +46,20 @@ export default function RootLayout({
 							disableTransitionOnChange
 						>
 							{children}
+							<ToastContainer
+								position="bottom-right"
+								autoClose={3000}
+								hideProgressBar
+								newestOnTop={false}
+								closeOnClick={false}
+								rtl={false}
+								pauseOnFocusLoss
+								draggable
+								pauseOnHover
+								theme="dark"
+								transition={Slide}
+								limit={3}
+							/>
 						</ThemeProvider>
 					</AuthProvider>
 				</SessionProvider>
