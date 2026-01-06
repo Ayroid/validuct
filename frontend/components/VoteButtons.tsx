@@ -25,7 +25,7 @@ export default function VoteButtons({
 	const handleVote = async (voteType: "upvote" | "downvote") => {
 		// Redirect to login if not authenticated
 		if (!session) {
-			router.push("/login");
+			router.push("/signin");
 			return;
 		}
 

@@ -1,4 +1,4 @@
-import { LoginForm } from "@/components/LoginForm";
+import { SignInForm } from "@/components/SignInForm";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -8,18 +8,18 @@ export default function LoginPage() {
 			<div className="flex w-full max-w-sm flex-col gap-6">
 				<Link
 					href="/"
-					className="flex items-center gap-2 self-center font-medium"
+					className="flex items-center gap-2 self-center font-medium text-3xl"
 				>
 					<Image
 						src="/logo.svg"
 						alt="Validuct Logo"
-						width={32}
-						height={32}
+						width={56}
+						height={56}
 						className="object-contain"
 					/>
 					Validuct
 				</Link>
-				<LoginForm />
+				<SignInForm />
 			</div>
 		</div>
 	);

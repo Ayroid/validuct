@@ -77,7 +77,7 @@ export default function EditIdeaPage() {
 	useEffect(() => {
 		// Redirect to login if not authenticated
 		if (status === "unauthenticated") {
-			router.push("/login");
+			router.push("/signin");
 			return;
 		}
 

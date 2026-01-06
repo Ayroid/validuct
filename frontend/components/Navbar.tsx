@@ -52,7 +52,7 @@ const Navbar = async () => {
 							</Link>
 						) : (
 							<Link
-								href="/login"
+								href="/signin"
 								className="bg-foreground text-background hover:bg-foreground/90 rounded-full px-6 py-2 font-medium transition-colors"
 							>
 								Sign In

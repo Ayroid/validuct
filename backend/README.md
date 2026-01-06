@@ -89,7 +89,7 @@ backend/
 ### Authentication
 
 - `POST /api/v1/auth/register` - Register new user
-- `POST /api/v1/auth/login` - Login user
+- `POST /api/v1/auth/signin` - Login user
 - `GET /api/v1/auth/me` - Get current user (protected)
 
 ## Database Schema

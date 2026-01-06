@@ -7,6 +7,8 @@ import GithubProvider from "next-auth/providers/github";
 import { API_URL } from "@/lib/constants";
 import { AuthResponse } from "@/types";
 
+const protectedRoutes = ["/home", "/idea/new", "/idea/[id]/edit"];
+
 // Extend NextAuth types for type safety
 declare module "next-auth" {
 	interface Session extends DefaultSession {
@@ -117,11 +119,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		 */
 		authorized({ auth, request: { nextUrl } }) {
 			const isLoggedIn = !!auth?.user;
-			const isOnProtectedRoute =
-				nextUrl.pathname.startsWith("/home") ||
-				nextUrl.pathname.startsWith("/idea/new") ||
-				nextUrl.pathname.endsWith("/edit");
-
+			const isOnProtectedRoute = protectedRoutes.includes(nextUrl.pathname);
 			if (isOnProtectedRoute && !isLoggedIn) {
 				return false; // Redirect to login
 			}
@@ -277,7 +275,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 	// Custom pages
 	pages: {
-		signIn: "/login",
+		signIn: "/signin",
 	},
 
 	// Session configuration

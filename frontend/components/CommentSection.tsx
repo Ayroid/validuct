@@ -72,7 +72,7 @@ export default function CommentSection({
 		e.preventDefault();
 
 		if (!session) {
-			router.push("/login");
+			router.push("/signin");
 			return;
 		}
 
@@ -99,7 +99,7 @@ export default function CommentSection({
 
 	const handleReply = (parentCommentId: string) => {
 		if (!session) {
-			router.push("/login");
+			router.push("/signin");
 			return;
 		}
 		setReplyToCommentId(parentCommentId);
@@ -226,7 +226,7 @@ export default function CommentSection({
 			) : (
 				<div className="bg-background mb-8 rounded-lg border border-gray-200 p-4 text-center">
 					<p className="mb-2 text-gray-600">Sign in to join the conversation</p>
-					<Button onClick={() => router.push("/login")} size="sm">
+					<Button onClick={() => router.push("/signin")} size="sm">
 						Sign In
 					</Button>
 				</div>

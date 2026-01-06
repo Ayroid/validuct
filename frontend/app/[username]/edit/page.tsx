@@ -70,7 +70,7 @@ export default function ProfileSettingsPage() {
 	};
 
 	if (!session?.user) {
-		router.push("/login");
+		router.push("/signin");
 		return null;
 	}
 

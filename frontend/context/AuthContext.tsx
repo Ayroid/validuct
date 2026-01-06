@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 	const logout = async () => {
 		await nextAuthSignOut({ redirect: false });
-		router.push("/login");
+		router.push("/signin");
 		router.refresh();
 	};
 

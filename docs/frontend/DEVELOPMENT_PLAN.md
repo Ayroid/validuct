@@ -197,7 +197,7 @@ UNIQUE(user_id, pin_order)
 
 ---
 
-#### `POST /auth/login`
+#### `POST /auth/signin`
 **Description:** Login existing user
 
 **Request Body:**
@@ -648,7 +648,7 @@ frontend/
 ### Key Pages/Routes
 
 1. **`/`** - Home Timeline (NEW/TRENDING/TOP tabs)
-2. **`/login`** - Login page
+2. **`/signin`** - Login page
 3. **`/register`** - Registration page
 4. **`/idea/new`** - Create new idea (protected)
 5. **`/idea/[id]`** - Idea detail with comments

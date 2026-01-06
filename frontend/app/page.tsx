@@ -14,7 +14,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default async function Home() {
 	const session = await auth();
-	const ctaLink = session ? "/home" : "/login";
+	const ctaLink = session ? "/home" : "/signin";
 
 	return (
 		<div className="bg-background mx-auto min-h-screen max-w-5xl">

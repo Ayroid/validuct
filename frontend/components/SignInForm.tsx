@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import {
@@ -15,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 
-export function LoginForm({
+export function SignInForm({
 	className,
 	...props
 }: React.ComponentProps<"div">) {
@@ -76,9 +75,9 @@ export function LoginForm({
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
 			<Card>
 				<CardHeader className="text-center">
-					<CardTitle className="text-xl">Welcome back</CardTitle>
+					<CardTitle className="text-xl">Let&apos;s Go</CardTitle>
 					<CardDescription>
-						Sign in with your Google account to continue
+						Sign in with your preferred account to continue
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
@@ -118,22 +117,8 @@ export function LoginForm({
 						<FaGithub />
 						{isGithubLoading ? "Signing in..." : "Sign in with Github"}
 					</Button>
-					<div className="mt-4 text-center text-sm">
-						Don&apos;t have an account?{" "}
-						<Link
-							href="/register"
-							className="hover:text-primary underline underline-offset-4"
-						>
-							Sign up
-						</Link>
-					</div>
 				</CardContent>
 			</Card>
-			<div className="text-muted-foreground hover:[&_a]:text-primary px-6 text-center text-xs text-balance [&_a]:underline [&_a]:underline-offset-4">
-				By clicking continue, you agree to our{" "}
-				<Link href="/terms">Terms of Service</Link> and{" "}
-				<Link href="/privacy">Privacy Policy</Link>.
-			</div>
 		</div>
 	);
 }

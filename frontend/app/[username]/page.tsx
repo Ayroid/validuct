@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, notFound } from "next/navigation";
 import { userApi, UserProfile } from "@/lib/api/users";
 import { ideasApi } from "@/lib/api/ideas";
 import { Idea } from "@/types";
@@ -42,6 +42,13 @@ export default function ProfilePage() {
 						? (err as { response?: { data?: { error?: string } } }).response
 								?.data?.error
 						: undefined;
+
+				// If user not found (404), trigger Next.js not-found page
+				if (err instanceof Error && "response" in err &&
+					(err as { response?: { status?: number } }).response?.status === 404) {
+					notFound();
+				}
+
 				setError(errorMessage || "Failed to load profile");
 			} finally {
 				setLoading(false);
