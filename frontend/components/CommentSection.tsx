@@ -6,7 +6,7 @@ import { commentsApi, Comment } from "@/lib/api/comments";
 import CommentItem from "./CommentItem";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { CommentSectionProps, ErrorResponse } from "@/types";
+import { CommentSectionProps, ErrorResponse, CommentCategory } from "@/types";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -18,14 +18,53 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+const CATEGORY_CONFIG: Record<
+	CommentCategory,
+	{ label: string; placeholder: string; shortLabel: string }
+> = {
+	PROBLEM_CLARITY: {
+		label: "Problem clarity",
+		shortLabel: "Problem",
+		placeholder: "Is the problem well-defined? Any gaps in understanding?",
+	},
+	TARGET_USERS: {
+		label: "Target users",
+		shortLabel: "Users",
+		placeholder: "Who would use this? Are the target users clear?",
+	},
+	WILLINGNESS_TO_PAY: {
+		label: "Willingness to pay",
+		shortLabel: "Pricing",
+		placeholder: "Would people pay for this? At what price point?",
+	},
+	TECHNICAL_FEASIBILITY: {
+		label: "Technical feasibility",
+		shortLabel: "Tech",
+		placeholder: "Is this technically achievable? Any blockers?",
+	},
+	FEATURE_SUGGESTION: {
+		label: "Feature suggestion",
+		shortLabel: "Feature",
+		placeholder: "What features would make this better?",
+	},
+	GENERAL: {
+		label: "General feedback",
+		shortLabel: "General",
+		placeholder: "Share your thoughts on this idea...",
+	},
+};
+
 export default function CommentSection({
 	ideaId,
 	initialCommentsCount = 0,
+	ideaOwnerId,
 }: CommentSectionProps) {
 	const { data: session } = useSession();
 	const router = useRouter();
 	const [comments, setComments] = useState<Comment[]>([]);
 	const [newCommentContent, setNewCommentContent] = useState("");
+	const [selectedCategory, setSelectedCategory] =
+		useState<CommentCategory>("GENERAL");
 	const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
 	const [replyContent, setReplyContent] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -84,10 +123,12 @@ export default function CommentSection({
 
 			const newComment = await commentsApi.createComment(ideaId, {
 				content: newCommentContent,
+				category: selectedCategory,
 			});
 
 			setComments([newComment, ...comments]);
 			setNewCommentContent("");
+			setSelectedCategory("GENERAL");
 			setTotalComments((prev) => prev + 1);
 		} catch (error: unknown) {
 			const err = error as ErrorResponse;
@@ -193,12 +234,15 @@ export default function CommentSection({
 
 	return (
 		<div className="mt-8">
-			<h2 className="mb-6 text-xl font-bold">
-				{totalComments} Comment{totalComments !== 1 ? "s" : ""}
+			<h2 className="text-foreground mb-6 text-xl font-bold">
+				Discussion{" "}
+				<span className="text-muted-foreground text-base font-normal">
+					({totalComments})
+				</span>
 			</h2>
 
 			{error && (
-				<div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+				<div className="border-destructive/30 bg-destructive/10 text-destructive mb-4 rounded-md border p-3 text-sm">
 					{error}
 				</div>
 			)}
@@ -206,15 +250,51 @@ export default function CommentSection({
 			{/* New Comment Form */}
 			{session ? (
 				<form onSubmit={handleCreateComment} className="mb-8">
+					{/* Category Selection */}
+					<div className="mb-3">
+						<p className="text-muted-foreground mb-2 text-sm">
+							What kind of feedback are you giving?
+						</p>
+						<div className="flex flex-wrap gap-2">
+							{(Object.keys(CATEGORY_CONFIG) as CommentCategory[]).map(
+								(category) => (
+									<button
+										key={category}
+										type="button"
+										onClick={() => setSelectedCategory(category)}
+										className={`rounded-full border px-3 py-1.5 text-sm transition-all ${
+											selectedCategory === category
+												? "border-primary bg-primary/10 text-primary"
+												: "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+										}`}
+									>
+										<span className="hidden sm:inline">
+											{CATEGORY_CONFIG[category].label}
+										</span>
+										<span className="sm:hidden">
+											{CATEGORY_CONFIG[category].shortLabel}
+										</span>
+									</button>
+								)
+							)}
+						</div>
+					</div>
+
 					<textarea
 						value={newCommentContent}
 						onChange={(e) => setNewCommentContent(e.target.value)}
-						placeholder="Share your thoughts..."
-						className="focus:ring-primary w-full resize-none rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:outline-none"
+						placeholder={CATEGORY_CONFIG[selectedCategory].placeholder}
+						className="bg-background text-foreground placeholder:text-muted-foreground focus:ring-primary border-border w-full resize-none rounded-lg border px-4 py-3 focus:ring-2 focus:outline-none"
 						rows={3}
 						disabled={isSubmitting}
 					/>
-					<div className="mt-2 flex justify-end">
+					<div className="mt-2 flex items-center justify-between">
+						<span className="text-muted-foreground text-xs">
+							Category:{" "}
+							<span className="text-foreground font-medium">
+								{CATEGORY_CONFIG[selectedCategory].label}
+							</span>
+						</span>
 						<Button
 							type="submit"
 							disabled={isSubmitting || !newCommentContent.trim()}
@@ -224,8 +304,10 @@ export default function CommentSection({
 					</div>
 				</form>
 			) : (
-				<div className="bg-background mb-8 rounded-lg border border-gray-200 p-4 text-center">
-					<p className="mb-2 text-gray-600">Sign in to join the conversation</p>
+				<div className="bg-card border-border mb-8 rounded-lg border p-4 text-center">
+					<p className="text-muted-foreground mb-2">
+						Sign in to join the conversation
+					</p>
 					<Button onClick={() => router.push("/signin")} size="sm">
 						Sign In
 					</Button>
@@ -235,15 +317,15 @@ export default function CommentSection({
 			{/* Comments List */}
 			{isLoading && page === 1 ? (
 				<div className="py-8 text-center">
-					<div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
-					<p className="mt-2 text-gray-600">Loading comments...</p>
+					<div className="border-primary inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+					<p className="text-muted-foreground mt-2">Loading comments...</p>
 				</div>
 			) : comments.length === 0 ? (
-				<div className="py-2 text-center text-gray-500">
-					<p>No comments yet. Be the first to share your thoughts!</p>
+				<div className="text-muted-foreground py-4 text-center">
+					<p>No comments yet. Be the first to share your validation!</p>
 				</div>
 			) : (
-				<div className="space-y-4">
+				<div className="space-y-2">
 					{comments.map((comment) => (
 						<CommentItem
 							key={comment.id}
@@ -257,6 +339,7 @@ export default function CommentSection({
 							handleSubmitReply={handleSubmitReply}
 							isSubmitting={isSubmitting}
 							setReplyToCommentId={setReplyToCommentId}
+							ideaOwnerId={ideaOwnerId}
 						/>
 					))}
 

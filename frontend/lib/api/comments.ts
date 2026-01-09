@@ -1,5 +1,5 @@
 import apiClient from "./client";
-import { ApiResponse, PaginationMeta } from "@/types";
+import { ApiResponse, PaginationMeta, CommentCategory } from "@/types";
 
 export interface Comment {
 	id: string;
@@ -7,6 +7,8 @@ export interface Comment {
 	ideaId: string;
 	parentCommentId: string | null;
 	content: string;
+	category: CommentCategory;
+	helpfulCount: number;
 	createdAt: string;
 	updatedAt: string;
 	user: {
@@ -15,6 +17,7 @@ export interface Comment {
 		profilePicture: string | null;
 	};
 	replies?: Comment[];
+	isHelpful?: boolean;
 }
 
 export interface GetCommentsParams {
@@ -31,6 +34,7 @@ export interface GetCommentsResponse {
 export interface CreateCommentData {
 	content: string;
 	parentCommentId?: string;
+	category?: CommentCategory;
 }
 
 export interface UpdateCommentData {
@@ -85,5 +89,15 @@ export const commentsApi = {
 	// Delete a comment
 	async deleteComment(commentId: string): Promise<void> {
 		await apiClient.delete(`/comments/${commentId}`);
+	},
+
+	// Toggle helpful on a comment
+	async toggleHelpful(
+		commentId: string
+	): Promise<{ isHelpful: boolean; helpfulCount: number }> {
+		const { data } = await apiClient.post<
+			ApiResponse<{ isHelpful: boolean; helpfulCount: number }>
+		>(`/comments/${commentId}/helpful`);
+		return data.data!;
 	},
 };

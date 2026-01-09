@@ -2,11 +2,39 @@
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
-import { Comment } from "@/lib/api/comments";
+import { commentsApi } from "@/lib/api/comments";
 import { Button } from "./ui/button";
 import Image from "next/image";
-import { CommentItemProps } from "@/types";
+import { CommentItemProps, CommentCategory } from "@/types";
+
+const CATEGORY_LABELS: Record<
+	CommentCategory,
+	{ label: string; color: string }
+> = {
+	PROBLEM_CLARITY: {
+		label: "Problem",
+		color: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+	},
+	TARGET_USERS: {
+		label: "Users",
+		color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+	},
+	WILLINGNESS_TO_PAY: {
+		label: "Pricing",
+		color: "bg-green-500/10 text-green-600 dark:text-green-400",
+	},
+	TECHNICAL_FEASIBILITY: {
+		label: "Tech",
+		color: "bg-orange-500/10 text-orange-600 dark:text-orange-400",
+	},
+	FEATURE_SUGGESTION: {
+		label: "Feature",
+		color: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400",
+	},
+	GENERAL: { label: "General", color: "bg-muted text-muted-foreground" },
+};
 
 export default function CommentItem({
 	comment,
@@ -20,14 +48,38 @@ export default function CommentItem({
 	handleSubmitReply,
 	isSubmitting,
 	setReplyToCommentId,
-}: CommentItemProps) {
+	ideaOwnerId,
+}: CommentItemProps & { ideaOwnerId?: string }) {
 	const { data: session } = useSession();
+	const router = useRouter();
 	const [isEditing, setIsEditing] = useState(false);
 	const [editedContent, setEditedContent] = useState(comment.content);
 	const [showReplies, setShowReplies] = useState(true);
+	const [helpfulCount, setHelpfulCount] = useState(comment.helpfulCount || 0);
+	const [isHelpful, setIsHelpful] = useState(comment.isHelpful || false);
+	const [isHelpfulLoading, setIsHelpfulLoading] = useState(false);
 
 	const isOwner = session?.user?.id === comment.userId;
+	const isIdeaOwner = comment.userId === ideaOwnerId;
 	const maxDepth = 5; // Limit nesting depth
+
+	const handleToggleHelpful = async () => {
+		if (!session) {
+			router.push("/signin");
+			return;
+		}
+
+		setIsHelpfulLoading(true);
+		try {
+			const result = await commentsApi.toggleHelpful(comment.id);
+			setIsHelpful(result.isHelpful);
+			setHelpfulCount(result.helpfulCount);
+		} catch {
+			// Silently fail
+		} finally {
+			setIsHelpfulLoading(false);
+		}
+	};
 
 	const handleEdit = () => {
 		if (editedContent.trim() && editedContent !== comment.content) {
@@ -44,12 +96,14 @@ export default function CommentItem({
 	return (
 		<div
 			className={`${
-				depth > 0 ? "mt-4 ml-8" : "mt-4"
-			} border-border border-l-2 pl-4`}
+				depth > 0 ? "mt-3 ml-6" : "mt-6 first:mt-0"
+			} border-l pl-4 ${
+				isIdeaOwner ? "border-primary/40" : "border-border/50"
+			}`}
 		>
 			<div className="flex items-start gap-3">
 				{/* User Avatar */}
-				<div className="shrink-0">
+				<div className="relative shrink-0">
 					{comment.user.profilePicture ? (
 						<Image
 							src={comment.user.profilePicture}
@@ -63,15 +117,30 @@ export default function CommentItem({
 							{comment.user.username[0].toUpperCase()}
 						</div>
 					)}
+					{isIdeaOwner && (
+						<div className="bg-primary border-background absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2" />
+					)}
 				</div>
 
 				{/* Comment Content */}
 				<div className="min-w-0 flex-1">
 					{/* User Info and Timestamp */}
-					<div className="mb-1 flex items-center gap-2">
+					<div className="mb-1 flex flex-wrap items-center gap-2">
 						<span className="text-foreground text-sm font-semibold">
 							{comment.user.username}
 						</span>
+						{isIdeaOwner && (
+							<span className="bg-primary/10 text-primary rounded-full px-2 py-0.5 text-xs font-medium">
+								Author
+							</span>
+						)}
+						{comment.category && comment.category !== "GENERAL" && (
+							<span
+								className={`rounded-full px-2 py-0.5 text-xs font-medium ${CATEGORY_LABELS[comment.category]?.color || ""}`}
+							>
+								{CATEGORY_LABELS[comment.category]?.label || comment.category}
+							</span>
+						)}
 						<span className="text-muted-foreground text-xs">
 							{formatDistanceToNow(new Date(comment.createdAt), {
 								addSuffix: true,
@@ -110,10 +179,38 @@ export default function CommentItem({
 					{/* Action Buttons */}
 					{!isEditing && (
 						<div className="mt-2 flex items-center gap-3">
+							{/* Helpful Button */}
+							<button
+								onClick={handleToggleHelpful}
+								disabled={isHelpfulLoading}
+								className={`flex cursor-pointer items-center gap-1 text-xs font-medium transition-colors ${
+									isHelpful
+										? "text-green-600 dark:text-green-400"
+										: "text-muted-foreground hover:text-green-600 dark:hover:text-green-400"
+								} ${isHelpfulLoading ? "opacity-50" : ""}`}
+							>
+								<svg
+									className="h-3.5 w-3.5"
+									fill={isHelpful ? "currentColor" : "none"}
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+									/>
+								</svg>
+								<span>
+									Helpful{helpfulCount > 0 ? ` (${helpfulCount})` : ""}
+								</span>
+							</button>
+
 							{session && depth < maxDepth && (
 								<button
 									onClick={() => onReply?.(comment.id)}
-									className="text-muted-foreground hover:text-muted-foreground/80 cursor-pointer text-xs font-medium transition-colors"
+									className="text-muted-foreground hover:text-foreground cursor-pointer text-xs font-medium transition-colors"
 								>
 									Reply
 								</button>
@@ -122,7 +219,7 @@ export default function CommentItem({
 								<>
 									<button
 										onClick={() => setIsEditing(true)}
-										className="text-muted-foreground hover:text-muted-foreground/80 cursor-pointer text-xs font-medium transition-colors"
+										className="text-muted-foreground hover:text-foreground cursor-pointer text-xs font-medium transition-colors"
 									>
 										Edit
 									</button>
@@ -130,7 +227,7 @@ export default function CommentItem({
 										onClick={() => {
 											onDelete?.(comment.id);
 										}}
-										className="text-muted-foreground hover:text-muted-foreground/80 cursor-pointer text-xs font-medium transition-colors"
+										className="text-muted-foreground hover:text-destructive cursor-pointer text-xs font-medium transition-colors"
 									>
 										Delete
 									</button>
@@ -166,6 +263,7 @@ export default function CommentItem({
 										handleSubmitReply={handleSubmitReply}
 										isSubmitting={isSubmitting}
 										setReplyToCommentId={setReplyToCommentId}
+										ideaOwnerId={ideaOwnerId}
 									/>
 								))}
 						</div>
@@ -178,7 +276,7 @@ export default function CommentItem({
 								value={replyContent}
 								onChange={(e) => setReplyContent?.(e.target.value)}
 								placeholder="Write a reply..."
-								className="w-full resize-none rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+								className="bg-background text-foreground placeholder:text-muted-foreground focus:ring-primary border-border w-full resize-none rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
 								rows={2}
 								autoFocus
 							/>

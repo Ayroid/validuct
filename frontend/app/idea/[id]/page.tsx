@@ -10,6 +10,7 @@ import { useAuth } from "@/context/AuthContext";
 import VoteButtons from "@/components/VoteButtons";
 import CommentSection from "@/components/CommentSection";
 import ShareButton from "@/components/ShareButton";
+import ValidationSignals from "@/components/ValidationSignals";
 import Image from "next/image";
 
 export default function IdeaDetailPage() {
@@ -97,7 +98,7 @@ export default function IdeaDetailPage() {
 
 	return (
 		<div className="bg-background min-h-screen">
-			<div className="mx-auto max-w-5xl px-4 py-8">
+			<div className="mx-auto max-w-5xl px-6 py-8">
 				{/* Back Button */}
 				<button
 					onClick={() => router.back()}
@@ -237,11 +238,17 @@ export default function IdeaDetailPage() {
 						</div>
 					</div>
 
+					{/* Validation Signals */}
+					<div className="mt-6">
+						<ValidationSignals ideaId={idea.id} />
+					</div>
+
 					{/* Comments Section */}
-					<div className="mt-4 border-t">
+					<div className="mt-6 border-t">
 						<CommentSection
 							ideaId={idea.id}
 							initialCommentsCount={idea.commentsCount}
+							ideaOwnerId={idea.userId}
 						/>
 					</div>
 				</div>

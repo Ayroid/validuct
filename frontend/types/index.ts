@@ -52,10 +52,20 @@ export interface Idea {
 	userVote?: "upvote" | "downvote" | null;
 }
 
+export type CommentCategory =
+	| "PROBLEM_CLARITY"
+	| "TARGET_USERS"
+	| "WILLINGNESS_TO_PAY"
+	| "TECHNICAL_FEASIBILITY"
+	| "FEATURE_SUGGESTION"
+	| "GENERAL";
+
 export interface Comment {
 	id: string;
 	userId: string;
 	content: string;
+	category: CommentCategory;
+	helpfulCount: number;
 	createdAt: string;
 	updatedAt: string;
 	user: {
@@ -63,6 +73,19 @@ export interface Comment {
 		profilePicture: string | null;
 	};
 	replies?: Comment[];
+	isHelpful?: boolean;
+}
+
+export type SignalType =
+	| "PROBLEM_REAL"
+	| "WOULD_PAY"
+	| "READY_TO_BUILD"
+	| "NEEDS_CLARITY";
+
+export interface IdeaSignals {
+	counts: Record<SignalType, number>;
+	userSignals: SignalType[];
+	total: number;
 }
 
 export interface PaginationMeta {
@@ -146,6 +169,7 @@ export interface IdeaCardProps {
 export interface CommentSectionProps {
 	ideaId: string;
 	initialCommentsCount?: number;
+	ideaOwnerId?: string;
 }
 
 export interface CommentItemProps {
@@ -160,6 +184,7 @@ export interface CommentItemProps {
 	handleSubmitReply?: (parentCommentId: string) => Promise<void>;
 	isSubmitting?: boolean;
 	setReplyToCommentId?: (commentId: string | null) => void;
+	ideaOwnerId?: string;
 }
 
 export interface VoteButtonsProps {
