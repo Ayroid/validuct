@@ -9,6 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useAuth } from "@/context/AuthContext";
 import VoteButtons from "@/components/VoteButtons";
 import CommentSection from "@/components/CommentSection";
+import ShareButton from "@/components/ShareButton";
 import Image from "next/image";
 
 export default function IdeaDetailPage() {
@@ -169,6 +170,8 @@ export default function IdeaDetailPage() {
 									>
 										{formatStatus(idea.status)}
 									</span>
+									{/* Share button - visible to everyone */}
+									<ShareButton idea={idea} size="icon" showLabel={false} />
 									{/* Edit/Delete buttons - only visible to owner */}
 									{user && user.id === idea.userId && (
 										<div className="flex items-center gap-2">
