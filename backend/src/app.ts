@@ -9,6 +9,7 @@ import userRoutes from './routes/userRoutes.js';
 import ideaRoutes from './routes/ideaRoutes.js';
 import voteRoutes from './routes/voteRoutes.js';
 import commentRoutes from './routes/commentRoutes.js';
+import signalRoutes from './routes/signalRoutes.js';
 
 const app: Application = express();
 
@@ -44,6 +45,7 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/ideas', ideaRoutes);
 app.use('/api/v1', voteRoutes);
 app.use('/api/v1', commentRoutes);
+app.use('/api/v1', signalRoutes);
 
 // Error handlers
 app.use(notFound);
