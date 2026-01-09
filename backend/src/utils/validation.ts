@@ -41,11 +41,33 @@ export const voteSchema = z.object({
 });
 
 // Comment validation schemas
+export const commentCategoryEnum = z.enum([
+  'PROBLEM_CLARITY',
+  'TARGET_USERS',
+  'WILLINGNESS_TO_PAY',
+  'TECHNICAL_FEASIBILITY',
+  'FEATURE_SUGGESTION',
+  'GENERAL',
+]);
+
 export const createCommentSchema = z.object({
   content: z.string().min(1, 'Content is required'),
   parentCommentId: z.string().uuid().optional(),
+  category: commentCategoryEnum.optional().default('GENERAL'),
 });
 
 export const updateCommentSchema = z.object({
   content: z.string().min(1, 'Content is required'),
+});
+
+// Signal validation schemas
+export const signalTypeEnum = z.enum([
+  'PROBLEM_REAL',
+  'WOULD_PAY',
+  'READY_TO_BUILD',
+  'NEEDS_CLARITY',
+]);
+
+export const toggleSignalSchema = z.object({
+  signalType: signalTypeEnum,
 });
