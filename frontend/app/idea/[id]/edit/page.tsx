@@ -158,7 +158,7 @@ export default function EditIdeaPage() {
 
 	if (loading || status === "loading") {
 		return (
-			<div className="bg-background flex min-h-screen items-center justify-center">
+			<div className="flex min-h-[50vh] items-center justify-center">
 				<div className="border-primary h-12 w-12 animate-spin rounded-full border-b-2"></div>
 			</div>
 		);
@@ -169,9 +169,8 @@ export default function EditIdeaPage() {
 	}
 
 	return (
-		<div className="bg-background min-h-screen">
-			<div className="mx-auto max-w-5xl px-4 py-8">
-				{/* Header */}
+		<div className="mx-auto max-w-5xl px-6 py-8">
+			{/* Header */}
 				<div className="mb-10">
 					<Link
 						href={`/idea/${params.id}`}
@@ -213,7 +212,7 @@ export default function EditIdeaPage() {
 								maxLength={100}
 								placeholder="A tool that helps..."
 							/>
-							<div className="text-right text-xs text-gray-400">
+							<div className="text-right text-xs text-muted-foreground">
 								{formData.heading.length}/100
 							</div>
 						</div>
@@ -234,7 +233,7 @@ export default function EditIdeaPage() {
 								placeholder="Describe your idea, the problem it solves, and who it's for..."
 								className="resize-none"
 							/>
-							<div className="text-right text-xs text-gray-400">
+							<div className="text-right text-xs text-muted-foreground">
 								{formData.description.length}/500
 							</div>
 						</div>
@@ -267,7 +266,7 @@ export default function EditIdeaPage() {
 							<div className="space-y-2">
 								<Label htmlFor="launchedLink">
 									Project Link
-									<span className="ml-1 text-gray-400">(Optional)</span>
+									<span className="ml-1 text-muted-foreground">(Optional)</span>
 								</Label>
 								<Input
 									type="url"
@@ -327,7 +326,6 @@ export default function EditIdeaPage() {
 						</div>
 					</form>
 				</div>
-			</div>
 
 			{/* Delete Confirmation Dialog */}
 			<AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

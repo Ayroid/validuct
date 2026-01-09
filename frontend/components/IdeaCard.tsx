@@ -19,11 +19,11 @@ export default function IdeaCard({
 	const getStatusBadgeColor = (status: string) => {
 		switch (status) {
 			case "VALIDATED":
-				return "bg-green-900/30 text-green-400";
+				return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
 			case "WIP":
-				return "bg-yellow-900/30 text-yellow-400";
+				return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
 			case "LAUNCHED":
-				return "bg-blue-900/30 text-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.3)]";
+				return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
 			case "DRAFT":
 			default:
 				return "bg-muted text-muted-foreground";

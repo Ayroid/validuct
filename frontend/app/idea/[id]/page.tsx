@@ -86,7 +86,7 @@ export default function IdeaDetailPage() {
 
 	if (loading) {
 		return (
-			<div className="bg-background flex min-h-screen items-center justify-center">
+			<div className="flex min-h-[50vh] items-center justify-center">
 				<div className="border-primary h-12 w-12 animate-spin rounded-full border-b-2"></div>
 			</div>
 		);
@@ -97,160 +97,158 @@ export default function IdeaDetailPage() {
 	}
 
 	return (
-		<div className="bg-background min-h-screen">
-			<div className="mx-auto max-w-5xl px-6 py-8">
-				{/* Back Button */}
-				<button
-					onClick={() => router.back()}
-					className="text-muted-foreground hover:text-foreground mb-8 inline-flex cursor-pointer items-center gap-1 text-sm"
+		<div className="mx-auto max-w-5xl px-6 py-8">
+			{/* Back Button */}
+			<button
+				onClick={() => router.back()}
+				className="text-muted-foreground hover:text-foreground mb-8 inline-flex cursor-pointer items-center gap-1 text-sm"
+			>
+				<svg
+					className="h-4 w-4"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
 				>
-					<svg
-						className="h-4 w-4"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-					>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth={2}
-							d="M15 19l-7-7 7-7"
-						/>
-					</svg>
-					<span>BACK</span>
-				</button>
+					<path
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						strokeWidth={2}
+						d="M15 19l-7-7 7-7"
+					/>
+				</svg>
+				<span>BACK</span>
+			</button>
 
-				{/* Main Content */}
-				<div className="bg-card border p-8">
-					{/* Header */}
-					<div className="mb-6 flex min-h-40 items-start justify-between">
-						<div className="flex min-w-0 flex-1 flex-col justify-between self-stretch">
-							<div className="mb-2 items-center gap-3 pr-2">
-								<h1 className="text-foreground mb-4 text-3xl font-bold wrap-break-word">
-									{idea.heading}
-								</h1>
-								<p className="text-muted-foreground leading-relaxed wrap-break-word whitespace-pre-wrap">
-									{idea.description}
-								</p>
-							</div>
-							<div className="text-muted-foreground flex items-center gap-3 text-sm">
-								<Link
-									href={`/${idea.user.username}`}
-									className="hover:text-primary flex items-center gap-2 transition-colors"
-								>
-									{idea.user.profilePicture ? (
-										<Image
-											src={idea.user.profilePicture}
-											alt={idea.user.username}
-											className="h-8 w-8 rounded-full"
-											width={32}
-											height={32}
-										/>
-									) : (
-										<div className="bg-muted text-foreground flex h-8 w-8 items-center justify-center rounded-full font-semibold">
-											{idea.user.username.charAt(0).toUpperCase()}
-										</div>
-									)}
-									<span className="font-medium">{idea.user.username}</span>
-								</Link>
-								<span>•</span>
-								<span>
-									{formatDistanceToNow(new Date(idea.createdAt), {
-										addSuffix: true,
-									})}
-								</span>
-							</div>
+			{/* Main Content */}
+			<div className="bg-card border p-8">
+				{/* Header */}
+				<div className="mb-6 flex min-h-40 items-start justify-between">
+					<div className="flex min-w-0 flex-1 flex-col justify-between self-stretch">
+						<div className="mb-2 items-center gap-3 pr-2">
+							<h1 className="text-foreground mb-4 text-3xl font-bold wrap-break-word">
+								{idea.heading}
+							</h1>
+							<p className="text-muted-foreground leading-relaxed wrap-break-word whitespace-pre-wrap">
+								{idea.description}
+							</p>
 						</div>
-						<div className="flex flex-col items-end justify-between gap-3 self-stretch">
-							<div className="flex flex-col items-end gap-3">
-								<div className="flex items-center gap-3">
-									<span
-										className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusBadgeColor(
-											idea.status
-										)}`}
-									>
-										{formatStatus(idea.status)}
-									</span>
-									{/* Share button - visible to everyone */}
-									<ShareButton idea={idea} size="icon" showLabel={false} />
-									{/* Edit/Delete buttons - only visible to owner */}
-									{user && user.id === idea.userId && (
-										<div className="flex items-center gap-2">
-											<Link
-												href={`/idea/${idea.id}/edit`}
-												className="hover:bg-muted text-primary rounded-lg p-2 transition-colors"
-												title="Edit idea"
-											>
-												<svg
-													className="h-5 w-5"
-													fill="none"
-													stroke="currentColor"
-													viewBox="0 0 24 24"
-												>
-													<path
-														strokeLinecap="round"
-														strokeLinejoin="round"
-														strokeWidth={2}
-														d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-													/>
-												</svg>
-											</Link>
-										</div>
-									)}
-								</div>
-
-								<VoteButtons
-									ideaId={idea.id}
-									initialUpvotesCount={idea.upvotesCount}
-									initialDownvotesCount={idea.downvotesCount}
-									initialUserVote={idea.userVote}
-									onVoteUpdate={handleVoteUpdate}
-								/>
-							</div>
-							{idea.launchedLink && (
-								<Link
-									href={idea.launchedLink}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									<div
-										className={`flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ${getStatusBadgeColor(
-											"LAUNCHED"
-										)}`}
-									>
-										Visit
-										<svg
-											className="h-4 w-4"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-											/>
-										</svg>
+						<div className="text-muted-foreground flex items-center gap-3 text-sm">
+							<Link
+								href={`/${idea.user.username}`}
+								className="hover:text-primary flex items-center gap-2 transition-colors"
+							>
+								{idea.user.profilePicture ? (
+									<Image
+										src={idea.user.profilePicture}
+										alt={idea.user.username}
+										className="h-8 w-8 rounded-full"
+										width={32}
+										height={32}
+									/>
+								) : (
+									<div className="bg-muted text-foreground flex h-8 w-8 items-center justify-center rounded-full font-semibold">
+										{idea.user.username.charAt(0).toUpperCase()}
 									</div>
-								</Link>
-							)}
+								)}
+								<span className="font-medium">{idea.user.username}</span>
+							</Link>
+							<span>•</span>
+							<span>
+								{formatDistanceToNow(new Date(idea.createdAt), {
+									addSuffix: true,
+								})}
+							</span>
 						</div>
 					</div>
+					<div className="flex flex-col items-end justify-between gap-3 self-stretch">
+						<div className="flex flex-col items-end gap-3">
+							<div className="flex items-center gap-3">
+								<span
+									className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusBadgeColor(
+										idea.status
+									)}`}
+								>
+									{formatStatus(idea.status)}
+								</span>
+								{/* Share button - visible to everyone */}
+								<ShareButton idea={idea} size="icon" showLabel={false} />
+								{/* Edit/Delete buttons - only visible to owner */}
+								{user && user.id === idea.userId && (
+									<div className="flex items-center gap-2">
+										<Link
+											href={`/idea/${idea.id}/edit`}
+											className="hover:bg-muted text-primary rounded-lg p-2 transition-colors"
+											title="Edit idea"
+										>
+											<svg
+												className="h-5 w-5"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
+											>
+												<path
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													strokeWidth={2}
+													d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+												/>
+											</svg>
+										</Link>
+									</div>
+								)}
+							</div>
 
-					{/* Validation Signals */}
-					<div className="mt-6">
-						<ValidationSignals ideaId={idea.id} />
+							<VoteButtons
+								ideaId={idea.id}
+								initialUpvotesCount={idea.upvotesCount}
+								initialDownvotesCount={idea.downvotesCount}
+								initialUserVote={idea.userVote}
+								onVoteUpdate={handleVoteUpdate}
+							/>
+						</div>
+						{idea.launchedLink && (
+							<Link
+								href={idea.launchedLink}
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								<div
+									className={`flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ${getStatusBadgeColor(
+										"LAUNCHED"
+									)}`}
+								>
+									Visit
+									<svg
+										className="h-4 w-4"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
+									>
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth={2}
+											d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+										/>
+									</svg>
+								</div>
+							</Link>
+						)}
 					</div>
+				</div>
 
-					{/* Comments Section */}
-					<div className="mt-6 border-t">
-						<CommentSection
-							ideaId={idea.id}
-							initialCommentsCount={idea.commentsCount}
-							ideaOwnerId={idea.userId}
-						/>
-					</div>
+				{/* Validation Signals */}
+				<div className="mt-6">
+					<ValidationSignals ideaId={idea.id} />
+				</div>
+
+				{/* Comments Section */}
+				<div className="mt-6 border-t">
+					<CommentSection
+						ideaId={idea.id}
+						initialCommentsCount={idea.commentsCount}
+						ideaOwnerId={idea.userId}
+					/>
 				</div>
 			</div>
 		</div>

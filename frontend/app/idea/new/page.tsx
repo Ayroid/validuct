@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -61,8 +61,8 @@ export default function NewIdeaPage() {
 
 	if (status === "loading") {
 		return (
-			<div className="bg-background flex min-h-screen items-center justify-center">
-				<div className="h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
+			<div className="flex min-h-[50vh] items-center justify-center">
+				<div className="border-primary h-12 w-12 animate-spin rounded-full border-b-2"></div>
 			</div>
 		);
 	}
@@ -100,8 +100,7 @@ export default function NewIdeaPage() {
 	};
 
 	return (
-		<div className="bg-background min-h-screen">
-			<div className="mx-auto max-w-5xl px-4 py-8">
+		<div className="mx-auto max-w-5xl px-6 py-8">
 				{/* Header */}
 				<div className="mb-10">
 					<Link
@@ -144,7 +143,7 @@ export default function NewIdeaPage() {
 								maxLength={100}
 								placeholder="A tool that helps..."
 							/>
-							<div className="text-right text-xs text-gray-400">
+							<div className="text-right text-xs text-muted-foreground">
 								{formData.heading.length}/100
 							</div>
 						</div>
@@ -165,7 +164,7 @@ export default function NewIdeaPage() {
 								placeholder="Describe your idea, the problem it solves, and who it's for..."
 								className="resize-none"
 							/>
-							<div className="text-right text-xs text-gray-400">
+							<div className="text-right text-xs text-muted-foreground">
 								{formData.description.length}/500
 							</div>
 						</div>
@@ -199,7 +198,7 @@ export default function NewIdeaPage() {
 								<Label htmlFor="launchedLink">
 									Project Link
 									{formData.status === "LAUNCHED" && (
-										<span className="ml-1 text-gray-400">(optional)</span>
+										<span className="ml-1 text-muted-foreground">(optional)</span>
 									)}
 								</Label>
 								<Input
@@ -252,6 +251,5 @@ export default function NewIdeaPage() {
 					</form>
 				</div>
 			</div>
-		</div>
 	);
 }

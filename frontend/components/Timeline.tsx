@@ -65,7 +65,7 @@ export default function Timeline() {
 	];
 
 	return (
-		<div className="mx-auto max-w-5xl px-6 py-8">
+		<div className="px-6 py-8">
 			<div className="w-full">
 				{/* Centered Tabs */}
 				<div className="mb-8 flex justify-between border-b">

@@ -44,8 +44,11 @@ export default function ProfilePage() {
 						: undefined;
 
 				// If user not found (404), trigger Next.js not-found page
-				if (err instanceof Error && "response" in err &&
-					(err as { response?: { status?: number } }).response?.status === 404) {
+				if (
+					err instanceof Error &&
+					"response" in err &&
+					(err as { response?: { status?: number } }).response?.status === 404
+				) {
 					notFound();
 				}
 
@@ -109,25 +112,25 @@ export default function ProfilePage() {
 
 	if (loading) {
 		return (
-			<div className="flex min-h-screen items-center justify-center">
-				<div className="text-lg">Loading profile...</div>
+			<div className="flex min-h-[50vh] items-center justify-center">
+				<div className="border-primary h-12 w-12 animate-spin rounded-full border-b-2"></div>
 			</div>
 		);
 	}
 
 	if (error || !profile) {
 		return (
-			<div className="flex min-h-screen items-center justify-center">
+			<div className="flex min-h-[50vh] items-center justify-center">
 				<div className="text-destructive">{error || "Profile not found"}</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="bg-background min-h-screen">
+		<>
 			{/* Profile Header */}
 			<div className="bg-card border-b">
-				<div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+				<div className="mx-auto max-w-5xl px-6 py-8">
 					<div className="max-w-5xl">
 						<Link
 							href="/home"
@@ -237,7 +240,7 @@ export default function ProfilePage() {
 			</div>
 
 			{/* Ideas Section */}
-			<div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+			<div className="mx-auto max-w-5xl px-6 py-8">
 				{/* Tabs */}
 				<div className="mb-6 flex items-center justify-between">
 					<div className="flex gap-4 border-b">
@@ -352,6 +355,6 @@ export default function ProfilePage() {
 					</div>
 				)}
 			</div>
-		</div>
+		</>
 	);
 }
