@@ -23,7 +23,6 @@ export default function VoteButtons({
 	const [isLoading, setIsLoading] = useState(false);
 
 	const handleVote = async (voteType: "upvote" | "downvote") => {
-		// Redirect to login if not authenticated
 		if (!session) {
 			router.push("/signin");
 			return;
@@ -53,13 +52,16 @@ export default function VoteButtons({
 	const netVotes = upvotesCount - downvotesCount;
 
 	return (
-		<div className="flex min-w-15 flex-col items-center gap-1" data-no-navigate>
+		<div
+			className="group/vote flex min-w-12 flex-col items-center gap-0.5"
+			data-no-navigate
+		>
 			<button
-				className={`transition-colors ${
+				className={`rounded p-1 transition-all duration-150 ${
 					userVote === "upvote"
-						? "text-orange-500"
-						: "text-gray-400 hover:text-orange-500"
-				} ${isLoading ? "cursor-not-allowed opacity-50" : ""}`}
+						? "text-amber-500"
+						: "text-muted-foreground/40 hover:text-amber-500/80"
+				} ${isLoading ? "cursor-not-allowed opacity-50" : "hover:bg-amber-500/10"}`}
 				onClick={(e) => {
 					e.stopPropagation();
 					handleVote("upvote");
@@ -68,7 +70,7 @@ export default function VoteButtons({
 				aria-label="Upvote"
 			>
 				<svg
-					className="h-8 w-8"
+					className="h-6 w-6"
 					fill={userVote === "upvote" ? "currentColor" : "none"}
 					stroke="currentColor"
 					viewBox="0 0 24 24"
@@ -76,18 +78,28 @@ export default function VoteButtons({
 					<path
 						strokeLinecap="round"
 						strokeLinejoin="round"
-						strokeWidth={2}
+						strokeWidth={2.5}
 						d="M5 15l7-7 7 7"
 					/>
 				</svg>
 			</button>
-			<span className="text-xl font-bold text-gray-700">{netVotes}</span>
+			<span
+				className={`text-lg font-bold tabular-nums transition-transform duration-150 group-hover/vote:scale-105 ${
+					userVote === "upvote"
+						? "text-amber-500"
+						: userVote === "downvote"
+							? "text-blue-500"
+							: "text-foreground/80"
+				}`}
+			>
+				{netVotes}
+			</span>
 			<button
-				className={`transition-colors ${
+				className={`rounded p-1 transition-all duration-150 ${
 					userVote === "downvote"
 						? "text-blue-500"
-						: "text-gray-400 hover:text-blue-500"
-				} ${isLoading ? "cursor-not-allowed opacity-50" : ""}`}
+						: "text-muted-foreground/40 hover:text-blue-500/80"
+				} ${isLoading ? "cursor-not-allowed opacity-50" : "hover:bg-blue-500/10"}`}
 				onClick={(e) => {
 					e.stopPropagation();
 					handleVote("downvote");
@@ -96,7 +108,7 @@ export default function VoteButtons({
 				aria-label="Downvote"
 			>
 				<svg
-					className="h-8 w-8"
+					className="h-6 w-6"
 					fill={userVote === "downvote" ? "currentColor" : "none"}
 					stroke="currentColor"
 					viewBox="0 0 24 24"
@@ -104,7 +116,7 @@ export default function VoteButtons({
 					<path
 						strokeLinecap="round"
 						strokeLinejoin="round"
-						strokeWidth={2}
+						strokeWidth={2.5}
 						d="M19 9l-7 7-7-7"
 					/>
 				</svg>
