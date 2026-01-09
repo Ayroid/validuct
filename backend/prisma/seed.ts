@@ -1,4 +1,4 @@
-import { PrismaClient, IdeaStatus, VoteType } from '@prisma/client';
+import { PrismaClient, IdeaStatus, VoteType, CommentCategory, SignalType } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -46,6 +46,96 @@ const userData = [
     email: 'evan@example.com',
     bio: 'DevOps engineer interested in cloud infrastructure',
     profilePicture: 'https://i.pravatar.cc/150?img=5',
+  },
+  {
+    username: 'frank_founder',
+    email: 'frank@example.com',
+    bio: 'Tech startup founder with 3 successful exits',
+    profilePicture: 'https://i.pravatar.cc/150?img=6',
+  },
+  {
+    username: 'grace_product',
+    email: 'grace@example.com',
+    bio: 'Product manager focused on user growth and retention',
+    profilePicture: 'https://i.pravatar.cc/150?img=7',
+  },
+  {
+    username: 'henry_hacker',
+    email: 'henry@example.com',
+    bio: 'Ethical hacker and cybersecurity enthusiast',
+    profilePicture: 'https://i.pravatar.cc/150?img=8',
+  },
+  {
+    username: 'iris_investor',
+    email: 'iris@example.com',
+    bio: 'Angel investor interested in early-stage startups',
+    profilePicture: 'https://i.pravatar.cc/150?img=9',
+  },
+  {
+    username: 'jack_data',
+    email: 'jack@example.com',
+    bio: 'Data scientist passionate about ML and analytics',
+    profilePicture: 'https://i.pravatar.cc/150?img=10',
+  },
+  {
+    username: 'kate_creative',
+    email: 'kate@example.com',
+    bio: 'Creative director with expertise in brand storytelling',
+    profilePicture: 'https://i.pravatar.cc/150?img=11',
+  },
+  {
+    username: 'leo_backend',
+    email: 'leo@example.com',
+    bio: 'Backend engineer specializing in distributed systems',
+    profilePicture: 'https://i.pravatar.cc/150?img=12',
+  },
+  {
+    username: 'maya_mobile',
+    email: 'maya@example.com',
+    bio: 'iOS and Android developer, React Native expert',
+    profilePicture: 'https://i.pravatar.cc/150?img=13',
+  },
+  {
+    username: 'nathan_marketer',
+    email: 'nathan@example.com',
+    bio: 'Growth marketer with focus on viral campaigns',
+    profilePicture: 'https://i.pravatar.cc/150?img=14',
+  },
+  {
+    username: 'olivia_ops',
+    email: 'olivia@example.com',
+    bio: 'Site reliability engineer, Kubernetes certified',
+    profilePicture: 'https://i.pravatar.cc/150?img=15',
+  },
+  {
+    username: 'paul_pm',
+    email: 'paul@example.com',
+    bio: 'Technical project manager, agile practitioner',
+    profilePicture: 'https://i.pravatar.cc/150?img=16',
+  },
+  {
+    username: 'quinn_qa',
+    email: 'quinn@example.com',
+    bio: 'QA engineer obsessed with test automation',
+    profilePicture: 'https://i.pravatar.cc/150?img=17',
+  },
+  {
+    username: 'rachel_researcher',
+    email: 'rachel@example.com',
+    bio: 'UX researcher helping teams build better products',
+    profilePicture: 'https://i.pravatar.cc/150?img=18',
+  },
+  {
+    username: 'steve_sales',
+    email: 'steve@example.com',
+    bio: 'B2B sales professional with SaaS experience',
+    profilePicture: 'https://i.pravatar.cc/150?img=19',
+  },
+  {
+    username: 'tina_tech',
+    email: 'tina@example.com',
+    bio: 'Tech lead passionate about clean architecture',
+    profilePicture: 'https://i.pravatar.cc/150?img=20',
   },
 ];
 
@@ -110,19 +200,141 @@ const ideaData = [
     status: IdeaStatus.DRAFT,
     launchedLink: null,
   },
+  {
+    heading: 'Blockchain-Based Supply Chain Tracker',
+    description: 'Transparent tracking system for product journeys from manufacturer to consumer. Uses blockchain to ensure authenticity and ethical sourcing.',
+    status: IdeaStatus.VALIDATED,
+    launchedLink: null,
+  },
+  {
+    heading: 'Mental Health Check-in App',
+    description: 'Daily mood tracking with AI-powered insights and therapy recommendations. Connects users with licensed therapists for virtual sessions.',
+    status: IdeaStatus.WIP,
+    launchedLink: 'https://mindcheck.io',
+  },
+  {
+    heading: 'Smart Recipe Generator',
+    description: 'Generate recipes based on ingredients you have at home. Includes nutritional information, cooking videos, and grocery delivery integration.',
+    status: IdeaStatus.DRAFT,
+    launchedLink: null,
+  },
+  {
+    heading: 'Freelancer Time Tracking Suite',
+    description: 'Comprehensive time tracking with automated invoicing, client management, and productivity analytics. Perfect for independent contractors and agencies.',
+    status: IdeaStatus.LAUNCHED,
+    launchedLink: 'https://tracktime.pro',
+  },
+  {
+    heading: 'Pet Care Coordination Platform',
+    description: 'Coordinate pet sitting, vet appointments, and pet care services. Includes health records, vaccination reminders, and emergency contacts.',
+    status: IdeaStatus.VALIDATED,
+    launchedLink: null,
+  },
+  {
+    heading: 'Language Learning Through Games',
+    description: 'Learn new languages by playing interactive story-based games. Uses spaced repetition and real conversation practice with native speakers.',
+    status: IdeaStatus.WIP,
+    launchedLink: 'https://lingo-quest.app',
+  },
+  {
+    heading: 'Carbon Footprint Calculator',
+    description: 'Track your personal carbon emissions and get actionable suggestions to reduce your environmental impact. Gamified with monthly challenges.',
+    status: IdeaStatus.DRAFT,
+    launchedLink: null,
+  },
+  {
+    heading: 'Smart Parking Finder',
+    description: 'Real-time parking availability in cities with reservation and payment features. Uses IoT sensors and crowdsourced data.',
+    status: IdeaStatus.LAUNCHED,
+    launchedLink: 'https://parkease.city',
+  },
+  {
+    heading: 'Subscription Management Hub',
+    description: 'Track all your subscriptions in one place, get cancellation reminders, and find cheaper alternatives. Helps users save money on unused services.',
+    status: IdeaStatus.VALIDATED,
+    launchedLink: null,
+  },
+  {
+    heading: 'Virtual Interior Designer',
+    description: 'AR-powered app to visualize furniture and decor in your space before buying. Includes AI recommendations based on your style preferences.',
+    status: IdeaStatus.WIP,
+    launchedLink: 'https://design-virtual.space',
+  },
+  {
+    heading: 'Neighborhood Safety Network',
+    description: 'Community-driven platform for sharing local safety updates, crime reports, and emergency alerts. Verified by local authorities.',
+    status: IdeaStatus.DRAFT,
+    launchedLink: null,
+  },
+  {
+    heading: 'Automated Meeting Scheduler',
+    description: 'AI assistant that finds optimal meeting times across time zones, sends invites, and manages rescheduling. Integrates with all major calendar apps.',
+    status: IdeaStatus.LAUNCHED,
+    launchedLink: 'https://schedulesmart.ai',
+  },
+  {
+    heading: 'Plant Care Assistant',
+    description: 'Identify plants, get care instructions, set watering reminders, and diagnose plant health issues using image recognition.',
+    status: IdeaStatus.VALIDATED,
+    launchedLink: null,
+  },
+  {
+    heading: 'Podcast Discovery Engine',
+    description: 'AI-powered podcast recommendations based on your interests and listening habits. Create custom playlists and discover niche content.',
+    status: IdeaStatus.WIP,
+    launchedLink: 'https://podtune.fm',
+  },
+  {
+    heading: 'Local Business Loyalty Platform',
+    description: 'Unified loyalty program for local businesses. Customers earn points across multiple stores and redeem rewards anywhere in the network.',
+    status: IdeaStatus.DRAFT,
+    launchedLink: null,
+  },
+  {
+    heading: 'Senior Care Coordination App',
+    description: 'Coordinate care for elderly family members across caregivers, doctors, and family. Includes medication reminders and emergency protocols.',
+    status: IdeaStatus.VALIDATED,
+    launchedLink: null,
+  },
+  {
+    heading: 'Resume Builder with AI Optimization',
+    description: 'Create ATS-friendly resumes with AI suggestions for improvements. Includes job-specific customization and cover letter generation.',
+    status: IdeaStatus.LAUNCHED,
+    launchedLink: 'https://resume-ace.jobs',
+  },
+  {
+    heading: 'Habit Stacking Companion',
+    description: 'Build new habits by stacking them onto existing routines. Uses behavioral science and community support for accountability.',
+    status: IdeaStatus.WIP,
+    launchedLink: 'https://habitstack.life',
+  },
+  {
+    heading: 'Group Gift Registry Platform',
+    description: 'Coordinate group gifts for weddings, birthdays, and special occasions. Track contributions and suggest gift ideas based on recipient interests.',
+    status: IdeaStatus.DRAFT,
+    launchedLink: null,
+  },
+  {
+    heading: 'Skill Verification Marketplace',
+    description: 'Platform where professionals can get their skills verified through practical challenges. Helps employers find genuinely qualified candidates.',
+    status: IdeaStatus.VALIDATED,
+    launchedLink: null,
+  },
 ];
 
 const commentTemplates = [
-  'This is a brilliant idea! I would definitely use this.',
-  'Have you considered adding {feature}? It could really enhance the user experience.',
-  'I love the concept, but I wonder about the monetization strategy.',
-  'This reminds me of {similarProduct}, but with a unique twist. Great work!',
-  'What technologies are you planning to use for the backend?',
-  'How do you plan to handle scalability as the user base grows?',
-  'This could solve a real problem I\'ve been facing. When do you expect to launch?',
-  'Interesting approach! Have you validated this with potential users?',
-  'I\'d be happy to beta test this when it\'s ready.',
-  'The market for this is huge. Have you looked into competitors?',
+  { category: CommentCategory.PROBLEM_CLARITY, text: 'Can you clarify who exactly faces this problem? Is it a daily pain point?' },
+  { category: CommentCategory.PROBLEM_CLARITY, text: 'How frequently do people encounter this issue? Is it worth solving?' },
+  { category: CommentCategory.TARGET_USERS, text: 'Who is your primary target audience for this solution?' },
+  { category: CommentCategory.TARGET_USERS, text: 'Have you talked to potential users about this problem?' },
+  { category: CommentCategory.WILLINGNESS_TO_PAY, text: 'Would you actually pay for this? If so, how much?' },
+  { category: CommentCategory.WILLINGNESS_TO_PAY, text: 'I\'d pay $10-20/month for this if it saves me time!' },
+  { category: CommentCategory.TECHNICAL_FEASIBILITY, text: 'What technologies are you planning to use for the backend?' },
+  { category: CommentCategory.TECHNICAL_FEASIBILITY, text: 'Have you considered using a microservices architecture for scalability?' },
+  { category: CommentCategory.FEATURE_SUGGESTION, text: 'It would be great to have mobile app support from day one.' },
+  { category: CommentCategory.FEATURE_SUGGESTION, text: 'Consider adding integration with popular tools like Slack and Discord.' },
+  { category: CommentCategory.GENERAL, text: 'This is a brilliant idea! I would definitely use this.' },
+  { category: CommentCategory.GENERAL, text: 'Interesting approach! Have you validated this with potential users?' },
 ];
 
 const replyTemplates = [
@@ -141,6 +353,8 @@ async function clearDatabase() {
   console.log('🗑️  Clearing existing data...');
 
   await prisma.pinnedIdea.deleteMany();
+  await prisma.ideaSignal.deleteMany();
+  await prisma.commentHelpful.deleteMany();
   await prisma.comment.deleteMany();
   await prisma.vote.deleteMany();
   await prisma.idea.deleteMany();
@@ -281,13 +495,15 @@ async function seedComments(users: any[], ideas: any[]) {
         randomUser = users[Math.floor(Math.random() * users.length)];
       } while (randomUser.id === idea.userId && users.length > 1);
 
-      const commentText = commentTemplates[Math.floor(Math.random() * commentTemplates.length)];
+      const commentTemplate = commentTemplates[Math.floor(Math.random() * commentTemplates.length)];
 
       const comment = await prisma.comment.create({
         data: {
           userId: randomUser.id,
           ideaId: idea.id,
-          content: commentText,
+          content: commentTemplate.text,
+          category: commentTemplate.category,
+          helpfulCount: Math.floor(Math.random() * 15), // Random helpful count
         },
       });
 
@@ -381,6 +597,99 @@ async function seedPinnedIdeas(users: any[], ideas: any[]) {
 }
 
 /**
+ * Create helpful votes for comments
+ * Users mark comments as helpful
+ */
+async function seedCommentHelpful(users: any[], comments: any[]) {
+  console.log('👍 Seeding helpful votes...');
+
+  const helpfulVotes = [];
+
+  // Each comment has a 40% chance of getting helpful votes
+  for (const comment of comments) {
+    if (Math.random() < 0.4) {
+      // 1-5 users mark it as helpful
+      const numHelpful = Math.floor(Math.random() * 5) + 1;
+
+      for (let i = 0; i < numHelpful; i++) {
+        // Pick a random user who didn't write the comment
+        let randomUser;
+        do {
+          randomUser = users[Math.floor(Math.random() * users.length)];
+        } while (randomUser.id === comment.userId && users.length > 1);
+
+        try {
+          const helpful = await prisma.commentHelpful.create({
+            data: {
+              userId: randomUser.id,
+              commentId: comment.id,
+            },
+          });
+          helpfulVotes.push(helpful);
+        } catch (error) {
+          // Skip if duplicate (user already marked as helpful)
+          continue;
+        }
+      }
+
+      // Update comment's helpful count
+      const actualCount = helpfulVotes.filter(h => h.commentId === comment.id).length;
+      await prisma.comment.update({
+        where: { id: comment.id },
+        data: { helpfulCount: actualCount },
+      });
+    }
+  }
+
+  console.log(`✅ Created ${helpfulVotes.length} helpful votes`);
+  return helpfulVotes;
+}
+
+/**
+ * Create validation signals for ideas
+ * Users signal validation for ideas
+ */
+async function seedIdeaSignals(users: any[], ideas: any[]) {
+  console.log('🎯 Seeding idea signals...');
+
+  const signals = [];
+  const signalTypes = [SignalType.PROBLEM_REAL, SignalType.WOULD_PAY, SignalType.READY_TO_BUILD, SignalType.NEEDS_CLARITY];
+
+  for (const idea of ideas) {
+    // Each idea gets signals from 2-8 random users
+    const numSignalers = Math.floor(Math.random() * 7) + 2;
+
+    for (let i = 0; i < numSignalers; i++) {
+      // Pick a random user
+      const randomUser = users[Math.floor(Math.random() * users.length)];
+
+      // Each user gives 1-3 different signal types
+      const numSignals = Math.floor(Math.random() * 3) + 1;
+      const shuffledTypes = signalTypes.sort(() => Math.random() - 0.5).slice(0, numSignals);
+
+      for (const signalType of shuffledTypes) {
+        try {
+          const signal = await prisma.ideaSignal.create({
+            data: {
+              userId: randomUser.id,
+              ideaId: idea.id,
+              signalType,
+            },
+          });
+          signals.push(signal);
+        } catch (error) {
+          // Skip if duplicate (user already gave this signal type)
+          continue;
+        }
+      }
+    }
+  }
+
+  console.log(`✅ Created ${signals.length} validation signals`);
+  return signals;
+}
+
+/**
  * Main seed function
  * Orchestrates the seeding process in the correct order
  */
@@ -397,6 +706,8 @@ async function main() {
     const votes = await seedVotes(users, ideas);
     const comments = await seedComments(users, ideas);
     const pinnedIdeas = await seedPinnedIdeas(users, ideas);
+    const helpfulVotes = await seedCommentHelpful(users, comments);
+    const signals = await seedIdeaSignals(users, ideas);
 
     // Summary
     console.log('\n📊 Seed Summary:');
@@ -405,6 +716,8 @@ async function main() {
     console.log(`   Votes: ${votes.length}`);
     console.log(`   Comments: ${comments.length}`);
     console.log(`   Pinned Ideas: ${pinnedIdeas.length}`);
+    console.log(`   Helpful Votes: ${helpfulVotes.length}`);
+    console.log(`   Validation Signals: ${signals.length}`);
     console.log('\n✨ Database seeded successfully!');
     console.log('\n📝 Default password for all users: password123');
   } catch (error) {
