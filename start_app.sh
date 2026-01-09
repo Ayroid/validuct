@@ -50,6 +50,9 @@ echo ""
 # Start database container
 docker start postgres-db
 
+# Start redis container
+docker start redis-db
+
 # Wait for database to be ready
 sleep 3
 
