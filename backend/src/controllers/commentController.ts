@@ -30,11 +30,12 @@ export class CommentController {
       }
       const userId = req.userId;
       const { id: ideaId } = req.params;
-      const { content, parentCommentId } = req.body;
+      const { content, parentCommentId, category } = req.body;
 
       const comment = await CommentService.createComment(userId, ideaId, {
         content,
         parentCommentId,
+        category: category ?? 'GENERAL',
       });
 
       res.status(201).json({
@@ -188,6 +189,41 @@ export class CommentController {
       await CommentService.deleteComment(commentId, userId);
 
       res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Handle toggling helpful status on a comment
+   *
+   * @param req - Express request object with authenticated user ID
+   * @param res - Express response object
+   * @param next - Express next function for error handling
+   *
+   * @remarks
+   * Route: POST /api/comments/:id/helpful
+   * Requires authentication
+   * Returns helpful state and count
+   */
+  static async toggleHelpful(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      if (!req.userId) {
+        throw new Error('User ID not found');
+      }
+      const userId = req.userId;
+      const { id: commentId } = req.params;
+
+      const result = await CommentService.toggleHelpful(commentId, userId);
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
     } catch (error) {
       next(error);
     }

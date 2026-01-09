@@ -36,4 +36,7 @@ router.patch(
 // Delete a comment (protected)
 router.delete('/comments/:id', protect, CommentController.deleteComment);
 
+// Toggle helpful on a comment (protected)
+router.post('/comments/:id/helpful', protect, CommentController.toggleHelpful);
+
 export default router;

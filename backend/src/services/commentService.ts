@@ -2,11 +2,23 @@ import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
 
 /**
+ * Comment category types for structured feedback
+ */
+type CommentCategory =
+  | 'PROBLEM_CLARITY'
+  | 'TARGET_USERS'
+  | 'WILLINGNESS_TO_PAY'
+  | 'TECHNICAL_FEASIBILITY'
+  | 'FEATURE_SUGGESTION'
+  | 'GENERAL';
+
+/**
  * Data required to create a new comment
  */
 interface CreateCommentData {
   content: string;
   parentCommentId?: string;
+  category?: CommentCategory;
 }
 
 /**
@@ -23,6 +35,27 @@ interface GetCommentsParams {
   ideaId: string;
   page?: number;
   limit?: number;
+}
+
+/**
+ * Comment structure with user and reply information
+ */
+interface CommentWithReplies {
+  id: string;
+  content: string;
+  userId: string;
+  ideaId: string;
+  parentCommentId: string | null;
+  category: string;
+  helpfulCount: number;
+  createdAt: Date;
+  updatedAt: Date;
+  user: {
+    id: string;
+    username: string;
+    profilePicture: string | null;
+  };
+  replies?: CommentWithReplies[];
 }
 
 /**
@@ -81,6 +114,7 @@ export class CommentService {
         ideaId,
         content: data.content,
         parentCommentId: data.parentCommentId || null,
+        category: data.category || 'GENERAL',
       },
       include: {
         user: {
@@ -118,9 +152,9 @@ export class CommentService {
    * from a flat list of comments, organizing them by parent-child relationships
    */
   private static buildCommentTree(
-    comments: any[],
+    comments: CommentWithReplies[],
     parentId: string | null = null
-  ): any[] {
+  ): CommentWithReplies[] {
     return comments
       .filter((comment) => comment.parentCommentId === parentId)
       .map((comment) => ({
@@ -378,5 +412,98 @@ export class CommentService {
     }
 
     return count;
+  }
+
+  /**
+   * Toggle a helpful vote on a comment
+   *
+   * @param commentId - The ID of the comment to vote on
+   * @param userId - The ID of the user voting
+   * @returns Object with the new helpful state and count
+   * @throws {AppError} If the comment is not found (404)
+   */
+  static async toggleHelpful(commentId: string, userId: string) {
+    // Verify comment exists
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+
+    if (!comment) {
+      throw new AppError('Comment not found', 404);
+    }
+
+    // Check if user already marked as helpful
+    const existingVote = await prisma.commentHelpful.findUnique({
+      where: {
+        userId_commentId: {
+          userId,
+          commentId,
+        },
+      },
+    });
+
+    if (existingVote) {
+      // Remove the helpful vote
+      await prisma.$transaction([
+        prisma.commentHelpful.delete({
+          where: { id: existingVote.id },
+        }),
+        prisma.comment.update({
+          where: { id: commentId },
+          data: { helpfulCount: { decrement: 1 } },
+        }),
+      ]);
+
+      const updatedComment = await prisma.comment.findUnique({
+        where: { id: commentId },
+        select: { helpfulCount: true },
+      });
+
+      return {
+        isHelpful: false,
+        helpfulCount: updatedComment?.helpfulCount || 0,
+      };
+    } else {
+      // Add the helpful vote
+      await prisma.$transaction([
+        prisma.commentHelpful.create({
+          data: { userId, commentId },
+        }),
+        prisma.comment.update({
+          where: { id: commentId },
+          data: { helpfulCount: { increment: 1 } },
+        }),
+      ]);
+
+      const updatedComment = await prisma.comment.findUnique({
+        where: { id: commentId },
+        select: { helpfulCount: true },
+      });
+
+      return {
+        isHelpful: true,
+        helpfulCount: updatedComment?.helpfulCount || 0,
+      };
+    }
+  }
+
+  /**
+   * Check if a user has marked a comment as helpful
+   *
+   * @param commentId - The ID of the comment
+   * @param userId - The ID of the user
+   * @returns Boolean indicating if the user marked it helpful
+   */
+  static async getUserHelpfulStatus(commentId: string, userId: string) {
+    const vote = await prisma.commentHelpful.findUnique({
+      where: {
+        userId_commentId: {
+          userId,
+          commentId,
+        },
+      },
+    });
+
+    return !!vote;
   }
 }
