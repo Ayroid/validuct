@@ -19,9 +19,47 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "Validuct - Validate Your Ideas",
-	description:
-		"Community-driven idea validation platform with upvoting, commenting, and status tracking",
+  metadataBase: new URL("https://validuct.com"),
+  title: "Validuct - Stop Guessing. Start Validating.",
+  description:
+    "AI-powered idea validation platform that gives builders evidence, not just opinions. Validate your product ideas with AI analysis, community feedback, and real purchase signals.",
+  keywords: [
+    "idea validation",
+    "startup validation",
+    "product validation",
+    "AI analysis",
+    "market research",
+    "competitor analysis",
+    "entrepreneur tools",
+    "build in public",
+    "Validuct",
+  ],
+  authors: [{ name: "Validuct" }],
+  openGraph: {
+    title: "Validuct - Stop Guessing. Start Validating.",
+    description:
+      "AI-powered idea validation platform that gives builders evidence, not just opinions. Validate your product ideas with AI analysis, community feedback, and real purchase signals.",
+    url: "https://validuct.com",
+    siteName: "Validuct",
+    images: [
+      {
+        url: "/validuct_og.png",
+        width: 1200,
+        height: 630,
+        alt: "Validuct - AI-Powered Idea Validation Platform",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Validuct - Stop Guessing. Start Validating.",
+    description:
+      "AI-powered idea validation platform that gives builders evidence, not just opinions. Validate your product ideas with AI analysis, community feedback, and real purchase signals.",
+    images: ["/validuct_og.png"],
+    creator: "@validuct",
+  },
 };
 
 export default function RootLayout({
