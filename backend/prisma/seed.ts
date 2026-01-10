@@ -4,8 +4,8 @@ import bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 /**
- * Database Seed Script
- * Populates all database schemas systematically while respecting relationships
+ * Production Database Seed Script
+ * Populates database with realistic startup ideas and user profiles
  *
  * Execution order:
  * 1. Users (no dependencies)
@@ -13,344 +13,301 @@ const prisma = new PrismaClient();
  * 3. Votes (depends on Users and Ideas)
  * 4. Comments (depends on Users and Ideas, self-referencing)
  * 5. PinnedIdeas (depends on Users and Ideas)
+ * 6. IdeaSignals (depends on Users and Ideas)
  */
 
-// Sample data arrays
+// Production users with realistic profiles
 const userData = [
   {
-    username: 'alice_innovator',
-    email: 'alice@example.com',
-    bio: 'Full-stack developer passionate about building SaaS products',
-    profilePicture: 'https://i.pravatar.cc/150?img=1',
+    username: 'rahul_sharma',
+    email: 'rahul.sharma@validuct.com',
+    bio: 'Product manager at a fintech startup. Building tools to help indie hackers validate faster.',
+    profilePicture: null,
   },
   {
-    username: 'bob_creator',
-    email: 'bob@example.com',
-    bio: 'Serial entrepreneur and startup advisor',
-    profilePicture: 'https://i.pravatar.cc/150?img=2',
+    username: 'priya_menon',
+    email: 'priya.menon@validuct.com',
+    bio: 'Ex-McKinsey consultant turned startup founder. Passionate about B2B SaaS.',
+    profilePicture: null,
   },
   {
-    username: 'charlie_dev',
-    email: 'charlie@example.com',
-    bio: 'Mobile app developer exploring AI and ML',
-    profilePicture: 'https://i.pravatar.cc/150?img=3',
+    username: 'arjun_nair',
+    email: 'arjun.nair@validuct.com',
+    bio: 'Full-stack developer with 8 years experience. Currently exploring AI applications.',
+    profilePicture: null,
   },
   {
-    username: 'diana_designer',
-    email: 'diana@example.com',
-    bio: 'UI/UX designer with a passion for user-centric design',
-    profilePicture: 'https://i.pravatar.cc/150?img=4',
+    username: 'sneha_patel',
+    email: 'sneha.patel@validuct.com',
+    bio: 'UX researcher helping teams build products users actually want. Previously at Razorpay.',
+    profilePicture: null,
   },
   {
-    username: 'evan_engineer',
-    email: 'evan@example.com',
-    bio: 'DevOps engineer interested in cloud infrastructure',
-    profilePicture: 'https://i.pravatar.cc/150?img=5',
+    username: 'vikram_reddy',
+    email: 'vikram.reddy@validuct.com',
+    bio: 'Serial entrepreneur. 2 exits. Angel investor in early-stage startups.',
+    profilePicture: null,
   },
   {
-    username: 'frank_founder',
-    email: 'frank@example.com',
-    bio: 'Tech startup founder with 3 successful exits',
-    profilePicture: 'https://i.pravatar.cc/150?img=6',
+    username: 'ananya_krishnan',
+    email: 'ananya.krishnan@validuct.com',
+    bio: 'Growth marketer specializing in PLG strategies. Helping startups find PMF.',
+    profilePicture: null,
   },
   {
-    username: 'grace_product',
-    email: 'grace@example.com',
-    bio: 'Product manager focused on user growth and retention',
-    profilePicture: 'https://i.pravatar.cc/150?img=7',
+    username: 'karthik_iyer',
+    email: 'karthik.iyer@validuct.com',
+    bio: 'Backend engineer at Flipkart. Building side projects on weekends.',
+    profilePicture: null,
   },
   {
-    username: 'henry_hacker',
-    email: 'henry@example.com',
-    bio: 'Ethical hacker and cybersecurity enthusiast',
-    profilePicture: 'https://i.pravatar.cc/150?img=8',
+    username: 'meera_joshi',
+    email: 'meera.joshi@validuct.com',
+    bio: 'Design lead with 10+ years in consumer apps. Mentor at design bootcamps.',
+    profilePicture: null,
   },
   {
-    username: 'iris_investor',
-    email: 'iris@example.com',
-    bio: 'Angel investor interested in early-stage startups',
-    profilePicture: 'https://i.pravatar.cc/150?img=9',
+    username: 'aditya_kumar',
+    email: 'aditya.kumar@validuct.com',
+    bio: 'ML engineer exploring GenAI applications. Building in public.',
+    profilePicture: null,
   },
   {
-    username: 'jack_data',
-    email: 'jack@example.com',
-    bio: 'Data scientist passionate about ML and analytics',
-    profilePicture: 'https://i.pravatar.cc/150?img=10',
+    username: 'divya_singh',
+    email: 'divya.singh@validuct.com',
+    bio: 'Freelance consultant helping startups with go-to-market strategy.',
+    profilePicture: null,
   },
   {
-    username: 'kate_creative',
-    email: 'kate@example.com',
-    bio: 'Creative director with expertise in brand storytelling',
-    profilePicture: 'https://i.pravatar.cc/150?img=11',
+    username: 'rohan_mehta',
+    email: 'rohan.mehta@validuct.com',
+    bio: 'DevOps engineer passionate about developer tools and automation.',
+    profilePicture: null,
   },
   {
-    username: 'leo_backend',
-    email: 'leo@example.com',
-    bio: 'Backend engineer specializing in distributed systems',
-    profilePicture: 'https://i.pravatar.cc/150?img=12',
+    username: 'neha_gupta',
+    email: 'neha.gupta@validuct.com',
+    bio: 'Content strategist and indie maker. Writing about startup validation.',
+    profilePicture: null,
   },
   {
-    username: 'maya_mobile',
-    email: 'maya@example.com',
-    bio: 'iOS and Android developer, React Native expert',
-    profilePicture: 'https://i.pravatar.cc/150?img=13',
+    username: 'sanjay_verma',
+    email: 'sanjay.verma@validuct.com',
+    bio: 'CTO at a healthtech startup. Previously built products at Amazon.',
+    profilePicture: null,
   },
   {
-    username: 'nathan_marketer',
-    email: 'nathan@example.com',
-    bio: 'Growth marketer with focus on viral campaigns',
-    profilePicture: 'https://i.pravatar.cc/150?img=14',
+    username: 'pooja_rao',
+    email: 'pooja.rao@validuct.com',
+    bio: 'Mobile developer focused on React Native. Building apps for small businesses.',
+    profilePicture: null,
   },
   {
-    username: 'olivia_ops',
-    email: 'olivia@example.com',
-    bio: 'Site reliability engineer, Kubernetes certified',
-    profilePicture: 'https://i.pravatar.cc/150?img=15',
-  },
-  {
-    username: 'paul_pm',
-    email: 'paul@example.com',
-    bio: 'Technical project manager, agile practitioner',
-    profilePicture: 'https://i.pravatar.cc/150?img=16',
-  },
-  {
-    username: 'quinn_qa',
-    email: 'quinn@example.com',
-    bio: 'QA engineer obsessed with test automation',
-    profilePicture: 'https://i.pravatar.cc/150?img=17',
-  },
-  {
-    username: 'rachel_researcher',
-    email: 'rachel@example.com',
-    bio: 'UX researcher helping teams build better products',
-    profilePicture: 'https://i.pravatar.cc/150?img=18',
-  },
-  {
-    username: 'steve_sales',
-    email: 'steve@example.com',
-    bio: 'B2B sales professional with SaaS experience',
-    profilePicture: 'https://i.pravatar.cc/150?img=19',
-  },
-  {
-    username: 'tina_tech',
-    email: 'tina@example.com',
-    bio: 'Tech lead passionate about clean architecture',
-    profilePicture: 'https://i.pravatar.cc/150?img=20',
+    username: 'amit_shah',
+    email: 'amit.shah@validuct.com',
+    bio: 'Finance professional exploring fintech opportunities. MBA from IIM-A.',
+    profilePicture: null,
   },
 ];
 
+// Production ideas - realistic startup concepts
 const ideaData = [
   {
-    heading: 'AI-Powered Code Review Assistant',
-    description: 'A tool that uses AI to automatically review code changes, suggest improvements, and catch potential bugs before they make it to production. Integrates with GitHub, GitLab, and Bitbucket.',
+    heading: 'AI-Powered Invoice Processing for SMBs',
+    description: 'Small businesses spend hours manually entering invoice data. This tool uses OCR and LLMs to automatically extract invoice details, categorize expenses, and sync with accounting software like Tally and Zoho Books. Target market: Indian SMBs processing 50-500 invoices monthly.',
     status: IdeaStatus.VALIDATED,
     launchedLink: null,
   },
   {
-    heading: 'Sustainable Shopping Marketplace',
-    description: 'An e-commerce platform focused on eco-friendly and sustainable products. Includes carbon footprint tracking for purchases and rewards users for making environmentally conscious choices.',
+    heading: 'Compliance Automation for Indian Startups',
+    description: 'Indian startups struggle with GST filings, TDS compliance, and ROC filings. Building a platform that automates compliance tracking, sends reminders, and auto-generates required documents. Integration with popular accounting tools.',
     status: IdeaStatus.WIP,
-    launchedLink: 'https://sustainable-shop-demo.com',
+    launchedLink: null,
   },
   {
-    heading: 'Remote Team Collaboration Hub',
-    description: 'A virtual workspace combining video conferencing, project management, and real-time collaboration tools. Designed specifically for distributed teams working across time zones.',
+    heading: 'Whitelabel Checkout for D2C Brands',
+    description: 'D2C brands lose 60% of customers at checkout due to poor UX and limited payment options. Building a Shopify-like checkout widget that works with any platform, supports UPI, cards, BNPL, and reduces cart abandonment.',
     status: IdeaStatus.LAUNCHED,
-    launchedLink: 'https://remotehub.io',
+    launchedLink: 'https://checkoutpro.in',
   },
   {
-    heading: 'Personal Finance AI Coach',
-    description: 'An intelligent financial advisor app that learns your spending habits and provides personalized budgeting advice, investment suggestions, and savings goals.',
-    status: IdeaStatus.DRAFT,
-    launchedLink: null,
-  },
-  {
-    heading: 'Fitness Gamification Platform',
-    description: 'Turn your fitness journey into an RPG game. Complete workouts to level up your character, join guilds with friends, and compete in fitness challenges. Integrates with popular fitness trackers.',
+    heading: 'Content Repurposing Tool for Creators',
+    description: 'Content creators spend hours reformatting content for different platforms. This tool takes a YouTube video or blog post and automatically generates Twitter threads, LinkedIn posts, Instagram carousels, and newsletter content using AI.',
     status: IdeaStatus.VALIDATED,
     launchedLink: null,
   },
   {
-    heading: 'Local Skill-Sharing Network',
-    description: 'A community platform where people can exchange skills and services without money. Learn guitar from a neighbor in exchange for teaching them to cook, for example.',
+    heading: 'Vendor Management for Restaurants',
+    description: 'Restaurant owners juggle 20+ vendors for ingredients. Building a platform to consolidate vendor communication, compare prices, track orders, and manage payments. Reduces procurement costs by 15-20%.',
     status: IdeaStatus.DRAFT,
     launchedLink: null,
   },
   {
-    heading: 'Smart Home Energy Optimizer',
-    description: 'IoT system that analyzes energy consumption patterns and automatically adjusts smart home devices to minimize electricity bills while maintaining comfort.',
+    heading: 'Async Video Updates for Remote Teams',
+    description: 'Remote teams waste hours in sync meetings that could be emails. This tool lets team members record quick video updates, automatically transcribes them, and creates a searchable knowledge base. Think Loom meets Notion.',
     status: IdeaStatus.WIP,
-    launchedLink: 'https://energysmart.tech',
+    launchedLink: null,
   },
   {
-    heading: 'Educational Content Aggregator',
-    description: 'Platform that curates and organizes free educational content from across the internet. Uses AI to create personalized learning paths based on user goals and skill levels.',
+    heading: 'Fractional CFO Marketplace',
+    description: 'Early-stage startups need financial expertise but cannot afford full-time CFOs. Building a marketplace connecting startups with experienced fractional CFOs for fundraising, financial modeling, and strategic planning.',
     status: IdeaStatus.VALIDATED,
     launchedLink: null,
   },
   {
-    heading: 'Micro-Investment App for Students',
-    description: 'Investment platform designed for students with limited funds. Start investing with as little as $1, learn about the stock market through interactive lessons.',
+    heading: 'API Monitoring for Indie Hackers',
+    description: 'Enterprise API monitoring tools are expensive and complex. Building a simple, affordable uptime monitoring solution specifically for indie hackers and small teams. $9/month for unlimited endpoints.',
     status: IdeaStatus.LAUNCHED,
-    launchedLink: 'https://studentinvest.app',
+    launchedLink: 'https://pingpanda.dev',
   },
   {
-    heading: 'Virtual Event Networking Assistant',
-    description: 'AI-powered tool that matches attendees at virtual conferences based on interests and goals, facilitating meaningful connections in online events.',
+    heading: 'Legal Document Templates for Startups',
+    description: 'Startups pay thousands for basic legal documents. Building a library of India-specific legal templates (NDAs, employment contracts, SHA, ESOP policies) vetted by lawyers. One-time purchase model.',
     status: IdeaStatus.DRAFT,
     launchedLink: null,
   },
   {
-    heading: 'Blockchain-Based Supply Chain Tracker',
-    description: 'Transparent tracking system for product journeys from manufacturer to consumer. Uses blockchain to ensure authenticity and ethical sourcing.',
+    heading: 'Customer Interview Scheduling Tool',
+    description: 'Founders spend hours scheduling customer interviews for validation. This tool integrates with calendars, sends personalized outreach, handles timezone conversion, and records/transcribes calls automatically.',
+    status: IdeaStatus.WIP,
+    launchedLink: null,
+  },
+  {
+    heading: 'Hiring Platform for Tier-2 City Talent',
+    description: 'Great developers in tier-2 cities struggle to find remote opportunities. Building a curated job board connecting them with startups looking for affordable, quality talent. Focus on verified skills over pedigree.',
     status: IdeaStatus.VALIDATED,
     launchedLink: null,
   },
   {
-    heading: 'Mental Health Check-in App',
-    description: 'Daily mood tracking with AI-powered insights and therapy recommendations. Connects users with licensed therapists for virtual sessions.',
-    status: IdeaStatus.WIP,
-    launchedLink: 'https://mindcheck.io',
-  },
-  {
-    heading: 'Smart Recipe Generator',
-    description: 'Generate recipes based on ingredients you have at home. Includes nutritional information, cooking videos, and grocery delivery integration.',
-    status: IdeaStatus.DRAFT,
-    launchedLink: null,
-  },
-  {
-    heading: 'Freelancer Time Tracking Suite',
-    description: 'Comprehensive time tracking with automated invoicing, client management, and productivity analytics. Perfect for independent contractors and agencies.',
+    heading: 'Subscription Analytics Dashboard',
+    description: 'SaaS founders need to track MRR, churn, LTV, and other metrics. Building a simple dashboard that connects to Stripe, Razorpay, and Chargebee to provide real-time subscription analytics without complex setup.',
     status: IdeaStatus.LAUNCHED,
-    launchedLink: 'https://tracktime.pro',
+    launchedLink: 'https://metricsview.io',
   },
   {
-    heading: 'Pet Care Coordination Platform',
-    description: 'Coordinate pet sitting, vet appointments, and pet care services. Includes health records, vaccination reminders, and emergency contacts.',
+    heading: 'AI Meeting Notes for Sales Teams',
+    description: 'Sales reps forget to log call notes in CRM. Building an AI tool that joins sales calls, transcribes conversations, extracts action items, and auto-updates Salesforce/HubSpot records.',
     status: IdeaStatus.VALIDATED,
     launchedLink: null,
   },
   {
-    heading: 'Language Learning Through Games',
-    description: 'Learn new languages by playing interactive story-based games. Uses spaced repetition and real conversation practice with native speakers.',
-    status: IdeaStatus.WIP,
-    launchedLink: 'https://lingo-quest.app',
-  },
-  {
-    heading: 'Carbon Footprint Calculator',
-    description: 'Track your personal carbon emissions and get actionable suggestions to reduce your environmental impact. Gamified with monthly challenges.',
+    heading: 'Influencer CRM for D2C Brands',
+    description: 'D2C brands struggle to manage influencer relationships at scale. Building a CRM specifically for influencer marketing - track conversations, campaigns, payments, and ROI in one place.',
     status: IdeaStatus.DRAFT,
     launchedLink: null,
   },
   {
-    heading: 'Smart Parking Finder',
-    description: 'Real-time parking availability in cities with reservation and payment features. Uses IoT sensors and crowdsourced data.',
+    heading: 'Code Review Bot for Small Teams',
+    description: 'Small engineering teams lack bandwidth for thorough code reviews. Building an AI-powered bot that reviews PRs, suggests improvements, catches security issues, and enforces coding standards.',
+    status: IdeaStatus.WIP,
+    launchedLink: null,
+  },
+  {
+    heading: 'Customer Success Platform for SMB SaaS',
+    description: 'Enterprise customer success tools cost $50k+/year. Building an affordable alternative for SMB SaaS companies to track customer health, automate onboarding, and reduce churn.',
+    status: IdeaStatus.VALIDATED,
+    launchedLink: null,
+  },
+  {
+    heading: 'No-Code Internal Tools Builder',
+    description: 'Startups waste engineering time building internal dashboards. Building a Retool alternative focused on Indian market - supports Indian databases, rupee formatting, and local integrations.',
+    status: IdeaStatus.DRAFT,
+    launchedLink: null,
+  },
+  {
+    heading: 'Equity Management for Startups',
+    description: 'Managing cap tables and ESOP grants is complex and error-prone. Building Carta for Indian startups - handle equity allocation, vesting schedules, and compliance with Indian regulations.',
+    status: IdeaStatus.WIP,
+    launchedLink: null,
+  },
+  {
+    heading: 'Automated Social Proof Widgets',
+    description: 'Showing recent purchases and reviews increases conversion by 15%. Building embeddable widgets that display real-time social proof - recent sales, customer reviews, and visitor counts.',
     status: IdeaStatus.LAUNCHED,
-    launchedLink: 'https://parkease.city',
+    launchedLink: 'https://proofstack.co',
   },
   {
-    heading: 'Subscription Management Hub',
-    description: 'Track all your subscriptions in one place, get cancellation reminders, and find cheaper alternatives. Helps users save money on unused services.',
+    heading: 'Developer Portfolio Generator',
+    description: 'Developers need portfolios but hate building them. This tool pulls data from GitHub, reads READMEs, and auto-generates a beautiful portfolio site. One-click deploy to custom domains.',
     status: IdeaStatus.VALIDATED,
     launchedLink: null,
   },
   {
-    heading: 'Virtual Interior Designer',
-    description: 'AR-powered app to visualize furniture and decor in your space before buying. Includes AI recommendations based on your style preferences.',
-    status: IdeaStatus.WIP,
-    launchedLink: 'https://design-virtual.space',
-  },
-  {
-    heading: 'Neighborhood Safety Network',
-    description: 'Community-driven platform for sharing local safety updates, crime reports, and emergency alerts. Verified by local authorities.',
+    heading: 'Referral Program Infrastructure',
+    description: 'Every SaaS wants referral programs but building one is complex. Building referral infrastructure as a service - handle tracking, rewards, fraud detection, and payouts.',
     status: IdeaStatus.DRAFT,
     launchedLink: null,
   },
   {
-    heading: 'Automated Meeting Scheduler',
-    description: 'AI assistant that finds optimal meeting times across time zones, sends invites, and manages rescheduling. Integrates with all major calendar apps.',
-    status: IdeaStatus.LAUNCHED,
-    launchedLink: 'https://schedulesmart.ai',
-  },
-  {
-    heading: 'Plant Care Assistant',
-    description: 'Identify plants, get care instructions, set watering reminders, and diagnose plant health issues using image recognition.',
+    heading: 'Technical Writing as a Service',
+    description: 'Startups need documentation but developers hate writing it. Marketplace connecting startups with technical writers who specialize in API docs, guides, and tutorials.',
     status: IdeaStatus.VALIDATED,
     launchedLink: null,
   },
   {
-    heading: 'Podcast Discovery Engine',
-    description: 'AI-powered podcast recommendations based on your interests and listening habits. Create custom playlists and discover niche content.',
+    heading: 'Slack Bot for Customer Feedback',
+    description: 'Product teams miss customer feedback scattered across channels. Building a Slack bot that aggregates feedback from Intercom, emails, and social media, then categorizes and prioritizes it.',
     status: IdeaStatus.WIP,
-    launchedLink: 'https://podtune.fm',
+    launchedLink: null,
   },
   {
-    heading: 'Local Business Loyalty Platform',
-    description: 'Unified loyalty program for local businesses. Customers earn points across multiple stores and redeem rewards anywhere in the network.',
+    heading: 'Landing Page A/B Testing Tool',
+    description: 'Most A/B testing tools require developer involvement. Building a no-code tool specifically for landing pages - visual editor, automatic traffic splitting, and conversion tracking.',
     status: IdeaStatus.DRAFT,
     launchedLink: null,
   },
   {
-    heading: 'Senior Care Coordination App',
-    description: 'Coordinate care for elderly family members across caregivers, doctors, and family. Includes medication reminders and emergency protocols.',
-    status: IdeaStatus.VALIDATED,
-    launchedLink: null,
-  },
-  {
-    heading: 'Resume Builder with AI Optimization',
-    description: 'Create ATS-friendly resumes with AI suggestions for improvements. Includes job-specific customization and cover letter generation.',
-    status: IdeaStatus.LAUNCHED,
-    launchedLink: 'https://resume-ace.jobs',
-  },
-  {
-    heading: 'Habit Stacking Companion',
-    description: 'Build new habits by stacking them onto existing routines. Uses behavioral science and community support for accountability.',
-    status: IdeaStatus.WIP,
-    launchedLink: 'https://habitstack.life',
-  },
-  {
-    heading: 'Group Gift Registry Platform',
-    description: 'Coordinate group gifts for weddings, birthdays, and special occasions. Track contributions and suggest gift ideas based on recipient interests.',
-    status: IdeaStatus.DRAFT,
-    launchedLink: null,
-  },
-  {
-    heading: 'Skill Verification Marketplace',
-    description: 'Platform where professionals can get their skills verified through practical challenges. Helps employers find genuinely qualified candidates.',
+    heading: 'Founder Matching Platform',
+    description: 'Solo founders struggle to find co-founders. Building a matching platform based on complementary skills, working styles, and startup interests. Think dating app for co-founders.',
     status: IdeaStatus.VALIDATED,
     launchedLink: null,
   },
 ];
 
+// Realistic comments with proper categories
 const commentTemplates = [
-  { category: CommentCategory.PROBLEM_CLARITY, text: 'Can you clarify who exactly faces this problem? Is it a daily pain point?' },
-  { category: CommentCategory.PROBLEM_CLARITY, text: 'How frequently do people encounter this issue? Is it worth solving?' },
-  { category: CommentCategory.TARGET_USERS, text: 'Who is your primary target audience for this solution?' },
-  { category: CommentCategory.TARGET_USERS, text: 'Have you talked to potential users about this problem?' },
-  { category: CommentCategory.WILLINGNESS_TO_PAY, text: 'Would you actually pay for this? If so, how much?' },
-  { category: CommentCategory.WILLINGNESS_TO_PAY, text: 'I\'d pay $10-20/month for this if it saves me time!' },
-  { category: CommentCategory.TECHNICAL_FEASIBILITY, text: 'What technologies are you planning to use for the backend?' },
-  { category: CommentCategory.TECHNICAL_FEASIBILITY, text: 'Have you considered using a microservices architecture for scalability?' },
-  { category: CommentCategory.FEATURE_SUGGESTION, text: 'It would be great to have mobile app support from day one.' },
-  { category: CommentCategory.FEATURE_SUGGESTION, text: 'Consider adding integration with popular tools like Slack and Discord.' },
-  { category: CommentCategory.GENERAL, text: 'This is a brilliant idea! I would definitely use this.' },
-  { category: CommentCategory.GENERAL, text: 'Interesting approach! Have you validated this with potential users?' },
+  { category: CommentCategory.PROBLEM_CLARITY, text: 'I have experienced this exact problem at my previous company. We used to spend 3+ hours weekly just on this task.' },
+  { category: CommentCategory.PROBLEM_CLARITY, text: 'Can you share more about how often users face this issue? Is it a daily frustration or occasional inconvenience?' },
+  { category: CommentCategory.PROBLEM_CLARITY, text: 'This resonates. I have talked to 5+ people in my network who deal with this regularly.' },
+  { category: CommentCategory.PROBLEM_CLARITY, text: 'The problem is real, but I wonder if it is painful enough for people to switch from their current solution.' },
+  { category: CommentCategory.TARGET_USERS, text: 'Have you considered focusing on a specific vertical first? Might help with GTM.' },
+  { category: CommentCategory.TARGET_USERS, text: 'Who is your ideal customer profile? SMBs, enterprises, or startups?' },
+  { category: CommentCategory.TARGET_USERS, text: 'I think this would work better for mid-market companies rather than early-stage startups.' },
+  { category: CommentCategory.TARGET_USERS, text: 'The target audience seems too broad. Consider niching down to a specific industry initially.' },
+  { category: CommentCategory.WILLINGNESS_TO_PAY, text: 'I would pay $50-100/month for this if it saves me 5+ hours weekly.' },
+  { category: CommentCategory.WILLINGNESS_TO_PAY, text: 'This seems like a vitamin rather than a painkiller. Would people actually pay for this?' },
+  { category: CommentCategory.WILLINGNESS_TO_PAY, text: 'At my company, we have budget for tools like this. Would definitely evaluate.' },
+  { category: CommentCategory.WILLINGNESS_TO_PAY, text: 'Price sensitivity might be high in this market. Have you validated pricing with potential customers?' },
+  { category: CommentCategory.TECHNICAL_FEASIBILITY, text: 'The core tech seems straightforward. Main challenge will be integrations.' },
+  { category: CommentCategory.TECHNICAL_FEASIBILITY, text: 'Have you thought about the data privacy implications? GDPR compliance could be complex.' },
+  { category: CommentCategory.TECHNICAL_FEASIBILITY, text: 'Building this as a browser extension might be easier to start with than a full platform.' },
+  { category: CommentCategory.TECHNICAL_FEASIBILITY, text: 'AI accuracy will be crucial here. How are you planning to handle edge cases?' },
+  { category: CommentCategory.FEATURE_SUGGESTION, text: 'Would love to see Slack integration - that is where my team lives.' },
+  { category: CommentCategory.FEATURE_SUGGESTION, text: 'Consider adding a mobile app. A lot of decision-makers are on mobile.' },
+  { category: CommentCategory.FEATURE_SUGGESTION, text: 'Team collaboration features would make this much more valuable for organizations.' },
+  { category: CommentCategory.FEATURE_SUGGESTION, text: 'An API would be great for power users who want to integrate with their existing workflows.' },
+  { category: CommentCategory.GENERAL, text: 'Solid idea. Have you talked to potential customers yet?' },
+  { category: CommentCategory.GENERAL, text: 'Interesting approach. How is this different from existing solutions?' },
+  { category: CommentCategory.GENERAL, text: 'Love the focus on a specific market. That will help with positioning.' },
+  { category: CommentCategory.GENERAL, text: 'The timing feels right for this. Good luck with the build!' },
 ];
 
 const replyTemplates = [
-  'Thanks for the feedback! I\'ll definitely consider that.',
-  'Great question! I\'m currently exploring different options for that.',
-  'I appreciate your interest! I\'ll keep you updated on the progress.',
-  'That\'s a valid concern. Let me think about how to address it.',
-  'You\'re right, I need to do more research on that aspect.',
+  'Great point! We are actually planning to add that in our v2 roadmap.',
+  'Thanks for the feedback. This is exactly the kind of insight we need.',
+  'We have validated this with 15+ potential customers and 80% said they would pay.',
+  'Good question - we are starting with startups and expanding to SMBs later.',
+  'We are building the MVP with this in mind. Early users will help us refine it.',
+  'Appreciate the perspective. We will factor this into our pricing strategy.',
+  'That is our hypothesis too. Planning to run a pilot program next month.',
+  'The technical architecture supports this. Just a matter of prioritization.',
 ];
 
 /**
  * Clear all existing data from the database
- * Deletes in reverse dependency order to avoid foreign key constraints
  */
 async function clearDatabase() {
-  console.log('🗑️  Clearing existing data...');
+  console.log('Clearing existing data...');
 
   await prisma.pinnedIdea.deleteMany();
   await prisma.ideaSignal.deleteMany();
@@ -360,17 +317,19 @@ async function clearDatabase() {
   await prisma.idea.deleteMany();
   await prisma.user.deleteMany();
 
-  console.log('✅ Database cleared');
+  console.log('Database cleared');
 }
 
 /**
- * Create users with hashed passwords
+ * Create users with secure passwords
  */
 async function seedUsers() {
-  console.log('👥 Seeding users...');
+  console.log('Seeding users...');
 
-  const defaultPassword = 'password123'; // In production, use individual secure passwords
-  const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+  // In production, each user should have a unique secure password
+  // This is a seed script - actual users will reset passwords on first login
+  const defaultPassword = process.env.SEED_USER_PASSWORD || 'ValiductProd2024!';
+  const hashedPassword = await bcrypt.hash(defaultPassword, 12);
 
   const users = [];
 
@@ -384,58 +343,72 @@ async function seedUsers() {
     users.push(createdUser);
   }
 
-  console.log(`✅ Created ${users.length} users`);
+  console.log(`Created ${users.length} users`);
   return users;
 }
 
 /**
- * Create ideas for users
- * Distributes ideas among users in a realistic pattern
+ * Create ideas with realistic distribution
  */
 async function seedIdeas(users: any[]) {
-  console.log('💡 Seeding ideas...');
+  console.log('Seeding ideas...');
 
   const ideas = [];
 
   for (let i = 0; i < ideaData.length; i++) {
-    // Distribute ideas among users
     const userIndex = i % users.length;
     const user = users[userIndex];
+
+    // Realistic engagement based on status
+    let upvotes, downvotes;
+    switch (ideaData[i].status) {
+      case IdeaStatus.LAUNCHED:
+        upvotes = Math.floor(Math.random() * 80) + 40;
+        downvotes = Math.floor(Math.random() * 8);
+        break;
+      case IdeaStatus.VALIDATED:
+        upvotes = Math.floor(Math.random() * 50) + 20;
+        downvotes = Math.floor(Math.random() * 10);
+        break;
+      case IdeaStatus.WIP:
+        upvotes = Math.floor(Math.random() * 30) + 10;
+        downvotes = Math.floor(Math.random() * 8);
+        break;
+      default: // DRAFT
+        upvotes = Math.floor(Math.random() * 15) + 3;
+        downvotes = Math.floor(Math.random() * 5);
+    }
 
     const idea = await prisma.idea.create({
       data: {
         ...ideaData[i],
         userId: user.id,
-        // Add some realistic engagement counts
-        upvotesCount: Math.floor(Math.random() * 50) + 5,
-        downvotesCount: Math.floor(Math.random() * 10),
-        commentsCount: 0, // Will be updated when comments are created
+        upvotesCount: upvotes,
+        downvotesCount: downvotes,
+        commentsCount: 0,
       },
     });
 
     ideas.push(idea);
   }
 
-  console.log(`✅ Created ${ideas.length} ideas`);
+  console.log(`Created ${ideas.length} ideas`);
   return ideas;
 }
 
 /**
  * Create votes for ideas
- * Each user votes on random ideas (excluding their own)
  */
 async function seedVotes(users: any[], ideas: any[]) {
-  console.log('🗳️  Seeding votes...');
+  console.log('Seeding votes...');
 
   const votes = [];
 
   for (const user of users) {
-    // Each user votes on 3-7 random ideas
-    const numVotes = Math.floor(Math.random() * 5) + 3;
+    const numVotes = Math.floor(Math.random() * 8) + 4;
     const votedIdeaIds = new Set<string>();
 
     for (let i = 0; i < numVotes; i++) {
-      // Pick a random idea that the user hasn't voted on and didn't create
       let randomIdea;
       let attempts = 0;
 
@@ -447,12 +420,10 @@ async function seedVotes(users: any[], ideas: any[]) {
         attempts < 20
       );
 
-      if (attempts >= 20) continue; // Skip if we can't find a suitable idea
+      if (attempts >= 20) continue;
 
       votedIdeaIds.add(randomIdea.id);
-
-      // 70% upvote, 30% downvote
-      const voteType = Math.random() < 0.7 ? VoteType.UPVOTE : VoteType.DOWNVOTE;
+      const voteType = Math.random() < 0.75 ? VoteType.UPVOTE : VoteType.DOWNVOTE;
 
       try {
         const vote = await prisma.vote.create({
@@ -464,32 +435,38 @@ async function seedVotes(users: any[], ideas: any[]) {
         });
         votes.push(vote);
       } catch (error) {
-        // Skip if duplicate vote (shouldn't happen, but just in case)
         continue;
       }
     }
   }
 
-  console.log(`✅ Created ${votes.length} votes`);
+  console.log(`Created ${votes.length} votes`);
   return votes;
 }
 
 /**
  * Create comments and replies
- * Creates both top-level comments and nested replies
  */
 async function seedComments(users: any[], ideas: any[]) {
-  console.log('💬 Seeding comments...');
+  console.log('Seeding comments...');
 
   const comments = [];
 
-  // Create top-level comments
   for (const idea of ideas) {
-    // Each idea gets 2-5 comments
-    const numComments = Math.floor(Math.random() * 4) + 2;
+    // More comments on validated/launched ideas
+    let numComments;
+    switch (idea.status) {
+      case IdeaStatus.LAUNCHED:
+        numComments = Math.floor(Math.random() * 5) + 4;
+        break;
+      case IdeaStatus.VALIDATED:
+        numComments = Math.floor(Math.random() * 4) + 3;
+        break;
+      default:
+        numComments = Math.floor(Math.random() * 3) + 1;
+    }
 
     for (let i = 0; i < numComments; i++) {
-      // Pick a random user who didn't create the idea
       let randomUser;
       do {
         randomUser = users[Math.floor(Math.random() * users.length)];
@@ -503,7 +480,7 @@ async function seedComments(users: any[], ideas: any[]) {
           ideaId: idea.id,
           content: commentTemplate.text,
           category: commentTemplate.category,
-          helpfulCount: Math.floor(Math.random() * 15), // Random helpful count
+          helpfulCount: Math.floor(Math.random() * 12),
         },
       });
 
@@ -511,15 +488,13 @@ async function seedComments(users: any[], ideas: any[]) {
     }
   }
 
-  // Create replies to some comments (30% of comments get a reply)
+  // Create replies (40% of comments get author replies)
   const topLevelComments = [...comments];
   for (const comment of topLevelComments) {
-    if (Math.random() < 0.3) {
-      // Get the idea to find its author
+    if (Math.random() < 0.4) {
       const idea = ideas.find(i => i.id === comment.ideaId);
       if (!idea) continue;
 
-      // Idea author replies to the comment
       const replyText = replyTemplates[Math.floor(Math.random() * replyTemplates.length)];
 
       const reply = await prisma.comment.create({
@@ -535,7 +510,7 @@ async function seedComments(users: any[], ideas: any[]) {
     }
   }
 
-  // Update comment counts for ideas
+  // Update comment counts
   for (const idea of ideas) {
     const commentCount = comments.filter(c => c.ideaId === idea.id).length;
     await prisma.idea.update({
@@ -544,32 +519,24 @@ async function seedComments(users: any[], ideas: any[]) {
     });
   }
 
-  console.log(`✅ Created ${comments.length} comments (including replies)`);
+  console.log(`Created ${comments.length} comments`);
   return comments;
 }
 
 /**
- * Create pinned ideas for users
- * Each user pins 1-3 of their own ideas
+ * Create pinned ideas
  */
 async function seedPinnedIdeas(users: any[], ideas: any[]) {
-  console.log('📌 Seeding pinned ideas...');
+  console.log('Seeding pinned ideas...');
 
   const pinnedIdeas = [];
 
   for (const user of users) {
-    // Get user's ideas
     const userIdeas = ideas.filter(idea => idea.userId === user.id);
-
     if (userIdeas.length === 0) continue;
 
-    // Pin 1-3 ideas (or all if user has fewer)
-    const numToPin = Math.min(
-      Math.floor(Math.random() * 3) + 1,
-      userIdeas.length
-    );
-
-    // Shuffle user's ideas and take the first numToPin
+    // Pin 1-2 ideas per user
+    const numToPin = Math.min(Math.floor(Math.random() * 2) + 1, userIdeas.length);
     const shuffled = userIdeas.sort(() => Math.random() - 0.5);
     const ideasToPin = shuffled.slice(0, numToPin);
 
@@ -582,7 +549,6 @@ async function seedPinnedIdeas(users: any[], ideas: any[]) {
         },
       });
 
-      // Update idea to mark it as pinned
       await prisma.idea.update({
         where: { id: ideasToPin[i].id },
         data: { isPinned: true },
@@ -592,31 +558,36 @@ async function seedPinnedIdeas(users: any[], ideas: any[]) {
     }
   }
 
-  console.log(`✅ Created ${pinnedIdeas.length} pinned ideas`);
+  console.log(`Created ${pinnedIdeas.length} pinned ideas`);
   return pinnedIdeas;
 }
 
 /**
  * Create helpful votes for comments
- * Users mark comments as helpful
  */
 async function seedCommentHelpful(users: any[], comments: any[]) {
-  console.log('👍 Seeding helpful votes...');
+  console.log('Seeding helpful votes...');
 
   const helpfulVotes = [];
 
-  // Each comment has a 40% chance of getting helpful votes
   for (const comment of comments) {
-    if (Math.random() < 0.4) {
-      // 1-5 users mark it as helpful
-      const numHelpful = Math.floor(Math.random() * 5) + 1;
+    if (Math.random() < 0.35) {
+      const numHelpful = Math.floor(Math.random() * 4) + 1;
+      const helpfulUserIds = new Set<string>();
 
       for (let i = 0; i < numHelpful; i++) {
-        // Pick a random user who didn't write the comment
         let randomUser;
+        let attempts = 0;
         do {
           randomUser = users[Math.floor(Math.random() * users.length)];
-        } while (randomUser.id === comment.userId && users.length > 1);
+          attempts++;
+        } while (
+          (randomUser.id === comment.userId || helpfulUserIds.has(randomUser.id)) &&
+          attempts < 10
+        );
+
+        if (attempts >= 10) continue;
+        helpfulUserIds.add(randomUser.id);
 
         try {
           const helpful = await prisma.commentHelpful.create({
@@ -627,12 +598,10 @@ async function seedCommentHelpful(users: any[], comments: any[]) {
           });
           helpfulVotes.push(helpful);
         } catch (error) {
-          // Skip if duplicate (user already marked as helpful)
           continue;
         }
       }
 
-      // Update comment's helpful count
       const actualCount = helpfulVotes.filter(h => h.commentId === comment.id).length;
       await prisma.comment.update({
         where: { id: comment.id },
@@ -641,33 +610,51 @@ async function seedCommentHelpful(users: any[], comments: any[]) {
     }
   }
 
-  console.log(`✅ Created ${helpfulVotes.length} helpful votes`);
+  console.log(`Created ${helpfulVotes.length} helpful votes`);
   return helpfulVotes;
 }
 
 /**
  * Create validation signals for ideas
- * Users signal validation for ideas
  */
 async function seedIdeaSignals(users: any[], ideas: any[]) {
-  console.log('🎯 Seeding idea signals...');
+  console.log('Seeding idea signals...');
 
   const signals = [];
   const signalTypes = [SignalType.PROBLEM_REAL, SignalType.WOULD_PAY, SignalType.READY_TO_BUILD, SignalType.NEEDS_CLARITY];
 
   for (const idea of ideas) {
-    // Each idea gets signals from 2-8 random users
-    const numSignalers = Math.floor(Math.random() * 7) + 2;
+    // More signals on validated/launched ideas
+    let numSignalers;
+    switch (idea.status) {
+      case IdeaStatus.LAUNCHED:
+        numSignalers = Math.floor(Math.random() * 6) + 5;
+        break;
+      case IdeaStatus.VALIDATED:
+        numSignalers = Math.floor(Math.random() * 5) + 3;
+        break;
+      default:
+        numSignalers = Math.floor(Math.random() * 3) + 1;
+    }
+
+    const signaledUserIds = new Set<string>();
 
     for (let i = 0; i < numSignalers; i++) {
-      // Pick a random user
-      const randomUser = users[Math.floor(Math.random() * users.length)];
+      let randomUser;
+      let attempts = 0;
+      do {
+        randomUser = users[Math.floor(Math.random() * users.length)];
+        attempts++;
+      } while (signaledUserIds.has(randomUser.id) && attempts < 10);
 
-      // Each user gives 1-3 different signal types
-      const numSignals = Math.floor(Math.random() * 3) + 1;
-      const shuffledTypes = signalTypes.sort(() => Math.random() - 0.5).slice(0, numSignals);
+      if (attempts >= 10) continue;
+      signaledUserIds.add(randomUser.id);
 
-      for (const signalType of shuffledTypes) {
+      // Each user gives 1-2 signal types
+      const numSignals = Math.floor(Math.random() * 2) + 1;
+      const selectedTypes = [...signalTypes].sort(() => Math.random() - 0.5).slice(0, numSignals);
+
+      for (const signalType of selectedTypes) {
         try {
           const signal = await prisma.ideaSignal.create({
             data: {
@@ -678,29 +665,25 @@ async function seedIdeaSignals(users: any[], ideas: any[]) {
           });
           signals.push(signal);
         } catch (error) {
-          // Skip if duplicate (user already gave this signal type)
           continue;
         }
       }
     }
   }
 
-  console.log(`✅ Created ${signals.length} validation signals`);
+  console.log(`Created ${signals.length} validation signals`);
   return signals;
 }
 
 /**
  * Main seed function
- * Orchestrates the seeding process in the correct order
  */
 async function main() {
-  console.log('🌱 Starting database seed...\n');
+  console.log('Starting production database seed...\n');
 
   try {
-    // Clear existing data
     await clearDatabase();
 
-    // Seed data in dependency order
     const users = await seedUsers();
     const ideas = await seedIdeas(users);
     const votes = await seedVotes(users, ideas);
@@ -709,24 +692,23 @@ async function main() {
     const helpfulVotes = await seedCommentHelpful(users, comments);
     const signals = await seedIdeaSignals(users, ideas);
 
-    // Summary
-    console.log('\n📊 Seed Summary:');
-    console.log(`   Users: ${users.length}`);
-    console.log(`   Ideas: ${ideas.length}`);
-    console.log(`   Votes: ${votes.length}`);
-    console.log(`   Comments: ${comments.length}`);
-    console.log(`   Pinned Ideas: ${pinnedIdeas.length}`);
-    console.log(`   Helpful Votes: ${helpfulVotes.length}`);
-    console.log(`   Validation Signals: ${signals.length}`);
-    console.log('\n✨ Database seeded successfully!');
-    console.log('\n📝 Default password for all users: password123');
+    console.log('\nSeed Summary:');
+    console.log(`  Users: ${users.length}`);
+    console.log(`  Ideas: ${ideas.length}`);
+    console.log(`  Votes: ${votes.length}`);
+    console.log(`  Comments: ${comments.length}`);
+    console.log(`  Pinned Ideas: ${pinnedIdeas.length}`);
+    console.log(`  Helpful Votes: ${helpfulVotes.length}`);
+    console.log(`  Validation Signals: ${signals.length}`);
+    console.log('\nDatabase seeded successfully!');
+    console.log('\nNote: Default password is set via SEED_USER_PASSWORD env var or "ValiductProd2024!"');
+    console.log('Users should reset their passwords on first login.');
   } catch (error) {
-    console.error('❌ Error seeding database:', error);
+    console.error('Error seeding database:', error);
     throw error;
   }
 }
 
-// Execute seed
 main()
   .catch((error) => {
     console.error(error);
