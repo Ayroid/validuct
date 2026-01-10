@@ -34,7 +34,7 @@ export default function ProfilePage() {
 
 	// New state-based sorting
 	const [activeTab, setActiveTab] = useState<"all" | "pinned">("all");
-	const [sortBy, setSortBy] = useState<ProfileSortMode>("needs_action");
+	const [sortBy, setSortBy] = useState<ProfileSortMode>("all");
 	const [page, setPage] = useState(1);
 	const [pagination, setPagination] = useState<PaginationMeta | null>(null);
 
@@ -167,7 +167,7 @@ export default function ProfilePage() {
 
 				{/* Tabs and Sort Controls */}
 				<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-					<div className="flex gap-1 rounded-lg bg-muted/50 p-1">
+					<div className="bg-muted/50 flex gap-1 rounded-lg p-1">
 						<button
 							onClick={() => {
 								setActiveTab("all");
@@ -202,6 +202,16 @@ export default function ProfilePage() {
 					{activeTab === "all" && isOwnProfile && (
 						<div className="flex gap-2">
 							<Button
+								variant={sortBy === "all" ? "default" : "outline"}
+								onClick={() => {
+									setSortBy("all");
+									setPage(1);
+								}}
+								size="sm"
+							>
+								All
+							</Button>
+							<Button
 								variant={sortBy === "needs_action" ? "default" : "outline"}
 								onClick={() => {
 									setSortBy("needs_action");
@@ -220,16 +230,6 @@ export default function ProfilePage() {
 								size="sm"
 							>
 								Ready to Build
-							</Button>
-							<Button
-								variant={sortBy === "all" ? "default" : "outline"}
-								onClick={() => {
-									setSortBy("all");
-									setPage(1);
-								}}
-								size="sm"
-							>
-								All
 							</Button>
 						</div>
 					)}

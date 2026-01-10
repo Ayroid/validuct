@@ -146,46 +146,44 @@ export default function ProfileIdeaCard({
 				</div>
 
 				{/* Content Section */}
-				<div className="flex min-w-0 flex-1 flex-col justify-between">
+				<div className="flex min-w-0 flex-1 flex-col gap-3">
 					{/* Title Row with Validation State */}
-					<div className="flex flex-col gap-3">
-						<div className="flex items-start justify-between gap-3">
-							<h2 className="text-foreground group-hover:text-primary min-w-0 flex-1 text-base font-semibold leading-snug transition-colors sm:text-lg">
-								{idea.heading}
-							</h2>
-							<div className="flex shrink-0 items-center gap-2">
-								{showPinButton && (
-									<PinButton
-										ideaId={idea.id}
-										ideaUserId={idea.userId}
-										initialIsPinned={false}
-										onPinChange={onPinChange}
-									/>
-								)}
-								<span
-									className={`rounded-full px-2.5 py-1 text-xs font-medium ${stateConfig.bgColor} ${stateConfig.textColor}`}
-								>
-									{stateConfig.label}
-								</span>
-							</div>
+					<div className="flex items-start justify-between gap-3">
+						<h2 className="text-foreground group-hover:text-primary line-clamp-2 min-w-0 flex-1 text-base font-semibold leading-snug transition-colors sm:text-lg">
+							{idea.heading}
+						</h2>
+						<div className="flex shrink-0 items-center gap-2">
+							{showPinButton && (
+								<PinButton
+									ideaId={idea.id}
+									ideaUserId={idea.userId}
+									initialIsPinned={false}
+									onPinChange={onPinChange}
+								/>
+							)}
+							<span
+								className={`rounded-full px-2.5 py-1 text-xs font-medium ${stateConfig.bgColor} ${stateConfig.textColor}`}
+							>
+								{stateConfig.label}
+							</span>
 						</div>
-
-						{/* Description */}
-						<p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed">
-							{idea.description}
-						</p>
 					</div>
 
+					{/* Description */}
+					<p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed">
+						{idea.description}
+					</p>
+
 					{/* Meta Row */}
-					<div className="text-muted-foreground mt-4 flex items-center justify-between text-xs">
+					<div className="text-muted-foreground flex items-center justify-between pt-1 text-xs">
 						<div className="flex items-center gap-2">
-							<span><span className="font-mono">{idea.commentsCount}</span> comments</span>
-							<span className="text-border">·</span>
 							<span>
 								{formatDistanceToNow(new Date(idea.createdAt), {
 									addSuffix: false,
 								}).replace(/^(about|over|almost) /, "")}
 							</span>
+							<span className="text-border">·</span>
+							<span><span className="font-mono">{idea.commentsCount}</span> comments</span>
 						</div>
 						<span className="text-muted-foreground font-medium transition-colors group-hover:text-primary">
 							View →
