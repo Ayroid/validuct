@@ -16,14 +16,14 @@ export default function IdeaCard({
 }: IdeaCardProps) {
 	const router = useRouter();
 
-	const getStatusBadgeColor = (status: string) => {
+	const getStatusBadgeStyles = (status: string) => {
 		switch (status) {
 			case "VALIDATED":
-				return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+				return "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400";
 			case "WIP":
-				return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
+				return "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400";
 			case "LAUNCHED":
-				return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+				return "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-400";
 			case "DRAFT":
 			default:
 				return "bg-muted text-muted-foreground";
@@ -56,13 +56,13 @@ export default function IdeaCard({
 	};
 
 	return (
-		<div
-			className="group border-border/50 bg-card cursor-pointer border p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-500/30 hover:shadow-lg hover:shadow-amber-500/5"
+		<article
+			className="group bg-card cursor-pointer rounded-xl border border-border/50 p-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover hover:border-border"
 			onClick={handleCardClick}
 		>
-			<div className="flex gap-5">
-				{/* Voting Column - Far Left */}
-				<div className="flex shrink-0 items-start pt-1">
+			<div className="flex gap-4">
+				{/* Voting Column */}
+				<div className="flex shrink-0 items-start pt-0.5">
 					<VoteButtons
 						ideaId={idea.id}
 						initialUpvotesCount={idea.upvotesCount}
@@ -72,76 +72,74 @@ export default function IdeaCard({
 				</div>
 
 				{/* Content Section */}
-				<div className="flex min-w-0 flex-1 flex-col justify-between gap-3 py-1">
+				<div className="flex min-w-0 flex-1 flex-col gap-3">
 					{/* Title Row with Status */}
-					<div className="flex min-w-0 flex-1 flex-col gap-3">
-						<div className="flex items-start justify-between gap-3">
-							<h2 className="text-foreground/95 group-hover:text-foreground line-clamp-2 min-w-0 flex-1 text-lg leading-snug font-semibold transition-colors">
-								{idea.heading}
-							</h2>
-							<div className="flex shrink-0 items-center gap-2">
-								{showPinButton && (
-									<PinButton
-										ideaId={idea.id}
-										ideaUserId={idea.userId}
-										initialIsPinned={idea.isPinned}
-										onPinChange={onPinChange}
-									/>
-								)}
-								<span
-									className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusBadgeColor(
-										idea.status
-									)}`}
-								>
-									{formatStatus(idea.status)}
-								</span>
-							</div>
+					<div className="flex items-start justify-between gap-3">
+						<h2 className="text-foreground group-hover:text-primary line-clamp-2 min-w-0 flex-1 text-base font-semibold leading-snug transition-colors sm:text-lg">
+							{idea.heading}
+						</h2>
+						<div className="flex shrink-0 items-center gap-2">
+							{showPinButton && (
+								<PinButton
+									ideaId={idea.id}
+									ideaUserId={idea.userId}
+									initialIsPinned={idea.isPinned}
+									onPinChange={onPinChange}
+								/>
+							)}
+							<span
+								className={`rounded-full px-2.5 py-1 text-xs font-medium ${getStatusBadgeStyles(
+									idea.status
+								)}`}
+							>
+								{formatStatus(idea.status)}
+							</span>
 						</div>
-
-						{/* Description - Single Line, Lower Contrast */}
-						<p className="text-muted-foreground/70 line-clamp-1 text-sm">
-							{idea.description}
-						</p>
 					</div>
 
-					{/* Meta Row - Low Visual Priority */}
-					<div className="text-muted-foreground/60 flex items-center justify-between text-xs">
-						<div className="flex items-center gap-1.5">
+					{/* Description */}
+					<p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed">
+						{idea.description}
+					</p>
+
+					{/* Meta Row */}
+					<div className="text-muted-foreground flex items-center justify-between pt-1 text-xs">
+						<div className="flex items-center gap-2">
 							<Link
 								href={`/${idea.user.username}`}
-								className="hover:text-foreground/80 flex items-center gap-1.5 transition-colors"
+								className="hover:text-foreground flex items-center gap-1.5 transition-colors"
 								onClick={(e) => e.stopPropagation()}
 							>
 								{idea.user.profilePicture ? (
 									<Image
 										src={idea.user.profilePicture}
 										alt={idea.user.username}
-										width={16}
-										height={16}
+										width={18}
+										height={18}
 										className="rounded-full"
 									/>
 								) : (
-									<HiUserCircle className="h-4 w-4" />
+									<HiUserCircle className="h-4.5 w-4.5" />
 								)}
 								<span className="font-medium hover:underline">
 									{idea.user.username}
 								</span>
 							</Link>
-							<span className="text-muted-foreground/40">·</span>
+							<span className="text-border">·</span>
 							<span>
 								{formatDistanceToNow(new Date(idea.createdAt), {
 									addSuffix: false,
 								}).replace(/^(about|over|almost) /, "")}
 							</span>
-							<span className="text-muted-foreground/40">·</span>
-							<span>{idea.commentsCount} comments</span>
+							<span className="text-border">·</span>
+							<span><span className="font-mono">{idea.commentsCount}</span> comments</span>
 						</div>
-						<span className="text-muted-foreground/70 font-medium transition-colors group-hover:text-amber-500/80">
+						<span className="text-muted-foreground font-medium transition-colors group-hover:text-primary">
 							View →
 						</span>
 					</div>
 				</div>
 			</div>
-		</div>
+		</article>
 	);
 }

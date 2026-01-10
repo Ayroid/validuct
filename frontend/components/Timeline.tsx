@@ -41,7 +41,14 @@ export default function Timeline() {
 				setIdeas(response.ideas);
 				setPage(1);
 			} else {
-				setIdeas((prev) => [...prev, ...response.ideas]);
+				// Deduplicate ideas to prevent duplicate key errors
+				setIdeas((prev) => {
+					const existingIds = new Set(prev.map((idea) => idea.id));
+					const newIdeas = response.ideas.filter(
+						(idea) => !existingIds.has(idea.id)
+					);
+					return [...prev, ...newIdeas];
+				});
 			}
 
 			setHasMore(currentPage < response.pagination.total_pages);

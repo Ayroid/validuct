@@ -8,34 +8,32 @@ const Navbar = async () => {
 	const session = await auth();
 
 	return (
-		<div className="sticky top-0 z-50">
-			<div className="mx-auto max-w-5xl px-6 py-4">
-				<div className="bg-card flex items-center justify-between rounded-full border px-6 py-3 shadow-sm">
+		<header className="sticky top-0 z-50 w-full">
+			<div className="mx-auto max-w-5xl px-4 py-4 sm:px-6">
+				<nav className="bg-card/95 flex items-center justify-between rounded-2xl border border-border/50 px-4 py-3 shadow-card backdrop-blur-sm sm:px-6">
 					<Link
 						href={session?.user ? "/home" : "/landing"}
-						className="flex items-center gap-3"
+						className="flex items-center gap-3 transition-opacity hover:opacity-80"
 					>
-						<div className="flex items-center gap-3">
-							<Image
-								src="/logo.svg"
-								alt="Validuct Logo"
-								width={40}
-								height={40}
-								className="object-contain"
-							/>
-							<div className="flex flex-col justify-center leading-tight">
-								<h1 className="text-foreground text-xl font-bold">VALIDUCT</h1>
-							</div>
-						</div>
+						<Image
+							src="/logo.svg"
+							alt="Validuct Logo"
+							width={36}
+							height={36}
+							className="object-contain"
+						/>
+						<span className="text-foreground text-lg font-bold tracking-tight sm:text-xl">
+							VALIDUCT
+						</span>
 					</Link>
 
-					<div className="flex flex-1 items-center justify-end gap-2">
+					<div className="flex items-center gap-2">
 						<ThemeToggle />
 
 						{session?.user ? (
 							<Link
 								href={`/${session.user.username}`}
-								className="hover:bg-muted rounded-full p-2 transition-colors"
+								className="hover:bg-muted rounded-full p-1.5 transition-colors"
 								title="Profile"
 							>
 								{session.user.profilePicture ? (
@@ -44,7 +42,7 @@ const Navbar = async () => {
 										alt="User Avatar"
 										width={32}
 										height={32}
-										className="h-8 w-8 rounded-full object-cover"
+										className="h-8 w-8 rounded-full object-cover ring-2 ring-border"
 									/>
 								) : (
 									<HiUserCircle className="text-muted-foreground h-8 w-8" />
@@ -53,15 +51,15 @@ const Navbar = async () => {
 						) : (
 							<Link
 								href="/signin"
-								className="bg-foreground text-background hover:bg-foreground/90 rounded-full px-6 py-2 font-medium transition-colors"
+								className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
 							>
 								Sign In
 							</Link>
 						)}
 					</div>
-				</div>
+				</nav>
 			</div>
-		</div>
+		</header>
 	);
 };
 

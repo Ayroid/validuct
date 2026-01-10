@@ -84,7 +84,7 @@ export default function VoteButtons({
 				</svg>
 			</button>
 			<span
-				className={`text-lg font-bold tabular-nums transition-transform duration-150 group-hover/vote:scale-105 ${
+				className={`font-mono text-lg font-bold transition-transform duration-150 group-hover/vote:scale-105 ${
 					userVote === "upvote"
 						? "text-amber-500"
 						: userVote === "downvote"

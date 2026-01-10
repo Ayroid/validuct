@@ -12,6 +12,7 @@ import CommentSection from "@/components/CommentSection";
 import ShareButton from "@/components/ShareButton";
 import ValidationSignals from "@/components/ValidationSignals";
 import Image from "next/image";
+import { HiArrowLeft, HiPencilSquare, HiArrowTopRightOnSquare } from "react-icons/hi2";
 
 export default function IdeaDetailPage() {
 	const params = useParams();
@@ -41,14 +42,14 @@ export default function IdeaDetailPage() {
 		}
 	};
 
-	const getStatusBadgeColor = (status: string) => {
+	const getStatusBadgeStyles = (status: string) => {
 		switch (status) {
 			case "VALIDATED":
-				return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+				return "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400";
 			case "WIP":
-				return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
+				return "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400";
 			case "LAUNCHED":
-				return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+				return "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-400";
 			case "DRAFT":
 			default:
 				return "bg-muted text-muted-foreground";
@@ -97,62 +98,66 @@ export default function IdeaDetailPage() {
 	}
 
 	return (
-		<div className="mx-auto max-w-5xl px-6 py-8">
+		<div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
 			{/* Back Button */}
 			<button
 				onClick={() => router.back()}
-				className="text-muted-foreground hover:text-foreground mb-8 inline-flex cursor-pointer items-center gap-1 text-sm"
+				className="text-muted-foreground hover:text-foreground mb-6 inline-flex cursor-pointer items-center gap-1.5 text-sm font-medium transition-colors"
 			>
-				<svg
-					className="h-4 w-4"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						strokeWidth={2}
-						d="M15 19l-7-7 7-7"
-					/>
-				</svg>
+				<HiArrowLeft className="h-4 w-4" />
 				<span>BACK</span>
 			</button>
 
-			{/* Main Content */}
-			<div className="bg-card border p-8">
+			{/* Main Content Card */}
+			<article className="bg-card rounded-xl border border-border/50 p-6 shadow-card sm:p-8">
 				{/* Header */}
-				<div className="mb-6 flex min-h-40 items-start justify-between">
-					<div className="flex min-w-0 flex-1 flex-col justify-between self-stretch">
-						<div className="mb-2 items-center gap-3 pr-2">
-							<h1 className="text-foreground mb-4 text-3xl font-bold wrap-break-word">
-								{idea.heading}
-							</h1>
-							<p className="text-muted-foreground leading-relaxed wrap-break-word whitespace-pre-wrap">
-								{idea.description}
-							</p>
+				<header className="mb-6 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+					<div className="flex min-w-0 flex-1 flex-col gap-4">
+						<div className="flex flex-wrap items-center gap-3">
+							<span
+								className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusBadgeStyles(idea.status)}`}
+							>
+								{formatStatus(idea.status)}
+							</span>
+							{idea.launchedLink && (
+								<Link
+									href={idea.launchedLink}
+									target="_blank"
+									rel="noopener noreferrer"
+									className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors ${getStatusBadgeStyles("LAUNCHED")} hover:opacity-80`}
+								>
+									Visit
+									<HiArrowTopRightOnSquare className="h-3.5 w-3.5" />
+								</Link>
+							)}
 						</div>
+						<h1 className="text-foreground text-2xl font-bold leading-tight sm:text-3xl">
+							{idea.heading}
+						</h1>
+						<p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+							{idea.description}
+						</p>
 						<div className="text-muted-foreground flex items-center gap-3 text-sm">
 							<Link
 								href={`/${idea.user.username}`}
-								className="hover:text-primary flex items-center gap-2 transition-colors"
+								className="hover:text-foreground flex items-center gap-2 transition-colors"
 							>
 								{idea.user.profilePicture ? (
 									<Image
 										src={idea.user.profilePicture}
 										alt={idea.user.username}
-										className="h-8 w-8 rounded-full"
-										width={32}
-										height={32}
+										className="h-7 w-7 rounded-full ring-2 ring-border"
+										width={28}
+										height={28}
 									/>
 								) : (
-									<div className="bg-muted text-foreground flex h-8 w-8 items-center justify-center rounded-full font-semibold">
+									<div className="bg-muted text-foreground flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold ring-2 ring-border">
 										{idea.user.username.charAt(0).toUpperCase()}
 									</div>
 								)}
 								<span className="font-medium">{idea.user.username}</span>
 							</Link>
-							<span>•</span>
+							<span className="text-border">·</span>
 							<span>
 								{formatDistanceToNow(new Date(idea.createdAt), {
 									addSuffix: true,
@@ -160,97 +165,45 @@ export default function IdeaDetailPage() {
 							</span>
 						</div>
 					</div>
-					<div className="flex flex-col items-end justify-between gap-3 self-stretch">
-						<div className="flex flex-col items-end gap-3">
-							<div className="flex items-center gap-3">
-								<span
-									className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusBadgeColor(
-										idea.status
-									)}`}
-								>
-									{formatStatus(idea.status)}
-								</span>
-								{/* Share button - visible to everyone */}
-								<ShareButton idea={idea} size="icon" showLabel={false} />
-								{/* Edit/Delete buttons - only visible to owner */}
-								{user && user.id === idea.userId && (
-									<div className="flex items-center gap-2">
-										<Link
-											href={`/idea/${idea.id}/edit`}
-											className="hover:bg-muted text-primary rounded-lg p-2 transition-colors"
-											title="Edit idea"
-										>
-											<svg
-												className="h-5 w-5"
-												fill="none"
-												stroke="currentColor"
-												viewBox="0 0 24 24"
-											>
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													strokeWidth={2}
-													d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-												/>
-											</svg>
-										</Link>
-									</div>
-								)}
-							</div>
 
-							<VoteButtons
-								ideaId={idea.id}
-								initialUpvotesCount={idea.upvotesCount}
-								initialDownvotesCount={idea.downvotesCount}
-								initialUserVote={idea.userVote}
-								onVoteUpdate={handleVoteUpdate}
-							/>
-						</div>
-						{idea.launchedLink && (
-							<Link
-								href={idea.launchedLink}
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								<div
-									className={`flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ${getStatusBadgeColor(
-										"LAUNCHED"
-									)}`}
+					{/* Actions Column */}
+					<div className="flex flex-row items-center gap-3 sm:flex-col sm:items-end">
+						<div className="flex items-center gap-2">
+							<ShareButton idea={idea} size="icon" showLabel={false} />
+							{user && user.id === idea.userId && (
+								<Link
+									href={`/idea/${idea.id}/edit`}
+									className="hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg p-2 transition-colors"
+									title="Edit idea"
 								>
-									Visit
-									<svg
-										className="h-4 w-4"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={2}
-											d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-										/>
-									</svg>
-								</div>
-							</Link>
-						)}
+									<HiPencilSquare className="h-5 w-5" />
+								</Link>
+							)}
+						</div>
+						<VoteButtons
+							ideaId={idea.id}
+							initialUpvotesCount={idea.upvotesCount}
+							initialDownvotesCount={idea.downvotesCount}
+							initialUserVote={idea.userVote}
+							onVoteUpdate={handleVoteUpdate}
+						/>
 					</div>
-				</div>
+				</header>
 
 				{/* Validation Signals */}
-				<div className="mt-6">
+				<section className="mt-8">
 					<ValidationSignals ideaId={idea.id} />
-				</div>
+				</section>
 
 				{/* Comments Section */}
-				<div className="mt-6 border-t">
+				<section className="mt-8 border-t border-border/50 pt-8">
 					<CommentSection
 						ideaId={idea.id}
 						initialCommentsCount={idea.commentsCount}
 						ideaOwnerId={idea.userId}
 					/>
-				</div>
-			</div>
+				</section>
+			</article>
 		</div>
 	);
 }

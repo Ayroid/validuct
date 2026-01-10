@@ -18,31 +18,27 @@ import {
 
 const VALIDATION_STATE_CONFIG: Record<
 	ValidationState,
-	{ label: string; color: string; bgColor: string; borderColor: string }
+	{ label: string; bgColor: string; textColor: string }
 > = {
 	NEEDS_ACTION: {
 		label: "Needs Action",
-		color: "text-orange-400",
-		bgColor: "bg-orange-500/20",
-		borderColor: "border-orange-500/30",
+		bgColor: "bg-amber-100 dark:bg-amber-500/20",
+		textColor: "text-amber-700 dark:text-amber-400",
 	},
 	READY_TO_BUILD: {
 		label: "Ready to Build",
-		color: "text-green-400",
-		bgColor: "bg-green-500/20",
-		borderColor: "border-green-500/30",
+		bgColor: "bg-emerald-100 dark:bg-emerald-500/20",
+		textColor: "text-emerald-700 dark:text-emerald-400",
 	},
 	VALIDATED: {
 		label: "Validated",
-		color: "text-blue-400",
-		bgColor: "bg-blue-500/20",
-		borderColor: "border-blue-500/30",
+		bgColor: "bg-sky-100 dark:bg-sky-500/20",
+		textColor: "text-sky-700 dark:text-sky-400",
 	},
 	NEUTRAL: {
 		label: "Gathering Signals",
-		color: "text-muted-foreground",
 		bgColor: "bg-muted",
-		borderColor: "border-border",
+		textColor: "text-muted-foreground",
 	},
 };
 
@@ -65,34 +61,33 @@ export default function ProfileIdeaCard({
 		}
 	};
 
-	// Calculate total positive signals
 	const totalPositiveSignals =
 		idea.signals.problemReal +
 		idea.signals.wouldPay +
 		idea.signals.readyToBuild;
 
 	return (
-		<div
-			className="group border-border/50 bg-card cursor-pointer rounded-lg border p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-500/30 hover:shadow-lg hover:shadow-amber-500/5"
+		<article
+			className="group bg-card cursor-pointer rounded-xl border border-border/50 p-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover hover:border-border"
 			onClick={handleCardClick}
 		>
 			<div className="flex gap-5">
 				{/* Signal Snapshot Column */}
-				<div className="flex w-20 shrink-0 flex-col items-center justify-center">
-					<div className="border-border/30 bg-background/50 rounded-lg border p-4 text-center">
-						<div className="text-foreground text-2xl font-bold">
+				<div className="flex w-20 shrink-0 flex-col items-center">
+					<div className="bg-muted/50 rounded-xl border border-border/30 p-4 text-center">
+						<div className="text-foreground font-mono text-2xl font-bold">
 							{totalPositiveSignals}
 						</div>
 						<div className="text-muted-foreground text-xs">signals</div>
 					</div>
 					{/* Mini signal icons */}
-					<div className="mt-2 flex w-full items-center justify-evenly gap-1">
+					<div className="mt-3 flex w-full items-center justify-center gap-2">
 						{idea.signals.problemReal > 0 && (
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<div className="flex flex-col items-center gap-0.5">
-										<HiCheckBadge className="h-3.5 w-3.5 text-blue-400" />
-										<span className="text-muted-foreground text-[10px]">
+										<HiCheckBadge className="text-signal-problem h-4 w-4" />
+										<span className="text-muted-foreground font-mono text-[10px]">
 											{idea.signals.problemReal}
 										</span>
 									</div>
@@ -106,8 +101,8 @@ export default function ProfileIdeaCard({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<div className="flex flex-col items-center gap-0.5">
-										<HiCurrencyDollar className="h-3.5 w-3.5 text-green-400" />
-										<span className="text-muted-foreground text-[10px]">
+										<HiCurrencyDollar className="text-signal-pay h-4 w-4" />
+										<span className="text-muted-foreground font-mono text-[10px]">
 											{idea.signals.wouldPay}
 										</span>
 									</div>
@@ -121,8 +116,8 @@ export default function ProfileIdeaCard({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<div className="flex flex-col items-center gap-0.5">
-										<HiRocketLaunch className="h-3.5 w-3.5 text-purple-400" />
-										<span className="text-muted-foreground text-[10px]">
+										<HiRocketLaunch className="text-signal-build h-4 w-4" />
+										<span className="text-muted-foreground font-mono text-[10px]">
 											{idea.signals.readyToBuild}
 										</span>
 									</div>
@@ -136,8 +131,8 @@ export default function ProfileIdeaCard({
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<div className="flex flex-col items-center gap-0.5">
-										<HiExclamationTriangle className="h-3.5 w-3.5 text-orange-400" />
-										<span className="text-muted-foreground text-[10px]">
+										<HiExclamationTriangle className="text-signal-clarity h-4 w-4" />
+										<span className="text-muted-foreground font-mono text-[10px]">
 											{idea.signals.needsClarity}
 										</span>
 									</div>
@@ -151,11 +146,11 @@ export default function ProfileIdeaCard({
 				</div>
 
 				{/* Content Section */}
-				<div className="flex min-w-0 flex-1 flex-col justify-between py-1">
+				<div className="flex min-w-0 flex-1 flex-col justify-between">
 					{/* Title Row with Validation State */}
-					<div className="flex min-w-0 flex-1 flex-col gap-3">
+					<div className="flex flex-col gap-3">
 						<div className="flex items-start justify-between gap-3">
-							<h2 className="text-foreground/95 group-hover:text-foreground min-w-0 flex-1 text-lg leading-snug font-semibold transition-colors">
+							<h2 className="text-foreground group-hover:text-primary min-w-0 flex-1 text-base font-semibold leading-snug transition-colors sm:text-lg">
 								{idea.heading}
 							</h2>
 							<div className="flex shrink-0 items-center gap-2">
@@ -167,9 +162,8 @@ export default function ProfileIdeaCard({
 										onPinChange={onPinChange}
 									/>
 								)}
-								{/* Validation State Badge */}
 								<span
-									className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${stateConfig.bgColor} ${stateConfig.color} ${stateConfig.borderColor}`}
+									className={`rounded-full px-2.5 py-1 text-xs font-medium ${stateConfig.bgColor} ${stateConfig.textColor}`}
 								>
 									{stateConfig.label}
 								</span>
@@ -177,47 +171,28 @@ export default function ProfileIdeaCard({
 						</div>
 
 						{/* Description */}
-						<p className="text-muted-foreground/70 line-clamp-1 text-sm">
+						<p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed">
 							{idea.description}
 						</p>
 					</div>
 
-					{/* Meta Row with Signal Details */}
-					<div className="text-muted-foreground/60 mt-3 flex items-center justify-between text-xs">
-						<div className="flex items-center gap-3">
-							{/* Signal counts with icons */}
-							{/* {(Object.keys(SIGNAL_ICONS) as Array<keyof IdeaSignalCounts>).map(
-								(key) => {
-									const count = idea.signals[key];
-									if (count === 0) return null;
-									const { icon: Icon, color, label } = SIGNAL_ICONS[key];
-									return (
-										<span
-											key={key}
-											className="flex items-center gap-1"
-											title={label}
-										>
-											<Icon className={`h-3.5 w-3.5 ${color}`} />
-											<span className="text-foreground/70">{count}</span>
-										</span>
-									);
-								}
-							)}
-							<span className="text-muted-foreground/30">|</span> */}
-							<span>{idea.commentsCount} comments</span>
-							<span className="text-muted-foreground/30">|</span>
+					{/* Meta Row */}
+					<div className="text-muted-foreground mt-4 flex items-center justify-between text-xs">
+						<div className="flex items-center gap-2">
+							<span><span className="font-mono">{idea.commentsCount}</span> comments</span>
+							<span className="text-border">·</span>
 							<span>
 								{formatDistanceToNow(new Date(idea.createdAt), {
 									addSuffix: false,
 								}).replace(/^(about|over|almost) /, "")}
 							</span>
 						</div>
-						<span className="text-muted-foreground/70 font-medium transition-colors group-hover:text-amber-500/80">
+						<span className="text-muted-foreground font-medium transition-colors group-hover:text-primary">
 							View →
 						</span>
 					</div>
 				</div>
 			</div>
-		</div>
+		</article>
 	);
 }

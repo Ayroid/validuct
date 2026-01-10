@@ -22,7 +22,7 @@ const SIGNAL_CONFIG: Record<
 		label: string;
 		icon: React.ComponentType<{ className?: string }>;
 		description: string;
-		activeColor: string;
+		activeText: string;
 		activeBg: string;
 		activeBorder: string;
 	}
@@ -31,33 +31,33 @@ const SIGNAL_CONFIG: Record<
 		label: "Problem feels real",
 		icon: HiCheckBadge,
 		description: "This addresses a genuine problem",
-		activeColor: "text-blue-400",
-		activeBg: "bg-blue-500/10",
-		activeBorder: "border-blue-500/50",
+		activeText: "text-signal-problem",
+		activeBg: "bg-signal-problem",
+		activeBorder: "border-signal-problem",
 	},
 	WOULD_PAY: {
 		label: "Would pay for this",
 		icon: HiCurrencyDollar,
 		description: "I'd pay for a solution",
-		activeColor: "text-green-400",
-		activeBg: "bg-green-500/10",
-		activeBorder: "border-green-500/50",
+		activeText: "text-signal-pay",
+		activeBg: "bg-signal-pay",
+		activeBorder: "border-signal-pay",
 	},
 	READY_TO_BUILD: {
 		label: "Ready to build",
 		icon: HiRocketLaunch,
 		description: "Clear enough to start building",
-		activeColor: "text-purple-400",
-		activeBg: "bg-purple-500/10",
-		activeBorder: "border-purple-500/50",
+		activeText: "text-signal-build",
+		activeBg: "bg-signal-build",
+		activeBorder: "border-signal-build",
 	},
 	NEEDS_CLARITY: {
 		label: "Needs more clarity",
 		icon: HiExclamationTriangle,
 		description: "Needs more detail or refinement",
-		activeColor: "text-orange-400",
-		activeBg: "bg-orange-500/10",
-		activeBorder: "border-orange-500/50",
+		activeText: "text-signal-clarity",
+		activeBg: "bg-signal-clarity",
+		activeBorder: "border-signal-clarity",
 	},
 };
 
@@ -122,13 +122,13 @@ export default function ValidationSignals({ ideaId }: ValidationSignalsProps) {
 
 	if (isLoading) {
 		return (
-			<div className="border-border/50 bg-card/30 rounded-lg border p-4">
-				<div className="bg-muted/50 mb-3 h-4 w-32 animate-pulse rounded" />
-				<div className="grid grid-cols-2 gap-2">
+			<div className="bg-card rounded-xl border border-border/50 p-5 shadow-card">
+				<div className="bg-muted mb-4 h-4 w-32 animate-pulse rounded-md" />
+				<div className="grid grid-cols-2 gap-3">
 					{[1, 2, 3, 4].map((i) => (
 						<div
 							key={i}
-							className="bg-muted/30 h-10 animate-pulse rounded-md"
+							className="bg-muted/50 h-12 animate-pulse rounded-lg"
 						/>
 					))}
 				</div>
@@ -146,7 +146,7 @@ export default function ValidationSignals({ ideaId }: ValidationSignalsProps) {
 	];
 
 	return (
-		<div className="rounded-lg border border-border/50 bg-card p-5">
+		<div className="bg-card rounded-xl border border-border/50 p-5 shadow-card">
 			<h3 className="text-foreground mb-4 text-sm font-semibold uppercase tracking-wide">
 				Validation Signals
 			</h3>
@@ -163,16 +163,16 @@ export default function ValidationSignals({ ideaId }: ValidationSignalsProps) {
 							key={type}
 							onClick={() => handleToggleSignal(type)}
 							disabled={isLoadingThis}
-							className={`group flex items-center justify-between rounded-lg border px-4 py-3 text-left transition-all duration-200 ${
+							className={`group flex items-center justify-between rounded-lg border px-3 py-2.5 text-left transition-all duration-200 sm:px-4 sm:py-3 ${
 								isActive
 									? `${config.activeBorder} ${config.activeBg}`
-									: "border-border/50 bg-background/50 hover:border-border hover:bg-background hover:shadow-sm"
+									: "border-border/50 bg-background hover:border-border hover:bg-muted/50"
 							} ${isLoadingThis ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
 							title={config.description}
 						>
-							<span className="flex items-center gap-2.5 text-sm">
+							<span className="flex items-center gap-2 text-sm sm:gap-2.5">
 								<IconComponent
-									className={`h-5 w-5 ${isActive ? config.activeColor : "text-muted-foreground"}`}
+									className={`h-5 w-5 shrink-0 ${isActive ? config.activeText : "text-muted-foreground"}`}
 								/>
 								<span
 									className={`hidden font-medium sm:inline ${isActive ? "text-foreground" : "text-muted-foreground"}`}
@@ -186,8 +186,8 @@ export default function ValidationSignals({ ideaId }: ValidationSignalsProps) {
 								</span>
 							</span>
 							<span
-								className={`min-w-6 text-right text-sm font-semibold tabular-nums ${
-									isActive ? config.activeColor : "text-muted-foreground"
+								className={`min-w-5 text-right font-mono text-sm font-semibold ${
+									isActive ? config.activeText : "text-muted-foreground"
 								}`}
 							>
 								{count}

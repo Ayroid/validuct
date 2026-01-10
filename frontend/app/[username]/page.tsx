@@ -146,7 +146,7 @@ export default function ProfilePage() {
 	}
 
 	return (
-		<div className="mx-auto max-w-5xl px-6 py-8">
+		<div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
 			{/* Builder Snapshot Header */}
 			<BuilderSnapshotHeader
 				profile={profile}
@@ -160,22 +160,22 @@ export default function ProfilePage() {
 				{isOwnProfile &&
 					validationSummary &&
 					validationSummary.totalIdeas > 0 && (
-						<div className="mb-8 border-x border-b">
+						<div className="mb-8">
 							<ValidationSummaryCard summary={validationSummary} />
 						</div>
 					)}
 
 				{/* Tabs and Sort Controls */}
-				<div className="mb-6 flex items-center justify-between">
-					<div className="flex gap-4 border-b">
+				<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+					<div className="flex gap-1 rounded-lg bg-muted/50 p-1">
 						<button
 							onClick={() => {
 								setActiveTab("all");
 								setPage(1);
 							}}
-							className={`px-4 py-2 font-medium transition-colors ${
+							className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
 								activeTab === "all"
-									? "text-primary border-primary border-b-2"
+									? "bg-card text-foreground shadow-sm"
 									: "text-muted-foreground hover:text-foreground"
 							}`}
 						>
@@ -187,9 +187,9 @@ export default function ProfilePage() {
 									setActiveTab("pinned");
 									setPage(1);
 								}}
-								className={`px-4 py-2 font-medium transition-colors ${
+								className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
 									activeTab === "pinned"
-										? "text-primary border-primary border-b-2"
+										? "bg-card text-foreground shadow-sm"
 										: "text-muted-foreground hover:text-foreground"
 								}`}
 							>

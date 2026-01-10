@@ -10,37 +10,32 @@ import {
 
 const STRENGTH_CONFIG: Record<
 	SignalStrength,
-	{ label: string; color: string; bgColor: string; borderColor: string }
+	{ label: string; bgColor: string; textColor: string }
 > = {
 	STRONG: {
 		label: "Strong",
-		color: "text-green-400",
-		bgColor: "bg-green-500/20",
-		borderColor: "border-green-500/30",
+		bgColor: "bg-emerald-100 dark:bg-emerald-500/20",
+		textColor: "text-emerald-700 dark:text-emerald-400",
 	},
 	MIXED: {
 		label: "Mixed",
-		color: "text-yellow-400",
-		bgColor: "bg-yellow-500/20",
-		borderColor: "border-yellow-500/30",
+		bgColor: "bg-amber-100 dark:bg-amber-500/20",
+		textColor: "text-amber-700 dark:text-amber-400",
 	},
 	WEAK: {
 		label: "Weak",
-		color: "text-orange-400",
-		bgColor: "bg-orange-500/20",
-		borderColor: "border-orange-500/30",
+		bgColor: "bg-orange-100 dark:bg-orange-500/20",
+		textColor: "text-orange-700 dark:text-orange-400",
 	},
 	NONE: {
 		label: "None",
-		color: "text-muted-foreground",
 		bgColor: "bg-muted",
-		borderColor: "border-border",
+		textColor: "text-muted-foreground",
 	},
 	EARLY: {
 		label: "Early",
-		color: "text-muted-foreground",
 		bgColor: "bg-muted",
-		borderColor: "border-border",
+		textColor: "text-muted-foreground",
 	},
 };
 
@@ -48,20 +43,20 @@ const SIGNAL_LABELS = {
 	problem: {
 		icon: HiCheckBadge,
 		label: "Problem Validation",
-		iconColor: "text-blue-400",
-		iconBg: "bg-blue-500/10",
+		iconColor: "text-signal-problem",
+		iconBg: "bg-signal-problem",
 	},
 	willingness: {
 		icon: HiCurrencyDollar,
 		label: "Willingness to Pay",
-		iconColor: "text-green-400",
-		iconBg: "bg-green-500/10",
+		iconColor: "text-signal-pay",
+		iconBg: "bg-signal-pay",
 	},
 	execution: {
 		icon: HiRocketLaunch,
 		label: "Ready to Build",
-		iconColor: "text-purple-400",
-		iconBg: "bg-purple-500/10",
+		iconColor: "text-signal-build",
+		iconBg: "bg-signal-build",
 	},
 };
 
@@ -83,20 +78,20 @@ export default function ValidationSummaryCard({
 	];
 
 	return (
-		<div className="rounded-lg border border-border/50 bg-card p-6">
+		<div className="bg-card rounded-xl border border-border/50 p-6 shadow-card">
 			<h3 className="text-foreground mb-5 text-lg font-semibold">
 				Validation Signals
 			</h3>
 
 			{/* Signal Strength Grid */}
-			<div className="mb-5 grid grid-cols-3 gap-4">
+			<div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
 				{signalCategories.map(({ key, data, config }) => {
 					const strengthConfig = STRENGTH_CONFIG[data.strength];
 					const IconComponent = config.icon;
 					return (
 						<div
 							key={key}
-							className="rounded-lg border border-border/30 bg-background/50 p-4 text-center"
+							className="bg-muted/30 rounded-xl border border-border/30 p-4 text-center"
 						>
 							<div
 								className={`mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full ${config.iconBg}`}
@@ -107,24 +102,24 @@ export default function ValidationSummaryCard({
 								{config.label}
 							</div>
 							<div
-								className={`inline-block rounded-full border px-3 py-1 text-xs font-semibold ${strengthConfig.bgColor} ${strengthConfig.color} ${strengthConfig.borderColor}`}
+								className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${strengthConfig.bgColor} ${strengthConfig.textColor}`}
 							>
 								{strengthConfig.label}
 							</div>
 							<div className="text-muted-foreground mt-2 text-xs">
-								{data.ideasWithSignal}/{summary.totalIdeas} ideas
+								<span className="font-mono">{data.ideasWithSignal}/{summary.totalIdeas}</span> ideas
 							</div>
 						</div>
 					);
 				})}
 			</div>
 
-			{/* Clarity Warning (if applicable) */}
+			{/* Clarity Warning */}
 			{summary.clarity.ideasWithSignal > 0 && (
-				<div className="mb-5 rounded-lg border border-orange-500/30 bg-orange-500/10 p-3">
+				<div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-500/30 dark:bg-amber-500/10">
 					<div className="flex items-center gap-2">
-						<HiExclamationTriangle className="h-5 w-5 text-orange-400" />
-						<span className="text-sm text-orange-300">
+						<HiExclamationTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+						<span className="text-sm text-amber-700 dark:text-amber-300">
 							{summary.clarity.ideasWithSignal} idea
 							{summary.clarity.ideasWithSignal > 1 ? "s" : ""} need more clarity
 						</span>
@@ -133,24 +128,24 @@ export default function ValidationSummaryCard({
 			)}
 
 			{/* Ideas by State */}
-			<div className="flex gap-6 border-t border-border/50 pt-4 text-sm">
+			<div className="flex flex-wrap gap-4 border-t border-border/50 pt-4 text-sm sm:gap-6">
 				<div className="flex items-center gap-2">
-					<div className="h-2 w-2 rounded-full bg-green-500"></div>
-					<span className="text-foreground font-medium">
+					<div className="h-2.5 w-2.5 rounded-full bg-emerald-500"></div>
+					<span className="text-foreground font-mono font-medium">
 						{summary.ideasByValidationState.readyToBuild}
 					</span>
 					<span className="text-muted-foreground">ready to build</span>
 				</div>
 				<div className="flex items-center gap-2">
-					<div className="h-2 w-2 rounded-full bg-orange-500"></div>
-					<span className="text-foreground font-medium">
+					<div className="h-2.5 w-2.5 rounded-full bg-amber-500"></div>
+					<span className="text-foreground font-mono font-medium">
 						{summary.ideasByValidationState.needsAction}
 					</span>
 					<span className="text-muted-foreground">need action</span>
 				</div>
 				<div className="flex items-center gap-2">
-					<div className="h-2 w-2 rounded-full bg-blue-500"></div>
-					<span className="text-foreground font-medium">
+					<div className="h-2.5 w-2.5 rounded-full bg-sky-500"></div>
+					<span className="text-foreground font-mono font-medium">
 						{summary.ideasByValidationState.validated}
 					</span>
 					<span className="text-muted-foreground">validated</span>

@@ -1,24 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { Slide, ToastContainer } from "react-toastify";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import SessionProvider from "@/components/providers/SessionProvider";
 import ThemeProvider from "@/components/providers/ThemeProvider";
 
-const jetbrainsMono = JetBrains_Mono({
+const geist = Geist({
 	subsets: ["latin"],
 	variable: "--font-sans",
-});
-
-const geistSans = Geist({
-	variable: "--font-geist-sans",
-	subsets: ["latin"],
+	display: "swap",
 });
 
 const geistMono = Geist_Mono({
-	variable: "--font-geist-mono",
 	subsets: ["latin"],
+	variable: "--font-mono",
+	display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -33,10 +30,12 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" className={jetbrainsMono.variable} suppressHydrationWarning>
-			<body
-				className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground min-h-screen antialiased`}
-			>
+		<html
+			lang="en"
+			className={`${geist.variable} ${geistMono.variable}`}
+			suppressHydrationWarning
+		>
+			<body className="bg-background text-foreground min-h-screen font-sans antialiased">
 				<SessionProvider>
 					<AuthProvider>
 						<ThemeProvider

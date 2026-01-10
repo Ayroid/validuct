@@ -241,13 +241,14 @@ export class IdeaService {
 
     switch (timeline) {
       case 'new':
-        orderBy = { createdAt: 'desc' };
+        orderBy = [{ createdAt: 'desc' }, { id: 'desc' }];
         break;
       case 'top':
-        orderBy = { upvotesCount: 'desc' };
+        // Secondary sort by id ensures stable ordering when upvotesCount is the same
+        orderBy = [{ upvotesCount: 'desc' }, { createdAt: 'desc' }, { id: 'desc' }];
         break;
       default:
-        orderBy = { createdAt: 'desc' };
+        orderBy = [{ createdAt: 'desc' }, { id: 'desc' }];
     }
 
     const [ideas, total] = await Promise.all([

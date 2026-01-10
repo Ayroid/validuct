@@ -15,8 +15,9 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOut } from "next-auth/react";
-import { HiDotsVertical } from "react-icons/hi";
 import {
+	HiArrowLeft,
+	HiEllipsisVertical,
 	HiExclamationTriangle,
 	HiCurrencyDollar,
 	HiChatBubbleLeftRight,
@@ -34,23 +35,23 @@ const ACTION_CONFIG: Record<
 > = {
 	CLARIFY_PROBLEM: {
 		icon: <HiExclamationTriangle className="h-5 w-5" />,
-		color: "text-orange-500",
-		bgColor: "bg-orange-500/10",
+		color: "text-signal-clarity",
+		bgColor: "bg-signal-clarity",
 	},
 	TEST_PRICING: {
 		icon: <HiCurrencyDollar className="h-5 w-5" />,
-		color: "text-blue-500",
-		bgColor: "bg-blue-500/10",
+		color: "text-signal-pay",
+		bgColor: "bg-signal-pay",
 	},
 	GATHER_FEEDBACK: {
 		icon: <HiChatBubbleLeftRight className="h-5 w-5" />,
-		color: "text-purple-500",
-		bgColor: "bg-purple-500/10",
+		color: "text-signal-build",
+		bgColor: "bg-signal-build",
 	},
 	READY_TO_BUILD: {
 		icon: <HiRocketLaunch className="h-5 w-5" />,
-		color: "text-green-500",
-		bgColor: "bg-green-500/10",
+		color: "text-emerald-500",
+		bgColor: "bg-emerald-500/10",
 	},
 	ADD_FIRST_IDEA: {
 		icon: <HiPlusCircle className="h-5 w-5" />,
@@ -60,9 +61,9 @@ const ACTION_CONFIG: Record<
 };
 
 const PRIORITY_BADGE: Record<ActionPriority, string> = {
-	HIGH: "bg-red-500/20 text-red-400 border border-red-500/30",
-	MEDIUM: "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30",
-	LOW: "bg-green-500/20 text-green-400 border border-green-500/30",
+	HIGH: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400",
+	MEDIUM: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
+	LOW: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400",
 };
 
 export default function BuilderSnapshotHeader({
@@ -74,31 +75,20 @@ export default function BuilderSnapshotHeader({
 	const actionConfig = nextAction ? ACTION_CONFIG[nextAction.action] : null;
 
 	return (
-		<div className="">
+		<div>
+			{/* Back Link */}
 			<Link
 				href="/home"
-				className="text-muted-foreground hover:text-foreground mb-8 inline-flex items-center gap-1 text-sm"
+				className="text-muted-foreground hover:text-foreground mb-6 inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
 			>
-				<svg
-					className="h-4 w-4"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						strokeWidth={2}
-						d="M15 19l-7-7 7-7"
-					/>
-				</svg>
+				<HiArrowLeft className="h-4 w-4" />
 				<span>BACK</span>
 			</Link>
-			<div className="bg-card border-x border-t px-6 py-8">
-				{/* Back Link */}
 
-				<div className="flex flex-col items-start gap-6">
-					<div className="flex w-full gap-6">
+			{/* Profile Card */}
+			<div className="bg-card rounded-xl border border-border/50 p-6 shadow-card sm:p-8">
+				<div className="flex flex-col gap-6">
+					<div className="flex flex-col gap-6 sm:flex-row">
 						{/* Profile Picture */}
 						<div className="shrink-0">
 							{profile.user.profilePicture ? (
@@ -107,31 +97,30 @@ export default function BuilderSnapshotHeader({
 									alt={profile.user.username}
 									width={96}
 									height={96}
-									className="h-24 w-24 rounded-full object-cover"
+									className="h-20 w-20 rounded-full object-cover ring-4 ring-border sm:h-24 sm:w-24"
 								/>
 							) : (
-								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-purple-600 text-3xl font-bold text-white">
+								<div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-2xl font-bold text-white ring-4 ring-border sm:h-24 sm:w-24 sm:text-3xl">
 									{profile.user.username[0].toUpperCase()}
 								</div>
 							)}
 						</div>
 
-						{/* Profile Info + Builder Snapshot */}
-
-						<div className="flex w-full items-start justify-between">
-							<div>
-								<h1 className="text-foreground text-3xl font-bold">
+						{/* Profile Info */}
+						<div className="flex flex-1 flex-col justify-between gap-4 sm:flex-row sm:items-start">
+							<div className="min-w-0 flex-1">
+								<h1 className="text-foreground text-2xl font-bold sm:text-3xl">
 									{profile.user.username}
 								</h1>
 								{profile.user.bio && (
-									<p className="text-muted-foreground mt-2 max-w-2xl">
+									<p className="text-muted-foreground mt-2 max-w-2xl leading-relaxed">
 										{profile.user.bio}
 									</p>
 								)}
 
-								{/* Builder Snapshot - replaces "Joined / ideas count" */}
-								<div className="mt-3 flex items-center gap-4">
-									<div className="text-sm">
+								{/* Builder Stats */}
+								<div className="mt-4 flex flex-wrap items-center gap-4 text-sm">
+									<div>
 										<span className="text-foreground font-semibold">
 											{validationSummary?.totalIdeas || 0}
 										</span>
@@ -140,8 +129,8 @@ export default function BuilderSnapshotHeader({
 									{validationSummary &&
 										validationSummary.ideasByValidationState.readyToBuild >
 											0 && (
-											<div className="text-sm">
-												<span className="font-semibold text-green-500">
+											<div>
+												<span className="font-semibold text-emerald-600 dark:text-emerald-400">
 													{
 														validationSummary.ideasByValidationState
 															.readyToBuild
@@ -155,8 +144,8 @@ export default function BuilderSnapshotHeader({
 										)}
 									{validationSummary &&
 										validationSummary.ideasByValidationState.validated > 0 && (
-											<div className="text-sm">
-												<span className="font-semibold text-blue-500">
+											<div>
+												<span className="font-semibold text-sky-600 dark:text-sky-400">
 													{validationSummary.ideasByValidationState.validated}
 												</span>
 												<span className="text-muted-foreground">
@@ -168,32 +157,19 @@ export default function BuilderSnapshotHeader({
 								</div>
 							</div>
 
-							{/* CTA Section - Redesigned hierarchy */}
+							{/* CTA Section */}
 							{isOwnProfile && (
 								<div className="flex items-center gap-2">
-									{/* Primary CTA: New Idea */}
 									<Link href="/idea/new">
-										<Button variant="default" className="cursor-pointer">
-											New Idea
-										</Button>
+										<Button>New Idea</Button>
 									</Link>
-
-									{/* Secondary: Edit Profile */}
 									<Link href={`/${profile.user.username}/edit`}>
-										<Button variant="outline" className="cursor-pointer">
-											Edit Profile
-										</Button>
+										<Button variant="outline">Edit Profile</Button>
 									</Link>
-
-									{/* Dropdown for Logout */}
 									<DropdownMenu>
 										<DropdownMenuTrigger asChild>
-											<Button
-												variant="ghost"
-												size="icon"
-												className="cursor-pointer"
-											>
-												<HiDotsVertical className="h-4 w-4" />
+											<Button variant="ghost" size="icon">
+												<HiEllipsisVertical className="h-5 w-5" />
 											</Button>
 										</DropdownMenuTrigger>
 										<DropdownMenuContent align="end">
@@ -209,23 +185,24 @@ export default function BuilderSnapshotHeader({
 							)}
 						</div>
 					</div>
+
 					{/* Next Action Recommendation */}
 					{isOwnProfile && nextAction && actionConfig && (
-						<div className="border-border/50 bg-background/50 mt-4 rounded-lg border p-4">
-							<div className="flex items-center justify-between gap-4">
+						<div className="bg-muted/50 rounded-xl border border-border/30 p-4">
+							<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 								<div className="flex items-center gap-3">
 									<div
-										className={`flex h-10 w-10 items-center justify-center rounded-full ${actionConfig.bgColor} ${actionConfig.color}`}
+										className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${actionConfig.bgColor} ${actionConfig.color}`}
 									>
 										{actionConfig.icon}
 									</div>
-									<div className="min-w-0 flex-1">
+									<div className="min-w-0">
 										<div className="flex items-center gap-2">
 											<span className="text-foreground text-sm font-medium">
 												Next Step
 											</span>
 											<span
-												className={`rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide uppercase ${PRIORITY_BADGE[nextAction.priority]}`}
+												className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${PRIORITY_BADGE[nextAction.priority]}`}
 											>
 												{nextAction.priority}
 											</span>
@@ -239,11 +216,7 @@ export default function BuilderSnapshotHeader({
 								</div>
 								{nextAction.targetIdeaId && (
 									<Link href={`/idea/${nextAction.targetIdeaId}`}>
-										<Button
-											variant="outline"
-											size="sm"
-											className="shrink-0 cursor-pointer"
-										>
+										<Button variant="outline" size="sm" className="shrink-0">
 											View Idea
 										</Button>
 									</Link>
