@@ -13,5 +13,7 @@ router.get('/me/pinned', protect, UserController.getPinnedIdeas);
 // Public routes with parameters
 router.get('/:username', UserController.getUserProfile);
 router.get('/:username/ideas', UserController.getUserIdeas);
+router.get('/:username/validation-summary', UserController.getValidationSummary);
+router.get('/:username/ideas-with-signals', UserController.getUserIdeasWithSignals);
 
 export default router;

@@ -22,3 +22,78 @@ export interface PaginationMeta {
   total: number;
   total_pages: number;
 }
+
+// ============================================================================
+// Validation Dashboard Types
+// ============================================================================
+
+export type SignalType = 'PROBLEM_REAL' | 'WOULD_PAY' | 'READY_TO_BUILD' | 'NEEDS_CLARITY';
+
+export type SignalStrength = 'STRONG' | 'MIXED' | 'WEAK' | 'NONE' | 'EARLY';
+
+export type ValidationState = 'NEEDS_ACTION' | 'READY_TO_BUILD' | 'VALIDATED' | 'NEUTRAL';
+
+export type NextActionType =
+  | 'CLARIFY_PROBLEM'
+  | 'TEST_PRICING'
+  | 'GATHER_FEEDBACK'
+  | 'READY_TO_BUILD'
+  | 'ADD_FIRST_IDEA';
+
+export type ActionPriority = 'HIGH' | 'MEDIUM' | 'LOW';
+
+export interface SignalCategorySummary {
+  signalType: SignalType;
+  totalCount: number;
+  ideasWithSignal: number;
+  strength: SignalStrength;
+}
+
+export interface NextActionRecommendation {
+  action: NextActionType;
+  message: string;
+  priority: ActionPriority;
+  targetIdeaId?: string;
+  targetIdeaHeading?: string;
+}
+
+export interface ValidationSummary {
+  totalIdeas: number;
+  problem: SignalCategorySummary;
+  willingness: SignalCategorySummary;
+  execution: SignalCategorySummary;
+  clarity: SignalCategorySummary;
+  nextAction: NextActionRecommendation;
+  ideasByValidationState: {
+    needsAction: number;
+    readyToBuild: number;
+    validated: number;
+  };
+}
+
+export interface IdeaSignalCounts {
+  problemReal: number;
+  wouldPay: number;
+  readyToBuild: number;
+  needsClarity: number;
+}
+
+export interface IdeaWithSignals {
+  id: string;
+  userId: string;
+  heading: string;
+  description: string;
+  status: 'VALIDATED' | 'WIP' | 'LAUNCHED' | 'DRAFT';
+  launchedLink: string | null;
+  commentsCount: number;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    username: string;
+    profilePicture: string | null;
+  };
+  signals: IdeaSignalCounts;
+  validationState: ValidationState;
+}
+
+export type ProfileSortMode = 'needs_action' | 'ready_to_build' | 'newest' | 'oldest' | 'all';

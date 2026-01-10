@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { AuthRequest } from '../types/index.js';
+import { AuthRequest, ProfileSortMode } from '../types/index.js';
 import { UserService } from '../services/userService.js';
 
 /**
@@ -227,6 +227,82 @@ export class UserController {
       return res.status(500).json({
         success: false,
         error: error.message || 'Failed to fetch pinned ideas',
+      });
+    }
+  }
+
+  /**
+   * Handle retrieving validation summary for a user
+   *
+   * @param req - Express request object
+   * @param res - Express response object
+   *
+   * @remarks
+   * Route: GET /api/users/:username/validation-summary
+   * No authentication required
+   * Returns aggregated validation signals and next action recommendation
+   */
+  static async getValidationSummary(req: AuthRequest, res: Response) {
+    try {
+      const { username } = req.params;
+
+      const result = await UserService.getValidationSummary(username);
+
+      if (!result) {
+        return res.status(404).json({
+          success: false,
+          error: 'User not found',
+        });
+      }
+
+      return res.json({
+        success: true,
+        data: result,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to fetch validation summary',
+      });
+    }
+  }
+
+  /**
+   * Handle retrieving user ideas with signal snapshots
+   *
+   * @param req - Express request object
+   * @param res - Express response object
+   *
+   * @remarks
+   * Route: GET /api/users/:username/ideas-with-signals
+   * Query: ?page=1&limit=20&sort=needs_action|ready_to_build|newest|oldest|all
+   * No authentication required
+   * Returns ideas with embedded signal counts and validation state
+   */
+  static async getUserIdeasWithSignals(req: AuthRequest, res: Response) {
+    try {
+      const { username } = req.params;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const sort = (req.query.sort as ProfileSortMode) || 'newest';
+
+      const result = await UserService.getUserIdeasWithSignals(username, page, limit, sort);
+
+      if (!result) {
+        return res.status(404).json({
+          success: false,
+          error: 'User not found',
+        });
+      }
+
+      return res.json({
+        success: true,
+        data: result,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to fetch user ideas with signals',
       });
     }
   }

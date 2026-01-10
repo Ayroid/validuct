@@ -5,6 +5,12 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { signalsApi } from "@/lib/api/signals";
 import { SignalType, IdeaSignals } from "@/types";
+import {
+	HiCheckBadge,
+	HiCurrencyDollar,
+	HiRocketLaunch,
+	HiExclamationTriangle,
+} from "react-icons/hi2";
 
 interface ValidationSignalsProps {
 	ideaId: string;
@@ -12,27 +18,46 @@ interface ValidationSignalsProps {
 
 const SIGNAL_CONFIG: Record<
 	SignalType,
-	{ label: string; emoji: string; description: string }
+	{
+		label: string;
+		icon: React.ComponentType<{ className?: string }>;
+		description: string;
+		activeColor: string;
+		activeBg: string;
+		activeBorder: string;
+	}
 > = {
 	PROBLEM_REAL: {
 		label: "Problem feels real",
-		emoji: "👍",
+		icon: HiCheckBadge,
 		description: "This addresses a genuine problem",
+		activeColor: "text-blue-400",
+		activeBg: "bg-blue-500/10",
+		activeBorder: "border-blue-500/50",
 	},
 	WOULD_PAY: {
 		label: "Would pay for this",
-		emoji: "💰",
+		icon: HiCurrencyDollar,
 		description: "I'd pay for a solution",
+		activeColor: "text-green-400",
+		activeBg: "bg-green-500/10",
+		activeBorder: "border-green-500/50",
 	},
 	READY_TO_BUILD: {
 		label: "Ready to build",
-		emoji: "🚀",
+		icon: HiRocketLaunch,
 		description: "Clear enough to start building",
+		activeColor: "text-purple-400",
+		activeBg: "bg-purple-500/10",
+		activeBorder: "border-purple-500/50",
 	},
 	NEEDS_CLARITY: {
 		label: "Needs more clarity",
-		emoji: "⚠️",
+		icon: HiExclamationTriangle,
 		description: "Needs more detail or refinement",
+		activeColor: "text-orange-400",
+		activeBg: "bg-orange-500/10",
+		activeBorder: "border-orange-500/50",
 	},
 };
 
@@ -121,37 +146,48 @@ export default function ValidationSignals({ ideaId }: ValidationSignalsProps) {
 	];
 
 	return (
-		<div className="border-border/50 bg-card/30 rounded-lg border p-4">
-			<h3 className="text-muted-foreground mb-3 text-sm font-medium">
-				Validation signals
+		<div className="rounded-lg border border-border/50 bg-card p-5">
+			<h3 className="text-foreground mb-4 text-sm font-semibold uppercase tracking-wide">
+				Validation Signals
 			</h3>
-			<div className="grid grid-cols-2 gap-2">
+			<div className="grid grid-cols-2 gap-3">
 				{signalTypes.map((type) => {
 					const config = SIGNAL_CONFIG[type];
 					const count = signals.counts[type] || 0;
 					const isActive = signals.userSignals.includes(type);
 					const isLoadingThis = loadingSignal === type;
+					const IconComponent = config.icon;
 
 					return (
 						<button
 							key={type}
 							onClick={() => handleToggleSignal(type)}
 							disabled={isLoadingThis}
-							className={`flex items-center justify-between rounded-md border px-3 py-2 text-left transition-all duration-150 ${
+							className={`group flex items-center justify-between rounded-lg border px-4 py-3 text-left transition-all duration-200 ${
 								isActive
-									? "border-primary/50 bg-primary/10 text-foreground"
-									: "border-border/50 bg-background/50 text-muted-foreground hover:border-border hover:bg-background"
-							} ${isLoadingThis ? "cursor-not-allowed opacity-50" : ""}`}
+									? `${config.activeBorder} ${config.activeBg}`
+									: "border-border/50 bg-background/50 hover:border-border hover:bg-background hover:shadow-sm"
+							} ${isLoadingThis ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
 							title={config.description}
 						>
-							<span className="flex items-center gap-2 text-sm">
-								<span>{config.emoji}</span>
-								<span className="hidden sm:inline">{config.label}</span>
-								<span className="sm:hidden">{config.label.split(" ")[0]}</span>
+							<span className="flex items-center gap-2.5 text-sm">
+								<IconComponent
+									className={`h-5 w-5 ${isActive ? config.activeColor : "text-muted-foreground"}`}
+								/>
+								<span
+									className={`hidden font-medium sm:inline ${isActive ? "text-foreground" : "text-muted-foreground"}`}
+								>
+									{config.label}
+								</span>
+								<span
+									className={`font-medium sm:hidden ${isActive ? "text-foreground" : "text-muted-foreground"}`}
+								>
+									{config.label.split(" ")[0]}
+								</span>
 							</span>
 							<span
-								className={`min-w-6 text-right text-sm font-medium tabular-nums ${
-									isActive ? "text-primary" : "text-muted-foreground"
+								className={`min-w-6 text-right text-sm font-semibold tabular-nums ${
+									isActive ? config.activeColor : "text-muted-foreground"
 								}`}
 							>
 								{count}

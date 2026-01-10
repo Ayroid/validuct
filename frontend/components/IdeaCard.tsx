@@ -72,11 +72,11 @@ export default function IdeaCard({
 				</div>
 
 				{/* Content Section */}
-				<div className="flex min-w-0 flex-1 flex-col justify-between py-1">
+				<div className="flex min-w-0 flex-1 flex-col justify-between gap-3 py-1">
 					{/* Title Row with Status */}
 					<div className="flex min-w-0 flex-1 flex-col gap-3">
 						<div className="flex items-start justify-between gap-3">
-							<h2 className="text-foreground/95 group-hover:text-foreground min-w-0 flex-1 text-lg leading-snug font-semibold transition-colors">
+							<h2 className="text-foreground/95 group-hover:text-foreground line-clamp-2 min-w-0 flex-1 text-lg leading-snug font-semibold transition-colors">
 								{idea.heading}
 							</h2>
 							<div className="flex shrink-0 items-center gap-2">

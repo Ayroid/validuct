@@ -88,6 +88,88 @@ export interface IdeaSignals {
 	total: number;
 }
 
+// ============================================================================
+// Validation Dashboard Types
+// ============================================================================
+
+export type SignalStrength = "STRONG" | "MIXED" | "WEAK" | "NONE" | "EARLY";
+
+export type ValidationState =
+	| "NEEDS_ACTION"
+	| "READY_TO_BUILD"
+	| "VALIDATED"
+	| "NEUTRAL";
+
+export type NextActionType =
+	| "CLARIFY_PROBLEM"
+	| "TEST_PRICING"
+	| "GATHER_FEEDBACK"
+	| "READY_TO_BUILD"
+	| "ADD_FIRST_IDEA";
+
+export type ActionPriority = "HIGH" | "MEDIUM" | "LOW";
+
+export type ProfileSortMode =
+	| "needs_action"
+	| "ready_to_build"
+	| "newest"
+	| "oldest"
+	| "all";
+
+export interface SignalCategorySummary {
+	signalType: SignalType;
+	totalCount: number;
+	ideasWithSignal: number;
+	strength: SignalStrength;
+}
+
+export interface NextActionRecommendation {
+	action: NextActionType;
+	message: string;
+	priority: ActionPriority;
+	targetIdeaId?: string;
+	targetIdeaHeading?: string;
+}
+
+export interface ValidationSummary {
+	totalIdeas: number;
+	problem: SignalCategorySummary;
+	willingness: SignalCategorySummary;
+	execution: SignalCategorySummary;
+	clarity: SignalCategorySummary;
+	nextAction: NextActionRecommendation;
+	ideasByValidationState: {
+		needsAction: number;
+		readyToBuild: number;
+		validated: number;
+	};
+}
+
+export interface IdeaSignalCounts {
+	problemReal: number;
+	wouldPay: number;
+	readyToBuild: number;
+	needsClarity: number;
+}
+
+export interface IdeaWithSignals {
+	id: string;
+	userId: string;
+	heading: string;
+	description: string;
+	status: keyof IdeaStatus;
+	launchedLink: string | null;
+	commentsCount: number;
+	createdAt: string;
+	updatedAt: string;
+	user: {
+		username: string;
+		profilePicture: string | null;
+	};
+	signals: IdeaSignalCounts;
+	validationState: ValidationState;
+}
+
 export interface PaginationMeta {
 	page: number;
 	limit: number;
@@ -204,6 +286,32 @@ export interface PinButtonProps {
 	ideaUserId: string;
 	initialIsPinned?: boolean;
 	onPinChange?: () => void;
+}
+
+export interface ProfileIdeaCardProps {
+	idea: IdeaWithSignals;
+	showPinButton?: boolean;
+	onPinChange?: () => void;
+}
+
+export interface ValidationSummaryCardProps {
+	summary: ValidationSummary;
+}
+
+export interface BuilderSnapshotHeaderProps {
+	profile: {
+		user: {
+			id: string;
+			username: string;
+			profilePicture?: string | null;
+			bio?: string | null;
+			createdAt: string;
+		};
+		ideasCount: number;
+		pinnedIdeas: Idea[];
+	};
+	validationSummary: ValidationSummary | null;
+	isOwnProfile: boolean;
 }
 
 // ============================================================================

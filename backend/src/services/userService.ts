@@ -1,4 +1,14 @@
 import { PrismaClient } from '@prisma/client';
+import {
+  SignalStrength,
+  ValidationState,
+  ValidationSummary,
+  NextActionRecommendation,
+  IdeaWithSignals,
+  IdeaSignalCounts,
+  PaginationMeta,
+  ProfileSortMode,
+} from '../types/index.js';
 
 const prisma = new PrismaClient();
 
@@ -350,5 +360,369 @@ export class UserService {
     });
 
     return pinnedIdeas.map((pin) => pin.idea);
+  }
+
+  // ============================================================================
+  // Validation Dashboard Methods
+  // ============================================================================
+
+  /**
+   * Calculate signal strength based on counts relative to total ideas
+   * Requires minimum 5 signals before calculating meaningful strength
+   */
+  private static calculateStrength(
+    ideasWithSignal: number,
+    totalIdeas: number,
+    totalSignals: number
+  ): SignalStrength {
+    const MIN_SIGNALS_REQUIRED = 5;
+
+    if (totalIdeas === 0) return 'NONE';
+    if (totalSignals < MIN_SIGNALS_REQUIRED) return 'EARLY';
+
+    const ratio = ideasWithSignal / totalIdeas;
+    if (ratio >= 0.6) return 'STRONG';
+    if (ratio >= 0.3) return 'MIXED';
+    if (ratio > 0) return 'WEAK';
+    return 'NONE';
+  }
+
+  /**
+   * Determine the validation state of an idea based on its signals
+   */
+  private static getIdeaValidationState(signals: IdeaSignalCounts): ValidationState {
+    const { problemReal, wouldPay, readyToBuild, needsClarity } = signals;
+
+    // High clarity concerns = needs action
+    if (needsClarity >= 3 || (needsClarity > 0 && needsClarity >= problemReal)) {
+      return 'NEEDS_ACTION';
+    }
+
+    // Strong across all positive signals = validated
+    if (problemReal >= 3 && wouldPay >= 2 && readyToBuild >= 2) {
+      return 'VALIDATED';
+    }
+
+    // Good problem + WTP + ready signals = ready to build
+    if (problemReal >= 2 && wouldPay >= 1 && readyToBuild >= 2) {
+      return 'READY_TO_BUILD';
+    }
+
+    // Some signals but not enough = needs action
+    if (problemReal > 0 || wouldPay > 0 || readyToBuild > 0) {
+      return 'NEEDS_ACTION';
+    }
+
+    return 'NEUTRAL';
+  }
+
+  /**
+   * Determine the next recommended action based on signal patterns
+   */
+  private static determineNextAction(
+    ideas: Array<{ id: string; heading: string; signals: IdeaSignalCounts; validationState: ValidationState }>,
+    totalIdeas: number
+  ): NextActionRecommendation {
+    if (totalIdeas === 0) {
+      return {
+        action: 'ADD_FIRST_IDEA',
+        message: 'Share your first idea to start gathering validation signals',
+        priority: 'HIGH',
+      };
+    }
+
+    // Find ideas that need clarity the most
+    const needsClarityIdeas = ideas
+      .filter((i) => i.signals.needsClarity > 0)
+      .sort((a, b) => b.signals.needsClarity - a.signals.needsClarity);
+
+    if (needsClarityIdeas.length > 0) {
+      const target = needsClarityIdeas[0];
+      return {
+        action: 'CLARIFY_PROBLEM',
+        message: `"${target.heading}" needs more clarity - refine the problem statement`,
+        priority: 'HIGH',
+        targetIdeaId: target.id,
+        targetIdeaHeading: target.heading,
+      };
+    }
+
+    // Find ideas with problem validation but no WTP signals
+    const needsPricingTest = ideas
+      .filter((i) => i.signals.problemReal >= 2 && i.signals.wouldPay === 0)
+      .sort((a, b) => b.signals.problemReal - a.signals.problemReal);
+
+    if (needsPricingTest.length > 0) {
+      const target = needsPricingTest[0];
+      return {
+        action: 'TEST_PRICING',
+        message: `"${target.heading}" has validated problem - test willingness to pay`,
+        priority: 'MEDIUM',
+        targetIdeaId: target.id,
+        targetIdeaHeading: target.heading,
+      };
+    }
+
+    // Find ideas ready to build
+    const readyToBuild = ideas
+      .filter((i) => i.validationState === 'READY_TO_BUILD' || i.validationState === 'VALIDATED')
+      .sort((a, b) => b.signals.readyToBuild - a.signals.readyToBuild);
+
+    if (readyToBuild.length > 0) {
+      const target = readyToBuild[0];
+      return {
+        action: 'READY_TO_BUILD',
+        message: `"${target.heading}" is validated and ready to build!`,
+        priority: 'LOW',
+        targetIdeaId: target.id,
+        targetIdeaHeading: target.heading,
+      };
+    }
+
+    // Default: gather more feedback
+    const mostEngaged = [...ideas].sort(
+      (a, b) =>
+        b.signals.problemReal + b.signals.wouldPay - (a.signals.problemReal + a.signals.wouldPay)
+    )[0];
+
+    return {
+      action: 'GATHER_FEEDBACK',
+      message: mostEngaged
+        ? `Share "${mostEngaged.heading}" to gather more validation signals`
+        : 'Share your ideas to gather validation signals',
+      priority: 'MEDIUM',
+      targetIdeaId: mostEngaged?.id,
+      targetIdeaHeading: mostEngaged?.heading,
+    };
+  }
+
+  /**
+   * Get validation summary for a user's ideas
+   *
+   * @param username - The username of the user
+   * @returns ValidationSummary object with aggregated signals and next action, or null if user not found
+   */
+  static async getValidationSummary(username: string): Promise<ValidationSummary | null> {
+    const user = await prisma.user.findUnique({
+      where: { username },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    // Get all ideas with their signal counts
+    const ideas = await prisma.idea.findMany({
+      where: { userId: user.id },
+      include: {
+        signals: {
+          select: {
+            signalType: true,
+          },
+        },
+      },
+    });
+
+    const totalIdeas = ideas.length;
+
+    // Process each idea's signals
+    const ideasWithSignals = ideas.map((idea) => {
+      const signalCounts: IdeaSignalCounts = {
+        problemReal: idea.signals.filter((s) => s.signalType === 'PROBLEM_REAL').length,
+        wouldPay: idea.signals.filter((s) => s.signalType === 'WOULD_PAY').length,
+        readyToBuild: idea.signals.filter((s) => s.signalType === 'READY_TO_BUILD').length,
+        needsClarity: idea.signals.filter((s) => s.signalType === 'NEEDS_CLARITY').length,
+      };
+
+      return {
+        id: idea.id,
+        heading: idea.heading,
+        signals: signalCounts,
+        validationState: this.getIdeaValidationState(signalCounts),
+      };
+    });
+
+    // Aggregate signal counts
+    const aggregated = {
+      problemReal: { total: 0, ideasWith: 0 },
+      wouldPay: { total: 0, ideasWith: 0 },
+      readyToBuild: { total: 0, ideasWith: 0 },
+      needsClarity: { total: 0, ideasWith: 0 },
+    };
+
+    ideasWithSignals.forEach((idea) => {
+      if (idea.signals.problemReal > 0) {
+        aggregated.problemReal.total += idea.signals.problemReal;
+        aggregated.problemReal.ideasWith++;
+      }
+      if (idea.signals.wouldPay > 0) {
+        aggregated.wouldPay.total += idea.signals.wouldPay;
+        aggregated.wouldPay.ideasWith++;
+      }
+      if (idea.signals.readyToBuild > 0) {
+        aggregated.readyToBuild.total += idea.signals.readyToBuild;
+        aggregated.readyToBuild.ideasWith++;
+      }
+      if (idea.signals.needsClarity > 0) {
+        aggregated.needsClarity.total += idea.signals.needsClarity;
+        aggregated.needsClarity.ideasWith++;
+      }
+    });
+
+    // Count ideas by validation state
+    const ideasByValidationState = {
+      needsAction: ideasWithSignals.filter((i) => i.validationState === 'NEEDS_ACTION').length,
+      readyToBuild: ideasWithSignals.filter((i) => i.validationState === 'READY_TO_BUILD').length,
+      validated: ideasWithSignals.filter((i) => i.validationState === 'VALIDATED').length,
+    };
+
+    return {
+      totalIdeas,
+      problem: {
+        signalType: 'PROBLEM_REAL',
+        totalCount: aggregated.problemReal.total,
+        ideasWithSignal: aggregated.problemReal.ideasWith,
+        strength: this.calculateStrength(aggregated.problemReal.ideasWith, totalIdeas, aggregated.problemReal.total),
+      },
+      willingness: {
+        signalType: 'WOULD_PAY',
+        totalCount: aggregated.wouldPay.total,
+        ideasWithSignal: aggregated.wouldPay.ideasWith,
+        strength: this.calculateStrength(aggregated.wouldPay.ideasWith, totalIdeas, aggregated.wouldPay.total),
+      },
+      execution: {
+        signalType: 'READY_TO_BUILD',
+        totalCount: aggregated.readyToBuild.total,
+        ideasWithSignal: aggregated.readyToBuild.ideasWith,
+        strength: this.calculateStrength(aggregated.readyToBuild.ideasWith, totalIdeas, aggregated.readyToBuild.total),
+      },
+      clarity: {
+        signalType: 'NEEDS_CLARITY',
+        totalCount: aggregated.needsClarity.total,
+        ideasWithSignal: aggregated.needsClarity.ideasWith,
+        strength: this.calculateStrength(aggregated.needsClarity.ideasWith, totalIdeas, aggregated.needsClarity.total),
+      },
+      nextAction: this.determineNextAction(ideasWithSignals, totalIdeas),
+      ideasByValidationState,
+    };
+  }
+
+  /**
+   * Get user ideas with signal snapshots and validation state
+   *
+   * @param username - The username of the user
+   * @param page - The page number (default: 1)
+   * @param limit - Number of ideas per page (default: 20)
+   * @param sort - Sort mode: 'needs_action', 'ready_to_build', 'newest', 'oldest', 'all'
+   * @returns Object containing ideas with signals and pagination metadata, or null if user not found
+   */
+  static async getUserIdeasWithSignals(
+    username: string,
+    page: number = 1,
+    limit: number = 20,
+    sort: ProfileSortMode = 'newest'
+  ): Promise<{ ideas: IdeaWithSignals[]; pagination: PaginationMeta } | null> {
+    const user = await prisma.user.findUnique({
+      where: { username },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    // Get all ideas with signals for sorting
+    const allIdeas = await prisma.idea.findMany({
+      where: { userId: user.id },
+      include: {
+        user: {
+          select: {
+            username: true,
+            profilePicture: true,
+          },
+        },
+        signals: {
+          select: {
+            signalType: true,
+          },
+        },
+      },
+    });
+
+    // Transform and calculate validation states
+    const ideasWithSignals: IdeaWithSignals[] = allIdeas.map((idea) => {
+      const signals: IdeaSignalCounts = {
+        problemReal: idea.signals.filter((s) => s.signalType === 'PROBLEM_REAL').length,
+        wouldPay: idea.signals.filter((s) => s.signalType === 'WOULD_PAY').length,
+        readyToBuild: idea.signals.filter((s) => s.signalType === 'READY_TO_BUILD').length,
+        needsClarity: idea.signals.filter((s) => s.signalType === 'NEEDS_CLARITY').length,
+      };
+
+      return {
+        id: idea.id,
+        userId: idea.userId,
+        heading: idea.heading,
+        description: idea.description,
+        status: idea.status as 'VALIDATED' | 'WIP' | 'LAUNCHED' | 'DRAFT',
+        launchedLink: idea.launchedLink,
+        commentsCount: idea.commentsCount,
+        createdAt: idea.createdAt.toISOString(),
+        updatedAt: idea.updatedAt.toISOString(),
+        user: idea.user,
+        signals,
+        validationState: this.getIdeaValidationState(signals),
+      };
+    });
+
+    // Sort based on the requested mode
+    let sortedIdeas: IdeaWithSignals[];
+    switch (sort) {
+      case 'needs_action':
+        sortedIdeas = ideasWithSignals
+          .filter((i) => i.validationState === 'NEEDS_ACTION' || i.validationState === 'NEUTRAL')
+          .sort((a, b) => {
+            // Prioritize by needsClarity, then by lack of signals
+            const aScore =
+              a.signals.needsClarity * 10 - (a.signals.problemReal + a.signals.wouldPay);
+            const bScore =
+              b.signals.needsClarity * 10 - (b.signals.problemReal + b.signals.wouldPay);
+            return bScore - aScore;
+          });
+        break;
+      case 'ready_to_build':
+        sortedIdeas = ideasWithSignals
+          .filter((i) => i.validationState === 'READY_TO_BUILD' || i.validationState === 'VALIDATED')
+          .sort((a, b) => {
+            const aScore = a.signals.readyToBuild + a.signals.problemReal + a.signals.wouldPay;
+            const bScore = b.signals.readyToBuild + b.signals.problemReal + b.signals.wouldPay;
+            return bScore - aScore;
+          });
+        break;
+      case 'oldest':
+        sortedIdeas = [...ideasWithSignals].sort(
+          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+        break;
+      case 'newest':
+      case 'all':
+      default:
+        sortedIdeas = [...ideasWithSignals].sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+    }
+
+    // Paginate
+    const total = sortedIdeas.length;
+    const skip = (page - 1) * limit;
+    const paginatedIdeas = sortedIdeas.slice(skip, skip + limit);
+
+    return {
+      ideas: paginatedIdeas,
+      pagination: {
+        page,
+        limit,
+        total,
+        total_pages: Math.ceil(total / limit),
+      },
+    };
   }
 }

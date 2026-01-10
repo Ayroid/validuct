@@ -1,114 +1,133 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, notFound } from "next/navigation";
 import { userApi, UserProfile } from "@/lib/api/users";
-import { ideasApi } from "@/lib/api/ideas";
-import { Idea } from "@/types";
+import {
+	ValidationSummary,
+	IdeaWithSignals,
+	ProfileSortMode,
+	PaginationMeta,
+	Idea,
+} from "@/types";
+import ProfileIdeaCard from "@/components/ProfileIdeaCard";
 import IdeaCard from "@/components/IdeaCard";
+import BuilderSnapshotHeader from "@/components/BuilderSnapshotHeader";
+import ValidationSummaryCard from "@/components/ValidationSummaryCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
-import Image from "next/image";
-import { FaCalendarAlt } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 
 export default function ProfilePage() {
 	const params = useParams();
 	const username = params.username as string;
 	const { data: session } = useSession();
+
+	// State
 	const [profile, setProfile] = useState<UserProfile | null>(null);
-	const [ideas, setIdeas] = useState<Idea[]>([]);
+	const [validationSummary, setValidationSummary] =
+		useState<ValidationSummary | null>(null);
+	const [ideas, setIdeas] = useState<IdeaWithSignals[] | Idea[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [ideasLoading, setIdeasLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+
+	// New state-based sorting
 	const [activeTab, setActiveTab] = useState<"all" | "pinned">("all");
-	const [sortBy, setSortBy] = useState<"newest" | "oldest" | "popular">(
-		"newest"
-	);
+	const [sortBy, setSortBy] = useState<ProfileSortMode>("needs_action");
 	const [page, setPage] = useState(1);
-	const [hasMore, setHasMore] = useState(false);
+	const [pagination, setPagination] = useState<PaginationMeta | null>(null);
 
 	const isOwnProfile = session?.user?.username === username;
 
+	// Fetch profile and validation summary
 	useEffect(() => {
-		const fetchProfile = async () => {
+		const fetchData = async () => {
 			try {
 				setLoading(true);
-				const data = await userApi.getUserProfile(username);
-				setProfile(data);
+				const [profileData, summaryData] = await Promise.all([
+					userApi.getUserProfile(username),
+					userApi.getValidationSummary(username),
+				]);
+				setProfile(profileData);
+				setValidationSummary(summaryData);
 			} catch (err: unknown) {
-				const errorMessage =
-					err instanceof Error && "response" in err
-						? (err as { response?: { data?: { error?: string } } }).response
-								?.data?.error
-						: undefined;
-
-				// If user not found (404), trigger Next.js not-found page
-				if (
-					err instanceof Error &&
-					"response" in err &&
-					(err as { response?: { status?: number } }).response?.status === 404
-				) {
-					notFound();
+				// Handle 404
+				if (err instanceof Error && "response" in err) {
+					const errWithResponse = err as {
+						response?: { status?: number; data?: { error?: string } };
+					};
+					if (errWithResponse.response?.status === 404) {
+						notFound();
+					}
+					setError(
+						errWithResponse.response?.data?.error || "Failed to load profile"
+					);
+				} else {
+					setError("Failed to load profile");
 				}
-
-				setError(errorMessage || "Failed to load profile");
 			} finally {
 				setLoading(false);
 			}
 		};
 
-		fetchProfile();
+		fetchData();
 	}, [username]);
 
-	const fetchIdeas = async () => {
+	// Fetch ideas with signals
+	const fetchIdeas = useCallback(async () => {
+		if (!profile) return;
+
 		try {
 			setIdeasLoading(true);
-			if (activeTab === "pinned" && profile) {
-				setIdeas(profile.pinnedIdeas);
-				setHasMore(false);
-			} else {
-				const data = await ideasApi.getUserIdeas(username, {
+			if (activeTab === "pinned") {
+				// For pinned tab, we show pinned ideas from profile
+				setIdeas([]);
+				setPagination(null);
+			} else if (isOwnProfile) {
+				// For own profile, fetch ideas with signals
+				const data = await userApi.getUserIdeasWithSignals(username, {
 					page,
 					limit: 20,
 					sort: sortBy,
 				});
 				setIdeas(data.ideas);
-				setHasMore(data.pagination.page < data.pagination.total_pages);
+				setPagination(data.pagination);
+			} else {
+				// For other profiles, fetch regular ideas
+				const data = await userApi.getUserIdeas(username, page, 20, "newest");
+				setIdeas(data.ideas || []);
+				setPagination(data.pagination || null);
 			}
-		} catch (err: unknown) {
-			const errorMessage =
-				err instanceof Error && "response" in err
-					? (err as { response?: { data?: { error?: string } } }).response?.data
-							?.error
-					: undefined;
-			setError(errorMessage || "Failed to load ideas");
+		} catch (err) {
+			console.error("Failed to load ideas:", err);
 		} finally {
 			setIdeasLoading(false);
 		}
-	};
+	}, [username, profile, page, sortBy, activeTab, isOwnProfile]);
 
 	useEffect(() => {
 		if (profile) {
 			fetchIdeas();
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [username, profile, page, sortBy, activeTab]);
+	}, [profile, fetchIdeas]);
 
-	const handlePinChange = () => {
-		// Refresh ideas when pin status changes
-		fetchIdeas();
-		// Also refresh profile to update pinned ideas count
-		const refreshProfile = async () => {
-			try {
-				const data = await userApi.getUserProfile(username);
-				setProfile(data);
-			} catch (err) {
-				console.error("Failed to refresh profile:", err);
-			}
-		};
-		refreshProfile();
+	const handlePinChange = async () => {
+		// Refresh both profile and ideas
+		try {
+			const [profileData, summaryData] = await Promise.all([
+				userApi.getUserProfile(username),
+				userApi.getValidationSummary(username),
+			]);
+			setProfile(profileData);
+			setValidationSummary(summaryData);
+			fetchIdeas();
+		} catch (err) {
+			console.error("Failed to refresh data:", err);
+		}
 	};
+
+	const hasMore = pagination ? pagination.page < pagination.total_pages : false;
 
 	if (loading) {
 		return (
@@ -127,121 +146,26 @@ export default function ProfilePage() {
 	}
 
 	return (
-		<>
-			{/* Profile Header */}
-			<div className="bg-card border-b">
-				<div className="mx-auto max-w-5xl px-6 py-8">
-					<div className="max-w-5xl">
-						<Link
-							href="/home"
-							className="text-muted-foreground hover:text-foreground mb-8 inline-flex items-center gap-1 text-sm"
-						>
-							<svg
-								className="h-4 w-4"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-									d="M15 19l-7-7 7-7"
-								/>
-							</svg>
-							<span>BACK</span>
-						</Link>
-					</div>
-					<div className="flex items-start gap-6">
-						{/* Profile Picture */}
-						<div className="shrink-0">
-							{profile.user.profilePicture ? (
-								<Image
-									src={profile.user.profilePicture}
-									alt={profile.user.username}
-									width={96}
-									height={96}
-									className="h-24 w-24 rounded-full object-cover"
-								/>
-							) : (
-								<div className="flex h-24 w-24 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-purple-600 text-3xl font-bold text-white">
-									{profile.user.username[0].toUpperCase()}
-								</div>
-							)}
+		<div className="mx-auto max-w-5xl px-6 py-8">
+			{/* Builder Snapshot Header */}
+			<BuilderSnapshotHeader
+				profile={profile}
+				validationSummary={validationSummary}
+				isOwnProfile={isOwnProfile}
+			/>
+
+			{/* Main Content */}
+			<div className="mx-auto mt-8 max-w-5xl">
+				{/* Validation Summary Card - Only show for own profile */}
+				{isOwnProfile &&
+					validationSummary &&
+					validationSummary.totalIdeas > 0 && (
+						<div className="mb-8 border-x border-b">
+							<ValidationSummaryCard summary={validationSummary} />
 						</div>
+					)}
 
-						{/* Profile Info */}
-						<div className="flex-1">
-							<div className="flex items-center justify-between">
-								<div>
-									<h1 className="text-foreground text-3xl font-bold">
-										{profile.user.username}
-									</h1>
-									{profile.user.bio && (
-										<p className="text-foreground mt-2 max-w-2xl">
-											{profile.user.bio}
-										</p>
-									)}
-								</div>
-								{isOwnProfile && (
-									<div className="flex flex-col gap-3">
-										<div className="flex gap-3">
-											<Link
-												href={`/${profile.user.username}/edit`}
-												className="flex-1"
-											>
-												<Button
-													variant="outline"
-													className="w-full cursor-pointer"
-												>
-													Edit Profile
-												</Button>
-											</Link>
-											<Button
-												variant="destructive"
-												className="w-full flex-1 cursor-pointer"
-												onClick={() => signOut({ callbackUrl: "/" })}
-											>
-												Logout
-											</Button>
-										</div>
-										<Link href="/idea/new" className="w-full">
-											<Button
-												variant="default"
-												className="hover:bg-primary/90 w-full cursor-pointer"
-											>
-												New Idea
-											</Button>
-										</Link>
-									</div>
-								)}
-							</div>
-
-							<div className="mt-2 flex flex-col justify-center gap-2">
-								<span className="text-muted-foreground flex items-center gap-2 text-sm">
-									<FaCalendarAlt />
-									Joined{" "}
-									{new Date(profile.user.createdAt).toLocaleDateString(
-										"en-US",
-										{
-											month: "long",
-											year: "numeric",
-										}
-									)}
-								</span>
-								<p className="text-foreground mt-1 text-sm">
-									{profile.ideasCount}
-									<span className="text-muted-foreground"> ideas shared</span>
-								</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			{/* Ideas Section */}
-			<div className="mx-auto max-w-5xl px-6 py-8">
-				{/* Tabs */}
+				{/* Tabs and Sort Controls */}
 				<div className="mb-6 flex items-center justify-between">
 					<div className="flex gap-4 border-b">
 						<button
@@ -274,38 +198,38 @@ export default function ProfilePage() {
 						)}
 					</div>
 
-					{/* Sort Options - Only for All Ideas */}
-					{activeTab === "all" && (
+					{/* State-Based Sort Options - Only for own profile */}
+					{activeTab === "all" && isOwnProfile && (
 						<div className="flex gap-2">
 							<Button
-								variant={sortBy === "newest" ? "default" : "outline"}
+								variant={sortBy === "needs_action" ? "default" : "outline"}
 								onClick={() => {
-									setSortBy("newest");
+									setSortBy("needs_action");
 									setPage(1);
 								}}
 								size="sm"
 							>
-								Newest
+								Needs Action
 							</Button>
 							<Button
-								variant={sortBy === "popular" ? "default" : "outline"}
+								variant={sortBy === "ready_to_build" ? "default" : "outline"}
 								onClick={() => {
-									setSortBy("popular");
+									setSortBy("ready_to_build");
 									setPage(1);
 								}}
 								size="sm"
 							>
-								Popular
+								Ready to Build
 							</Button>
 							<Button
-								variant={sortBy === "oldest" ? "default" : "outline"}
+								variant={sortBy === "all" ? "default" : "outline"}
 								onClick={() => {
-									setSortBy("oldest");
+									setSortBy("all");
 									setPage(1);
 								}}
 								size="sm"
 							>
-								Oldest
+								All
 							</Button>
 						</div>
 					)}
@@ -318,30 +242,76 @@ export default function ProfilePage() {
 							Loading ideas...
 						</div>
 					</div>
+				) : activeTab === "pinned" ? (
+					// Pinned ideas - use regular IdeaCard
+					profile.pinnedIdeas.length === 0 ? (
+						<div className="py-12 text-center">
+							<p className="text-muted-foreground">No pinned ideas yet</p>
+						</div>
+					) : (
+						<div className="space-y-4">
+							{profile.pinnedIdeas.map((idea: Idea) => (
+								<IdeaCard
+									key={idea.id}
+									idea={idea}
+									showPinButton={isOwnProfile}
+									onPinChange={handlePinChange}
+								/>
+							))}
+						</div>
+					)
 				) : ideas.length === 0 ? (
 					<div className="py-12 text-center">
 						<p className="text-muted-foreground">
-							{activeTab === "pinned" ? "No pinned ideas yet" : "No ideas yet"}
+							{sortBy === "needs_action"
+								? "No ideas need action right now!"
+								: sortBy === "ready_to_build"
+									? "No ideas are ready to build yet"
+									: "No ideas yet"}
 						</p>
-						{isOwnProfile && activeTab === "all" && (
+						{isOwnProfile && sortBy === "all" && (
 							<Link href="/idea/new" className="mt-4 inline-block">
 								<Button>Share Your First Idea</Button>
 							</Link>
 						)}
 					</div>
-				) : (
+				) : isOwnProfile ? (
 					<div className="space-y-4">
-						{ideas.map((idea) => (
-							<IdeaCard
+						{(ideas as IdeaWithSignals[]).map((idea) => (
+							<ProfileIdeaCard
 								key={idea.id}
 								idea={idea}
-								showPinButton={true}
+								showPinButton={isOwnProfile}
 								onPinChange={handlePinChange}
 							/>
 						))}
 
 						{/* Load More */}
-						{activeTab === "all" && hasMore && (
+						{hasMore && (
+							<div className="pt-6 text-center">
+								<Button
+									variant="outline"
+									onClick={() => setPage((p) => p + 1)}
+									disabled={ideasLoading}
+								>
+									{ideasLoading ? "Loading..." : "Load More"}
+								</Button>
+							</div>
+						)}
+					</div>
+				) : (
+					<div className="space-y-4">
+						{(ideas as Idea[]).map((idea) => (
+							<IdeaCard
+								key={idea.id}
+								idea={idea}
+								showPinButton={false}
+								onPinChange={handlePinChange}
+							/>
+						))}
+
+						{/* Load More */}
+						{hasMore && (
 							<div className="pt-6 text-center">
 								<Button
 									variant="outline"
@@ -355,6 +325,6 @@ export default function ProfilePage() {
 					</div>
 				)}
 			</div>
-		</>
+		</div>
 	);
 }

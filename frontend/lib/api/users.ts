@@ -1,5 +1,11 @@
 import apiClient from "./client";
-import { Idea } from "@/types";
+import {
+	Idea,
+	ValidationSummary,
+	IdeaWithSignals,
+	PaginationMeta,
+	ProfileSortMode,
+} from "@/types";
 
 export interface User {
 	id: string;
@@ -53,5 +59,26 @@ export const userApi = {
 	getPinnedIdeas: async () => {
 		const response = await apiClient.get("/users/me/pinned");
 		return response.data.data.pinned_ideas;
+	},
+
+	// Get user's validation summary
+	getValidationSummary: async (username: string): Promise<ValidationSummary> => {
+		const response = await apiClient.get(`/users/${username}/validation-summary`);
+		return response.data.data;
+	},
+
+	// Get user's ideas with signal snapshots
+	getUserIdeasWithSignals: async (
+		username: string,
+		params?: {
+			page?: number;
+			limit?: number;
+			sort?: ProfileSortMode;
+		}
+	): Promise<{ ideas: IdeaWithSignals[]; pagination: PaginationMeta }> => {
+		const response = await apiClient.get(`/users/${username}/ideas-with-signals`, {
+			params,
+		});
+		return response.data.data;
 	},
 };
