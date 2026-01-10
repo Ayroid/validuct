@@ -1,0 +1,15 @@
+node_modules
+dist
+.git
+.gitignore
+*.md
+.env*
+tests
+coverage
+.vscode
+*.log
+.eslintrc*
+eslint.config.mjs
+jest.config.js
+tsconfig.test.json
+scripts

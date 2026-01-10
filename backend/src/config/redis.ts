@@ -1,12 +1,12 @@
 import Redis from 'ioredis';
-import { config } from './env';
+import { config } from './env.js';
 
 /**
  * Redis client instance for rate limiting and caching
  */
 export const redis = new Redis(config.REDIS_URL, {
   maxRetriesPerRequest: 3,
-  retryStrategy: (times) => {
+  retryStrategy: (times: number) => {
     if (times > 3) {
       console.error('Redis: Max retries reached, giving up');
       return null;
@@ -28,7 +28,7 @@ redis.on('ready', () => {
   console.log('Redis: Connected and ready');
 });
 
-redis.on('error', (err) => {
+redis.on('error', (err: Error) => {
   isConnected = false;
   console.error('Redis: Connection error:', err.message);
 });

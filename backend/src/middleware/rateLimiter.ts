@@ -1,8 +1,8 @@
 import rateLimit, { Options } from 'express-rate-limit';
 import RedisStore, { SendCommandFn } from 'rate-limit-redis';
 import { Request, Response } from 'express';
-import { redis } from '../config/redis';
-import { AuthRequest } from '../types/index';
+import { redis } from '../config/redis.js';
+import { AuthRequest } from '../types/index.js';
 
 /**
  * Standard rate limit error response
