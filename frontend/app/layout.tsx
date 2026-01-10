@@ -35,6 +35,13 @@ export default function RootLayout({
 			className={`${geist.variable} ${geistMono.variable}`}
 			suppressHydrationWarning
 		>
+			<head>
+				<script
+					defer
+					src="https://cloud.umami.is/script.js"
+					data-website-id="8ba55836-b4e2-484e-bd6a-4ec997829a6d"
+				></script>
+			</head>
 			<body className="bg-background text-foreground min-h-screen font-sans antialiased">
 				<SessionProvider>
 					<AuthProvider>
