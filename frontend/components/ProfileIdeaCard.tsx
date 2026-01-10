@@ -71,9 +71,9 @@ export default function ProfileIdeaCard({
 			className="group bg-card cursor-pointer rounded-xl border border-border/50 p-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover hover:border-border"
 			onClick={handleCardClick}
 		>
-			<div className="flex gap-5">
+			<div className="flex flex-col gap-4 sm:flex-row sm:gap-5">
 				{/* Signal Snapshot Column */}
-				<div className="flex w-20 shrink-0 flex-col items-center">
+				<div className="flex w-full shrink-0 flex-row items-center gap-4 sm:w-20 sm:flex-col sm:gap-0">
 					<div className="bg-muted/50 rounded-xl border border-border/30 p-4 text-center">
 						<div className="text-foreground font-mono text-2xl font-bold">
 							{totalPositiveSignals}
@@ -81,7 +81,7 @@ export default function ProfileIdeaCard({
 						<div className="text-muted-foreground text-xs">signals</div>
 					</div>
 					{/* Mini signal icons */}
-					<div className="mt-3 flex w-full items-center justify-center gap-2">
+					<div className="flex w-full items-center justify-start gap-2 sm:mt-3 sm:justify-center">
 						{idea.signals.problemReal > 0 && (
 							<Tooltip>
 								<TooltipTrigger asChild>

@@ -83,7 +83,7 @@ export default function Timeline() {
 								setActiveTimeline(tab.id);
 								setPage(1);
 							}}
-							className={`relative flex-1 px-12 py-3 font-medium transition-all w-full${
+							className={`relative flex-1 px-4 py-3 font-medium transition-all w-full sm:px-8 md:px-12 ${
 								activeTimeline === tab.id
 									? "text-foreground bg-primary/10"
 									: "text-muted-foreground hover:text-foreground/80"

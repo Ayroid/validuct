@@ -67,7 +67,7 @@ export default async function Home() {
 			</div>
 
 			{/* What's Live & Coming Soon Section */}
-			<div className="bg-background mx-auto flex max-w-5xl gap-6 py-16">
+			<div className="bg-background mx-auto flex max-w-5xl flex-col gap-6 px-4 py-16 sm:px-6 md:flex-row">
 				{/* What's Live Now Card */}
 				<Card className="bg-primary text-primary-foreground w-full border">
 					<CardContent className="p-8 text-left">
@@ -188,7 +188,7 @@ export default async function Home() {
 					</p>
 				</div>
 
-				<div className="mx-auto flex max-w-5xl gap-6">
+				<div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 sm:px-6 md:flex-row">
 					{/* Structured Validation Card */}
 					<Card className="bg-primary text-primary-foreground w-full border">
 						<CardContent className="p-8 text-left">

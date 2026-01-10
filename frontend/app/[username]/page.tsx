@@ -200,7 +200,7 @@ export default function ProfilePage() {
 
 					{/* State-Based Sort Options - Only for own profile */}
 					{activeTab === "all" && isOwnProfile && (
-						<div className="flex gap-2">
+						<div className="flex flex-wrap gap-2">
 							<Button
 								variant={sortBy === "all" ? "default" : "outline"}
 								onClick={() => {

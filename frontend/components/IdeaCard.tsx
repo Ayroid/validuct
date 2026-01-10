@@ -103,11 +103,11 @@ export default function IdeaCard({
 					</p>
 
 					{/* Meta Row */}
-					<div className="text-muted-foreground flex items-center justify-between pt-1 text-xs">
-						<div className="flex items-center gap-2">
+					<div className="text-muted-foreground flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
+						<div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
 							<Link
 								href={`/${idea.user.username}`}
-								className="hover:text-foreground flex items-center gap-1.5 transition-colors"
+								className="hover:text-foreground flex shrink-0 items-center gap-1.5 transition-colors"
 								onClick={(e) => e.stopPropagation()}
 							>
 								{idea.user.profilePicture ? (
@@ -125,16 +125,16 @@ export default function IdeaCard({
 									{idea.user.username}
 								</span>
 							</Link>
-							<span className="text-border">·</span>
-							<span>
+							<span className="text-border hidden sm:inline">·</span>
+							<span className="hidden sm:inline">
 								{formatDistanceToNow(new Date(idea.createdAt), {
 									addSuffix: false,
 								}).replace(/^(about|over|almost) /, "")}
 							</span>
-							<span className="text-border">·</span>
-							<span><span className="font-mono">{idea.commentsCount}</span> comments</span>
+							<span className="text-border hidden sm:inline">·</span>
+							<span className="hidden sm:inline"><span className="font-mono">{idea.commentsCount}</span> comments</span>
 						</div>
-						<span className="text-muted-foreground font-medium transition-colors group-hover:text-primary">
+						<span className="text-muted-foreground shrink-0 font-medium transition-colors group-hover:text-primary">
 							View →
 						</span>
 					</div>
