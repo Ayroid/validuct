@@ -34,7 +34,12 @@ apiClient.interceptors.response.use(
 		if (error.response?.status === 429) {
 			toast.error("Too many requests.");
 		}
-		return Promise.reject(error);
+		// Extract error message from backend response
+		const errorMessage =
+			error.response?.data?.error ||
+			error.response?.data?.message ||
+			`Request failed with status code ${error.response?.status}`;
+		return Promise.reject(new Error(errorMessage));
 	}
 );
 

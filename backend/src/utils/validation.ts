@@ -71,3 +71,7 @@ export const signalTypeEnum = z.enum([
 export const toggleSignalSchema = z.object({
   signalType: signalTypeEnum,
 });
+
+export const waitlistSchema = z.object({
+  email: z.string().email('Invalid email address'),
+});

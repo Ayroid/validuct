@@ -28,8 +28,7 @@ const rateLimitResponse = (
  */
 const createRedisStore = (prefix: string) =>
   new RedisStore({
-    sendCommand: ((...args: string[]) =>
-      redis.call(args[0], ...args.slice(1))) as SendCommandFn,
+    sendCommand: ((...args: string[]) => redis.call(args[0], ...args.slice(1))) as SendCommandFn,
     prefix: `rl:${prefix}:`,
   });
 
@@ -37,11 +36,7 @@ const createRedisStore = (prefix: string) =>
  * Key generator for IP-based rate limiting
  */
 const ipKeyGenerator = (req: Request): string => {
-  return (
-    (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
-    req.ip ||
-    'unknown'
-  );
+  return (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.ip || 'unknown';
 };
 
 /**
@@ -115,6 +110,22 @@ export const commentLimiter = rateLimit({
   message: 'Too many comments, please try again later',
   handler: rateLimitResponse,
 });
+
+/**
+ * Waitlist limiter - For waitlist join endpoint
+ * 5 requests per hour per IP
+ */
+// export const waitlistLimiter = rateLimit({
+//   windowMs: 60 * 60 * 1000, // 1 hour
+//   limit: 5,
+//   standardHeaders: 'draft-7',
+//   legacyHeaders: false,
+//   store: createRedisStore('waitlist'),
+//   keyGenerator: ipKeyGenerator,
+//   message: 'Too many waitlist requests, please try again later',
+//   handler: rateLimitResponse,
+// });
+
 
 /**
  * General API limiter - For all GET requests

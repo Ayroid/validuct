@@ -186,3 +186,12 @@ model PinnedIdea {
   @@index([userId])
   @@map("pinned_ideas")
 }
+
+model Waitlist {
+  id        String   @id @default(uuid())
+  email     String   @unique @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("waitlist")
+}

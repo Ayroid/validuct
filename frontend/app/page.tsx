@@ -8,6 +8,7 @@ import {
 import { FaProductHunt, FaRedditAlien, FaXTwitter } from "react-icons/fa6";
 import Navbar from "@/components/Navbar";
 import AnimatedLogo from "@/components/AnimatedLogo";
+import Waitlist from "@/components/Waitlist";
 import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -50,15 +51,15 @@ export default async function Home() {
 							<div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-sm font-medium">
 								<div className="flex items-center gap-2">
 									<div className="bg-primary h-2 w-2 rounded-full"></div>
-									<span>Real Analytics</span>
+									<span>Demand Signals</span>
 								</div>
 								<div className="flex items-center gap-2">
 									<div className="bg-primary/80 h-2 w-2 rounded-full"></div>
-									<span>Honest Feedback</span>
+									<span>Builder Feedback</span>
 								</div>
 								<div className="flex items-center gap-2">
 									<div className="bg-primary/60 h-2 w-2 rounded-full"></div>
-									<span>Community Driven</span>
+									<span>Journey Tracking</span>
 								</div>
 							</div>
 						</div>
@@ -78,19 +79,19 @@ export default async function Home() {
 						<div className="bg-card text-card-foreground space-y-3 rounded-xl p-4">
 							<div className="bg-muted flex items-center justify-between rounded-lg p-3">
 								<span className="text-sm font-medium">
-									Post and explore startup ideas
+									Validation signals: Would Pay, Problem Real & more
 								</span>
 								<span className="text-primary font-bold">✓</span>
 							</div>
 							<div className="bg-muted flex items-center justify-between rounded-lg p-3">
 								<span className="text-sm font-medium">
-									Upvote, downvote & nested comments
+									Category-based nested comments & discussions
 								</span>
 								<span className="text-primary font-bold">✓</span>
 							</div>
 							<div className="bg-muted flex items-center justify-between rounded-lg p-3">
 								<span className="text-sm font-medium">
-									Track journey: Draft → Validated → Launched
+									Builder profiles with validation summaries
 								</span>
 								<span className="text-primary font-bold">✓</span>
 							</div>
@@ -113,19 +114,19 @@ export default async function Home() {
 						<div className="bg-card space-y-3 rounded-xl p-4">
 							<div className="bg-muted flex items-center justify-between rounded-lg p-3">
 								<span className="text-sm font-medium">
-									AI-powered idea analysis
+									AI-powered competitor & market analysis
 								</span>
 								<span className="text-primary/60 font-bold">Soon</span>
 							</div>
 							<div className="bg-muted flex items-center justify-between rounded-lg p-3">
 								<span className="text-sm font-medium">
-									&quot;Would pay $X&quot; validation signals
+									Collect waitlist signups for your ideas
 								</span>
 								<span className="text-primary/60 font-bold">Soon</span>
 							</div>
 							<div className="bg-muted flex items-center justify-between rounded-lg p-3">
 								<span className="text-sm font-medium">
-									Waitlist collection for your ideas
+									Validation analytics & insights dashboard
 								</span>
 								<span className="text-primary/60 font-bold">Soon</span>
 							</div>
@@ -192,23 +193,23 @@ export default async function Home() {
 					{/* Structured Validation Card */}
 					<Card className="bg-primary text-primary-foreground w-full border">
 						<CardContent className="p-8 text-left">
-							<h4 className="mb-4 text-2xl font-bold">Structured validation</h4>
+							<h4 className="mb-4 text-2xl font-bold">Real demand signals</h4>
 							<p className="mb-6 opacity-90">
-								Not just thumbs up/down—get feedback that tells you what to fix
-								and why.
+								Not just thumbs up/down—get signals that show real demand and
+								actionable feedback.
 							</p>
 							<div className="bg-card text-card-foreground space-y-3 rounded-xl p-4">
 								<div className="bg-muted flex items-center justify-between rounded-lg p-3">
 									<span className="text-sm font-medium">
-										Nested comments for deep discussions
+										&quot;Would Pay&quot; & &quot;Problem Real&quot; signals
 									</span>
-									<span className="text-primary font-bold">💬</span>
+									<span className="text-primary font-bold">💰</span>
 								</div>
 								<div className="bg-muted flex items-center justify-between rounded-lg p-3">
 									<span className="text-sm font-medium">
-										Community votes on viability
+										Category-based feedback by topic
 									</span>
-									<span className="text-primary font-bold">↑↓</span>
+									<span className="text-primary font-bold">💬</span>
 								</div>
 							</div>
 						</CardContent>
@@ -283,9 +284,10 @@ export default async function Home() {
 									<HiUsers className="text-brand-orange mx-auto h-12 w-12" />
 								</CardContent>
 							</Card>
-							<h4 className="mb-2 text-xl font-bold">Get real feedback</h4>
+							<h4 className="mb-2 text-xl font-bold">Get demand signals</h4>
 							<p className="text-muted-foreground">
-								Builders vote and share honest, actionable insights
+								Builders signal &quot;Would Pay&quot; and share structured
+								feedback
 							</p>
 						</div>
 
@@ -304,21 +306,10 @@ export default async function Home() {
 				</div>
 			</div>
 
-			{/* Closing CTA Section */}
+			{/* Waitlist Section */}
 			<div className="py-16">
-				<div className="mx-auto max-w-4xl px-6 text-center">
-					<h3 className="mb-4 text-3xl font-bold md:text-4xl">
-						Ready to validate your next big idea?
-					</h3>
-					<p className="text-muted-foreground mb-8 text-xl">
-						Join builders who validate before they build. It&apos;s free.
-					</p>
-					<Button asChild size="lg" className="gap-2 px-10 py-6 text-lg">
-						<Link href={ctaLink}>
-							<span>Get Started — It&apos;s Free</span>
-							<HiSparkles className="h-5 w-5" />
-						</Link>
-					</Button>
+				<div className="mx-auto max-w-5xl px-4 sm:px-6">
+					<Waitlist />
 				</div>
 			</div>
 
