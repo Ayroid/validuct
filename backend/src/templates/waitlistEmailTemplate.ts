@@ -71,7 +71,7 @@ export const waitlistEmail = () => ({
 									src="https://validuct.com/logo.png"
 									alt="Validuct"
 									width="80"
-									height="70"
+									height="80"
 									style="display: block; margin: 0 auto"
 								/>
 							</td>
