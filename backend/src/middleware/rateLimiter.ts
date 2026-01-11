@@ -115,16 +115,16 @@ export const commentLimiter = rateLimit({
  * Waitlist limiter - For waitlist join endpoint
  * 5 requests per hour per IP
  */
-// export const waitlistLimiter = rateLimit({
-//   windowMs: 60 * 60 * 1000, // 1 hour
-//   limit: 5,
-//   standardHeaders: 'draft-7',
-//   legacyHeaders: false,
-//   store: createRedisStore('waitlist'),
-//   keyGenerator: ipKeyGenerator,
-//   message: 'Too many waitlist requests, please try again later',
-//   handler: rateLimitResponse,
-// });
+export const waitlistLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  limit: 5,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  store: createRedisStore('waitlist'),
+  keyGenerator: ipKeyGenerator,
+  message: 'Too many waitlist requests, please try again later',
+  handler: rateLimitResponse,
+});
 
 
 /**
