@@ -109,7 +109,7 @@ export default async function Home() {
 							</span>
 						</div>
 						<p className="text-secondary-foreground/80 mb-6">
-							Powerful features to supercharge your validation.
+							Powerful features to supercharge your validation process.
 						</p>
 						<div className="bg-card space-y-3 rounded-xl p-4">
 							<div className="bg-muted flex items-center justify-between rounded-lg p-3">
