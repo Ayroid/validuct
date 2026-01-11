@@ -1,5 +1,5 @@
 import { prisma } from '../config/database.js';
-import { waitlistSchema } from '../utils/validation';
+import { waitlistSchema } from '../utils/validation.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { Resend } from 'resend';
 import { waitlistEmail } from '../templates/waitlistEmailTemplate.js';
