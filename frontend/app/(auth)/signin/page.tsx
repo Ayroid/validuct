@@ -11,7 +11,7 @@ export default function LoginPage() {
 					className="flex items-center gap-2 self-center text-3xl font-medium"
 				>
 					<Image
-						src="/logo.svg"
+						src="/logo.png"
 						alt="Validuct Logo"
 						width={56}
 						height={56}

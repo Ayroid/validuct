@@ -16,7 +16,7 @@ const Navbar = async () => {
 						className="flex items-center gap-3 transition-opacity hover:opacity-80"
 					>
 						<Image
-							src="/logo.svg"
+							src="/logo.png"
 							alt="Validuct Logo"
 							width={36}
 							height={36}

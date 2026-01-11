@@ -14,7 +14,6 @@ export default function PinButton({
 }: PinButtonProps) {
 	const { data: session } = useSession();
 	const [isPinned, setIsPinned] = useState(initialIsPinned);
-	const [isLoading, setIsLoading] = useState(false);
 
 	// Fetch pinned status on mount
 	useEffect(() => {
@@ -23,8 +22,8 @@ export default function PinButton({
 				const pinnedIdeas = await userApi.getPinnedIdeas();
 				const pinned = pinnedIdeas.some((idea: Idea) => idea.id === ideaId);
 				setIsPinned(pinned);
-			} catch (error) {
-				console.error("Failed to check pin status:", error);
+			} catch {
+				// Silently fail
 			}
 		};
 
@@ -39,35 +38,34 @@ export default function PinButton({
 	const handlePin = async (e: React.MouseEvent) => {
 		e.stopPropagation();
 
-		if (isLoading) return;
+		// Save previous state for rollback
+		const prevIsPinned = isPinned;
+
+		// Optimistically update UI
+		setIsPinned(!isPinned);
+		onPinChange?.();
 
 		try {
-			setIsLoading(true);
-			if (isPinned) {
+			if (prevIsPinned) {
 				await ideasApi.unpinIdea(ideaId);
-				setIsPinned(false);
 			} else {
 				await ideasApi.pinIdea(ideaId);
-				setIsPinned(true);
 			}
+		} catch {
+			// Revert on error
+			setIsPinned(prevIsPinned);
 			onPinChange?.();
-		} catch (error: any) {
-			console.error("Failed to pin/unpin idea:", error);
-			alert(error.response?.data?.error || "Failed to update pin status");
-		} finally {
-			setIsLoading(false);
 		}
 	};
 
 	return (
 		<button
 			onClick={handlePin}
-			disabled={isLoading}
 			className={`flex items-center gap-1 rounded-md px-3 py-1 text-sm font-medium transition-colors ${
 				isPinned
 					? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/40"
 					: "bg-muted text-muted-foreground hover:bg-muted/80"
-			} disabled:cursor-not-allowed disabled:opacity-50`}
+			}`}
 			title={
 				isPinned ? "Unpin this idea" : "Pin this idea to your profile (max 5)"
 			}

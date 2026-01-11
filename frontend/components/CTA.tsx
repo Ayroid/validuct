@@ -10,7 +10,7 @@ const CTA = () => {
 					<div className="relative px-8 py-12 text-center md:py-16">
 						<div className="mb-6 flex justify-center">
 							<Image
-								src="/logo.svg"
+								src="/logo.png"
 								alt="Validuct Logo"
 								width={200}
 								height={200}

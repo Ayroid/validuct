@@ -66,8 +66,6 @@ export default function ValidationSignals({ ideaId }: ValidationSignalsProps) {
 	const router = useRouter();
 	const [signals, setSignals] = useState<IdeaSignals | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
-	const [loadingSignal, setLoadingSignal] = useState<SignalType | null>(null);
-
 	useEffect(() => {
 		const fetchSignals = async () => {
 			try {
@@ -89,34 +87,35 @@ export default function ValidationSignals({ ideaId }: ValidationSignalsProps) {
 			return;
 		}
 
-		setLoadingSignal(signalType);
+		if (!signals) return;
+
+		// Save previous state for rollback
+		const prevSignals = { ...signals };
+
+		// Optimistically update UI
+		const isCurrentlyActive = signals.userSignals.includes(signalType);
+		const newCounts = { ...signals.counts };
+		let newUserSignals = [...signals.userSignals];
+
+		if (isCurrentlyActive) {
+			newCounts[signalType] = Math.max(0, (newCounts[signalType] || 0) - 1);
+			newUserSignals = newUserSignals.filter((s) => s !== signalType);
+		} else {
+			newCounts[signalType] = (newCounts[signalType] || 0) + 1;
+			newUserSignals.push(signalType);
+		}
+
+		setSignals({
+			counts: newCounts,
+			userSignals: newUserSignals,
+			total: Object.values(newCounts).reduce((a, b) => a + b, 0),
+		});
+
 		try {
-			const result = await signalsApi.toggleSignal(ideaId, signalType);
-
-			setSignals((prev) => {
-				if (!prev) return prev;
-
-				const newCounts = { ...prev.counts };
-				let newUserSignals = [...prev.userSignals];
-
-				if (result.hasSignal) {
-					newCounts[signalType] = (newCounts[signalType] || 0) + 1;
-					newUserSignals.push(signalType);
-				} else {
-					newCounts[signalType] = Math.max(0, (newCounts[signalType] || 0) - 1);
-					newUserSignals = newUserSignals.filter((s) => s !== signalType);
-				}
-
-				return {
-					counts: newCounts,
-					userSignals: newUserSignals,
-					total: Object.values(newCounts).reduce((a, b) => a + b, 0),
-				};
-			});
+			await signalsApi.toggleSignal(ideaId, signalType);
 		} catch {
-			// Silently fail
-		} finally {
-			setLoadingSignal(null);
+			// Revert on error
+			setSignals(prevSignals);
 		}
 	};
 
@@ -155,19 +154,17 @@ export default function ValidationSignals({ ideaId }: ValidationSignalsProps) {
 					const config = SIGNAL_CONFIG[type];
 					const count = signals.counts[type] || 0;
 					const isActive = signals.userSignals.includes(type);
-					const isLoadingThis = loadingSignal === type;
 					const IconComponent = config.icon;
 
 					return (
 						<button
 							key={type}
 							onClick={() => handleToggleSignal(type)}
-							disabled={isLoadingThis}
-							className={`group flex items-center justify-between rounded-lg border px-3 py-2.5 text-left transition-all duration-200 sm:px-4 sm:py-3 ${
+							className={`group flex cursor-pointer items-center justify-between rounded-lg border px-3 py-2.5 text-left transition-all duration-200 sm:px-4 sm:py-3 ${
 								isActive
 									? `${config.activeBorder} ${config.activeBg}`
 									: "border-border/50 bg-background hover:border-border hover:bg-muted/50"
-							} ${isLoadingThis ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+							}`}
 							title={config.description}
 						>
 							<span className="flex items-center gap-2 text-sm sm:gap-2.5">

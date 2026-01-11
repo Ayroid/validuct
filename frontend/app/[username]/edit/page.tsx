@@ -21,7 +21,6 @@ export default function ProfileSettingsPage() {
 	});
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [success, setSuccess] = useState(false);
 
 	useEffect(() => {
 		if (session?.user) {
@@ -37,7 +36,6 @@ export default function ProfileSettingsPage() {
 		e.preventDefault();
 		setIsLoading(true);
 		setError(null);
-		setSuccess(false);
 
 		try {
 			const updatedUser = await userApi.updateProfile(formData);
@@ -52,13 +50,6 @@ export default function ProfileSettingsPage() {
 					profilePicture: updatedUser.profilePicture,
 				},
 			});
-
-			setSuccess(true);
-
-			// Redirect to profile after 1 second
-			setTimeout(() => {
-				router.push(`/${updatedUser.username}`);
-			}, 1000);
 		} catch (err: unknown) {
 			const errorMessage =
 				err instanceof Error && "response" in err
@@ -105,12 +96,6 @@ export default function ProfileSettingsPage() {
 				{error && (
 					<div className="border-destructive/30 bg-destructive/10 text-destructive mb-6 rounded-md border px-4 py-3">
 						{error}
-					</div>
-				)}
-
-				{success && (
-					<div className="mb-6 rounded-md border border-green-500/30 bg-green-500/10 px-4 py-3 text-green-600 dark:text-green-400">
-						Profile updated successfully! Redirecting...
 					</div>
 				)}
 

@@ -57,7 +57,6 @@ export default function CommentItem({
 	const [showReplies, setShowReplies] = useState(true);
 	const [helpfulCount, setHelpfulCount] = useState(comment.helpfulCount || 0);
 	const [isHelpful, setIsHelpful] = useState(comment.isHelpful || false);
-	const [isHelpfulLoading, setIsHelpfulLoading] = useState(false);
 
 	const isOwner = session?.user?.id === comment.userId;
 	const isIdeaOwner = comment.userId === ideaOwnerId;
@@ -69,15 +68,23 @@ export default function CommentItem({
 			return;
 		}
 
-		setIsHelpfulLoading(true);
+		// Save previous state for rollback
+		const prevIsHelpful = isHelpful;
+		const prevHelpfulCount = helpfulCount;
+
+		// Optimistically update UI
+		const newIsHelpful = !isHelpful;
+		const newHelpfulCount = newIsHelpful ? helpfulCount + 1 : helpfulCount - 1;
+
+		setIsHelpful(newIsHelpful);
+		setHelpfulCount(Math.max(0, newHelpfulCount));
+
 		try {
-			const result = await commentsApi.toggleHelpful(comment.id);
-			setIsHelpful(result.isHelpful);
-			setHelpfulCount(result.helpfulCount);
+			await commentsApi.toggleHelpful(comment.id);
 		} catch {
-			// Silently fail
-		} finally {
-			setIsHelpfulLoading(false);
+			// Revert on error
+			setIsHelpful(prevIsHelpful);
+			setHelpfulCount(prevHelpfulCount);
 		}
 	};
 
@@ -182,12 +189,11 @@ export default function CommentItem({
 							{/* Helpful Button */}
 							<button
 								onClick={handleToggleHelpful}
-								disabled={isHelpfulLoading}
 								className={`flex cursor-pointer items-center gap-1 text-xs font-medium transition-colors ${
 									isHelpful
 										? "text-green-600 dark:text-green-400"
 										: "text-muted-foreground hover:text-green-600 dark:hover:text-green-400"
-								} ${isHelpfulLoading ? "opacity-50" : ""}`}
+								}`}
 							>
 								<svg
 									className="h-3.5 w-3.5"
