@@ -252,7 +252,7 @@ export default function EditIdeaPage() {
 									variant={
 										formData.status === option.value ? "default" : "outline"
 									}
-									className="justify-start"
+									className="justify-start cursor-pointer transition-colors"
 								>
 									<span className="mr-2">{option.emoji}</span>
 									{option.label}
@@ -285,7 +285,7 @@ export default function EditIdeaPage() {
 							<Button
 								type="button"
 								variant="outline"
-								className="flex-1"
+								className="flex-1 cursor-pointer transition-colors"
 								size="lg"
 								asChild
 							>
@@ -296,7 +296,7 @@ export default function EditIdeaPage() {
 								disabled={
 									submitting || !formData.heading || !formData.description
 								}
-								className="flex-1"
+								className="flex-1 cursor-pointer transition-colors"
 								size="lg"
 							>
 								{submitting ? (
@@ -318,7 +318,7 @@ export default function EditIdeaPage() {
 							type="button"
 							variant="destructive"
 							onClick={() => setDeleteDialogOpen(true)}
-							className="w-full"
+							className="w-full cursor-pointer justify-center transition-colors"
 						>
 							<HiTrash className="h-4 w-4" />
 							<span>Delete idea</span>

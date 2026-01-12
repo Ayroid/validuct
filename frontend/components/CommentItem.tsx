@@ -169,10 +169,10 @@ export default function CommentItem({
 								autoFocus
 							/>
 							<div className="mt-2 flex gap-2">
-								<Button onClick={handleEdit} size="sm">
+								<Button onClick={handleEdit} size="sm" className="cursor-pointer transition-colors">
 									Save
 								</Button>
-								<Button onClick={handleCancelEdit} variant="outline" size="sm">
+								<Button onClick={handleCancelEdit} variant="outline" size="sm" className="cursor-pointer transition-colors">
 									Cancel
 								</Button>
 							</div>
@@ -291,6 +291,7 @@ export default function CommentItem({
 									onClick={() => handleSubmitReply?.(comment.id)}
 									size="sm"
 									disabled={isSubmitting || !replyContent?.trim()}
+									className="cursor-pointer transition-colors"
 								>
 									{isSubmitting ? "Posting..." : "Reply"}
 								</Button>
@@ -301,6 +302,7 @@ export default function CommentItem({
 									}}
 									variant="outline"
 									size="sm"
+									className="cursor-pointer transition-colors"
 								>
 									Cancel
 								</Button>

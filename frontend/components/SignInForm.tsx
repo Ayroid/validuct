@@ -91,7 +91,7 @@ export function SignInForm({
 						disabled={isGoogleLoading}
 						type="button"
 						variant="outline"
-						className="h-10 w-full text-sm"
+						className="h-10 w-full text-sm cursor-pointer transition-colors"
 					>
 						<FaGoogle />
 						{isGoogleLoading ? "Signing in..." : "Sign in with Google"}
@@ -101,7 +101,7 @@ export function SignInForm({
 						disabled={isTwitterLoading}
 						type="button"
 						variant="outline"
-						className="mt-4 h-10 w-full text-sm"
+						className="mt-4 h-10 w-full text-sm cursor-pointer transition-colors"
 					>
 						{/* Twitter SVG Icon */}
 						<FaXTwitter />
@@ -112,7 +112,7 @@ export function SignInForm({
 						disabled={isGithubLoading}
 						type="button"
 						variant="outline"
-						className="mt-4 h-10 w-full text-sm"
+						className="mt-4 h-10 w-full text-sm cursor-pointer transition-colors"
 					>
 						<FaGithub />
 						{isGithubLoading ? "Signing in..." : "Sign in with Github"}

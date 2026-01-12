@@ -83,7 +83,7 @@ export default function Timeline() {
 								setActiveTimeline(tab.id);
 								setPage(1);
 							}}
-							className={`relative flex-1 px-4 py-3 font-medium transition-all w-full sm:px-8 md:px-12 ${
+							className={`relative w-full flex-1 cursor-pointer px-4 py-3 font-medium transition-all sm:px-8 md:px-12 ${
 								activeTimeline === tab.id
 									? "text-foreground bg-primary/10"
 									: "text-muted-foreground hover:text-foreground/80"
@@ -123,7 +123,7 @@ export default function Timeline() {
 									<button
 										onClick={handleLoadMore}
 										disabled={loading}
-										className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg px-6 py-3 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+										className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer rounded-lg px-6 py-3 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
 									>
 										{loading ? "Loading..." : "Load More"}
 									</button>

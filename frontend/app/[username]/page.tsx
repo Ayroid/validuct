@@ -173,7 +173,7 @@ export default function ProfilePage() {
 								setActiveTab("all");
 								setPage(1);
 							}}
-							className={`rounded-md px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
+							className={`cursor-pointer rounded-md px-4 py-2 text-sm font-medium transition-colors ${
 								activeTab === "all"
 									? "bg-card text-foreground shadow-sm"
 									: "text-muted-foreground hover:text-foreground"
@@ -187,7 +187,7 @@ export default function ProfilePage() {
 									setActiveTab("pinned");
 									setPage(1);
 								}}
-								className={`rounded-md px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
+								className={`cursor-pointer rounded-md px-4 py-2 text-sm font-medium transition-colors ${
 									activeTab === "pinned"
 										? "bg-card text-foreground shadow-sm"
 										: "text-muted-foreground hover:text-foreground"
@@ -200,34 +200,37 @@ export default function ProfilePage() {
 
 					{/* State-Based Sort Options - Only for own profile */}
 					{activeTab === "all" && isOwnProfile && (
-						<div className="flex flex-wrap gap-2">
+						<div className="bg-muted flex flex-wrap gap-2 rounded-lg p-1">
 							<Button
-								variant={sortBy === "all" ? "default" : "outline"}
+								variant={sortBy === "all" ? "default" : "ghost"}
 								onClick={() => {
 									setSortBy("all");
 									setPage(1);
 								}}
 								size="sm"
+								className="cursor-pointer transition-colors"
 							>
 								All
 							</Button>
 							<Button
-								variant={sortBy === "needs_action" ? "default" : "outline"}
+								variant={sortBy === "needs_action" ? "default" : "ghost"}
 								onClick={() => {
 									setSortBy("needs_action");
 									setPage(1);
 								}}
 								size="sm"
+								className="cursor-pointer transition-colors"
 							>
 								Needs Action
 							</Button>
 							<Button
-								variant={sortBy === "ready_to_build" ? "default" : "outline"}
+								variant={sortBy === "ready_to_build" ? "default" : "ghost"}
 								onClick={() => {
 									setSortBy("ready_to_build");
 									setPage(1);
 								}}
 								size="sm"
+								className="cursor-pointer transition-colors"
 							>
 								Ready to Build
 							</Button>
@@ -271,7 +274,9 @@ export default function ProfilePage() {
 						</p>
 						{isOwnProfile && sortBy === "all" && (
 							<Link href="/idea/new" className="mt-4 inline-block">
-								<Button>Share Your First Idea</Button>
+								<Button className="cursor-pointer transition-colors">
+									Share Your First Idea
+								</Button>
 							</Link>
 						)}
 					</div>
@@ -293,6 +298,7 @@ export default function ProfilePage() {
 									variant="outline"
 									onClick={() => setPage((p) => p + 1)}
 									disabled={ideasLoading}
+									className="cursor-pointer transition-colors"
 								>
 									{ideasLoading ? "Loading..." : "Load More"}
 								</Button>
@@ -317,6 +323,7 @@ export default function ProfilePage() {
 									variant="outline"
 									onClick={() => setPage((p) => p + 1)}
 									disabled={ideasLoading}
+									className="cursor-pointer transition-colors"
 								>
 									{ideasLoading ? "Loading..." : "Load More"}
 								</Button>

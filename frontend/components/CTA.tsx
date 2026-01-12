@@ -40,11 +40,11 @@ const CTA = () => {
 								<span>Real Analytics</span>
 							</div>
 							<div className="flex items-center gap-2">
-								<div className="h-2 w-2 rounded-full bg-(--brand-orange) shadow-sm"></div>
+								<div className="h-2 w-2 rounded-full bg-brand-orange shadow-sm"></div>
 								<span>Team Collaboration</span>
 							</div>
 							<div className="flex items-center gap-2">
-								<div className="h-2 w-2 rounded-full bg-(--brand-yellow) shadow-sm"></div>
+								<div className="h-2 w-2 rounded-full bg-brand-yellow shadow-sm"></div>
 								<span>Community Support</span>
 							</div>
 						</div>

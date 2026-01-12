@@ -195,7 +195,7 @@ export default function WaitlistPage() {
 						<Button
 							onClick={copyAllEmails}
 							variant="secondary"
-							className="w-full gap-2 sm:w-auto"
+							className="w-full gap-2 sm:w-auto cursor-pointer transition-colors"
 							disabled={exporting}
 						>
 							{copied ? (
@@ -213,7 +213,7 @@ export default function WaitlistPage() {
 						<Button
 							onClick={downloadCSV}
 							variant="default"
-							className="w-full gap-2 sm:w-auto"
+							className="w-full gap-2 sm:w-auto cursor-pointer transition-colors"
 							disabled={exporting}
 						>
 							<HiArrowDownTray className="h-4 w-4" />
@@ -262,6 +262,7 @@ export default function WaitlistPage() {
 						onClick={handleLoadMore}
 						disabled={loadingMore}
 						variant="outline"
+						className="cursor-pointer transition-colors"
 					>
 						{loadingMore ? "Loading..." : "Load More"}
 					</Button>

@@ -119,7 +119,7 @@ export default function IdeaWaitlist({
 							</p>
 						</div>
 					</div>
-					{stats?.count && stats.count > 0 && (
+					{(stats?.count ?? 0) > 0 && (
 						<Button
 							onClick={handleViewWaitlist}
 							variant="outline"
@@ -165,7 +165,11 @@ export default function IdeaWaitlist({
 								aria-invalid={!!error}
 							/>
 						</div>
-						<Button type="submit" disabled={isSubmitting}>
+						<Button
+							type="submit"
+							disabled={isSubmitting}
+							className="cursor-pointer transition-colors"
+						>
 							{isSubmitting ? (
 								<span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
 							) : (

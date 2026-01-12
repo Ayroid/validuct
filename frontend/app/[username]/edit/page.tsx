@@ -172,7 +172,7 @@ export default function ProfileSettingsPage() {
 
 					{/* Actions */}
 					<div className="flex gap-4 pt-4">
-						<Button type="submit" disabled={isLoading}>
+						<Button type="submit" disabled={isLoading} className="cursor-pointer">
 							{isLoading ? "Saving..." : "Save Changes"}
 						</Button>
 						<Button
@@ -180,6 +180,7 @@ export default function ProfileSettingsPage() {
 							variant="outline"
 							onClick={() => router.back()}
 							disabled={isLoading}
+							className="cursor-pointer"
 						>
 							Cancel
 						</Button>

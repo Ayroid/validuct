@@ -162,14 +162,14 @@ export default function BuilderSnapshotHeader({
 							{isOwnProfile && (
 								<div className="flex items-center gap-2">
 									<Link href="/idea/new">
-										<Button>New Idea</Button>
+										<Button className="cursor-pointer transition-colors">New Idea</Button>
 									</Link>
 									<Link href={`/${profile.user.username}/edit`}>
-										<Button variant="outline">Edit Profile</Button>
+										<Button variant="outline" className="cursor-pointer transition-colors">Edit Profile</Button>
 									</Link>
 									<DropdownMenu>
 										<DropdownMenuTrigger asChild>
-											<Button variant="ghost" size="icon">
+											<Button variant="ghost" size="icon" className="cursor-pointer transition-colors">
 												<HiEllipsisVertical className="h-5 w-5" />
 											</Button>
 										</DropdownMenuTrigger>
@@ -217,7 +217,7 @@ export default function BuilderSnapshotHeader({
 								</div>
 								{nextAction.targetIdeaId && (
 									<Link href={`/idea/${nextAction.targetIdeaId}`}>
-										<Button variant="outline" size="sm" className="shrink-0">
+										<Button variant="outline" size="sm" className="shrink-0 cursor-pointer transition-colors">
 											View Idea
 										</Button>
 									</Link>

@@ -33,7 +33,7 @@ export default function ShareButton({
 	variant = "ghost",
 	size = "sm",
 	showLabel = true,
-	className = "",
+	className = "cursor-pointer transition-colors",
 }: ShareButtonProps) {
 	const [copied, setCopied] = useState(false);
 	const [isOpen, setIsOpen] = useState(false);

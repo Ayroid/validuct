@@ -101,7 +101,7 @@ export default function VoteButtons({
 		>
 			{/* Upvote button - top in vertical, right in horizontal */}
 			<button
-				className={`rounded p-1 transition-all duration-150 hover:bg-amber-500/10 ${
+				className={`rounded p-1 transition-all duration-150 hover:bg-amber-500/10 cursor-pointer ${
 					userVote === "upvote"
 						? "text-amber-500"
 						: "text-muted-foreground/40 hover:text-amber-500/80"
@@ -140,7 +140,7 @@ export default function VoteButtons({
 			</span>
 			{/* Downvote button - bottom in vertical, left in horizontal */}
 			<button
-				className={`rounded p-1 transition-all duration-150 hover:bg-blue-500/10 ${
+				className={`rounded p-1 transition-all duration-150 hover:bg-blue-500/10 cursor-pointer ${
 					userVote === "downvote"
 						? "text-blue-500"
 						: "text-muted-foreground/40 hover:text-blue-500/80"

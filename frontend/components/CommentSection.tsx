@@ -262,7 +262,7 @@ export default function CommentSection({
 										key={category}
 										type="button"
 										onClick={() => setSelectedCategory(category)}
-										className={`rounded-full border px-3 py-1.5 text-sm transition-all ${
+										className={`cursor-pointer rounded-full border px-3 py-1.5 text-sm transition-all ${
 											selectedCategory === category
 												? "border-primary bg-primary/10 text-primary"
 												: "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
@@ -298,6 +298,7 @@ export default function CommentSection({
 						<Button
 							type="submit"
 							disabled={isSubmitting || !newCommentContent.trim()}
+							className="cursor-pointer transition-colors"
 						>
 							{isSubmitting ? "Posting..." : "Post Comment"}
 						</Button>
@@ -308,7 +309,7 @@ export default function CommentSection({
 					<p className="text-muted-foreground mb-2">
 						Sign in to join the conversation
 					</p>
-					<Button onClick={() => router.push("/signin")} size="sm">
+					<Button onClick={() => router.push("/signin")} size="sm" className="cursor-pointer transition-colors">
 						Sign In
 					</Button>
 				</div>
@@ -350,6 +351,7 @@ export default function CommentSection({
 								onClick={handleLoadMore}
 								variant="outline"
 								disabled={isLoading}
+								className="cursor-pointer transition-colors"
 							>
 								{isLoading ? "Loading..." : "Load More Comments"}
 							</Button>

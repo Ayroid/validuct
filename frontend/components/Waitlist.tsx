@@ -201,7 +201,7 @@ const Waitlist = () => {
 								<Button
 									type="submit"
 									size="lg"
-									className="w-full gap-2"
+									className="w-full gap-2 cursor-pointer transition-colors"
 									disabled={state === "loading"}
 								>
 									{state === "loading" ? (
