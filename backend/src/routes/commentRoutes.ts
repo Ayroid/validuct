@@ -2,10 +2,7 @@ import { Router } from 'express';
 import { CommentController } from '../controllers/commentController.js';
 import { protect } from '../middleware/auth.js';
 import { validate } from '../middleware/validator.js';
-import {
-  createCommentSchema,
-  updateCommentSchema,
-} from '../utils/validation.js';
+import { createCommentSchema, updateCommentSchema } from '../utils/validation.js';
 import { commentLimiter } from '../middleware/rateLimiter.js';
 
 const router = Router();

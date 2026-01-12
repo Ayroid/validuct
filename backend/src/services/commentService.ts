@@ -78,11 +78,7 @@ export class CommentService {
    * - For replies: provide parentCommentId
    * - Automatically increments the idea's comment count
    */
-  static async createComment(
-    userId: string,
-    ideaId: string,
-    data: CreateCommentData
-  ) {
+  static async createComment(userId: string, ideaId: string, data: CreateCommentData) {
     // Verify idea exists
     const idea = await prisma.idea.findUnique({
       where: { id: ideaId },
@@ -290,11 +286,7 @@ export class CommentService {
    * @remarks
    * Only the owner of the comment can update it
    */
-  static async updateComment(
-    commentId: string,
-    userId: string,
-    data: UpdateCommentData
-  ) {
+  static async updateComment(commentId: string, userId: string, data: UpdateCommentData) {
     // Find comment
     const comment = await prisma.comment.findUnique({
       where: { id: commentId },

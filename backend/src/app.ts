@@ -10,6 +10,7 @@ import ideaRoutes from './routes/ideaRoutes.js';
 import voteRoutes from './routes/voteRoutes.js';
 import commentRoutes from './routes/commentRoutes.js';
 import signalRoutes from './routes/signalRoutes.js';
+import ideaWaitlistRoutes from './routes/ideaWaitlistRoutes.js';
 import waitlistRoutes from './routes/waitlistRoutes.js';
 
 const app: Application = express();
@@ -47,6 +48,7 @@ app.use('/api/v1/ideas', ideaRoutes);
 app.use('/api/v1', voteRoutes);
 app.use('/api/v1', commentRoutes);
 app.use('/api/v1', signalRoutes);
+app.use('/api/v1', ideaWaitlistRoutes);
 app.use('/api/v1/waitlist', waitlistRoutes);
 
 // Error handlers

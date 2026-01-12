@@ -62,8 +62,12 @@ export const userApi = {
 	},
 
 	// Get user's validation summary
-	getValidationSummary: async (username: string): Promise<ValidationSummary> => {
-		const response = await apiClient.get(`/users/${username}/validation-summary`);
+	getValidationSummary: async (
+		username: string
+	): Promise<ValidationSummary> => {
+		const response = await apiClient.get(
+			`/users/${username}/validation-summary`
+		);
 		return response.data.data;
 	},
 
@@ -76,9 +80,12 @@ export const userApi = {
 			sort?: ProfileSortMode;
 		}
 	): Promise<{ ideas: IdeaWithSignals[]; pagination: PaginationMeta }> => {
-		const response = await apiClient.get(`/users/${username}/ideas-with-signals`, {
-			params,
-		});
+		const response = await apiClient.get(
+			`/users/${username}/ideas-with-signals`,
+			{
+				params,
+			}
+		);
 		return response.data.data;
 	},
 };

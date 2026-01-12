@@ -167,7 +167,7 @@ export class IdeaService {
 
       // Apply pagination to the vote counts
       const paginatedVotes = recentVotes.slice(skip, skip + limit);
-      const trendingIdeaIds = paginatedVotes.map(v => v.ideaId);
+      const trendingIdeaIds = paginatedVotes.map((v) => v.ideaId);
 
       // If no trending ideas, return early
       if (trendingIdeaIds.length === 0) {
@@ -196,9 +196,9 @@ export class IdeaService {
       });
 
       // Restore correct order (findMany with 'in' doesn't preserve order)
-      const ideaMap = new Map(ideas.map(idea => [idea.id, idea]));
+      const ideaMap = new Map(ideas.map((idea) => [idea.id, idea]));
       const orderedIdeas = trendingIdeaIds
-        .map(id => ideaMap.get(id))
+        .map((id) => ideaMap.get(id))
         .filter((idea): idea is NonNullable<typeof idea> => idea !== undefined);
 
       // Add user votes if authenticated

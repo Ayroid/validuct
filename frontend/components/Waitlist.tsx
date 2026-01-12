@@ -79,7 +79,7 @@ const Waitlist = () => {
 		return (
 			<Card className="bg-primary text-primary-foreground w-full border">
 				<CardContent className="p-0">
-					<div className="flex flex-col md:flex-row gap-8">
+					<div className="flex flex-col gap-8 md:flex-row">
 						{/* Left Side - Features Preview */}
 						<div className="flex-1 py-4 md:p-8">
 							<div className="mb-4 flex items-center gap-2">
@@ -107,7 +107,9 @@ const Waitlist = () => {
 										</div>
 										<div>
 											<p className="font-semibold">{feature.title}</p>
-											<p className="text-sm opacity-80">{feature.description}</p>
+											<p className="text-sm opacity-80">
+												{feature.description}
+											</p>
 										</div>
 									</div>
 								))}
@@ -115,11 +117,13 @@ const Waitlist = () => {
 						</div>
 
 						{/* Right Side - Success Message */}
-						<div className="bg-card text-card-foreground flex flex-1 flex-col items-center justify-center rounded-xl p-6 md:rounded-xl md:p-8 text-center">
+						<div className="bg-card text-card-foreground flex flex-1 flex-col items-center justify-center rounded-xl p-6 text-center md:rounded-xl md:p-8">
 							<div className="bg-primary/20 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
-								<HiCheckCircle className="h-10 w-10 text-primary" />
+								<HiCheckCircle className="text-primary h-10 w-10" />
 							</div>
-							<h3 className="mb-2 text-2xl font-bold">You&apos;re on the list!</h3>
+							<h3 className="mb-2 text-2xl font-bold">
+								You&apos;re on the list!
+							</h3>
 							<p className="text-muted-foreground">
 								We&apos;ll notify you when new features drop. Get ready!
 							</p>
@@ -133,7 +137,7 @@ const Waitlist = () => {
 	return (
 		<Card className="bg-primary text-primary-foreground w-full border">
 			<CardContent className="p-0">
-				<div className="flex flex-col md:flex-row gap-8">
+				<div className="flex flex-col gap-8 md:flex-row">
 					{/* Left Side - Features Preview */}
 					<div className="flex-1 py-4 md:p-8">
 						<div className="mb-4 flex items-center gap-2">
@@ -190,7 +194,7 @@ const Waitlist = () => {
 											setErrorMessage("");
 										}
 									}}
-									className="w-full bg-muted"
+									className="bg-muted w-full"
 									disabled={state === "loading"}
 									aria-invalid={state === "error"}
 								/>

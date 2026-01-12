@@ -10,7 +10,7 @@ const Navbar = async () => {
 	return (
 		<header className="sticky top-0 z-50 w-full">
 			<div className="mx-auto max-w-5xl px-4 py-4 sm:px-6">
-				<nav className="bg-card/95 flex items-center justify-between rounded-2xl border border-border/50 px-4 py-3 shadow-card backdrop-blur-sm sm:px-6">
+				<nav className="bg-card/95 border-border/50 shadow-card flex items-center justify-between rounded-2xl border px-4 py-3 backdrop-blur-sm sm:px-6">
 					<Link
 						href={session?.user ? "/home" : "/landing"}
 						className="flex items-center gap-3 transition-opacity hover:opacity-80"
@@ -42,7 +42,7 @@ const Navbar = async () => {
 										alt="User Avatar"
 										width={32}
 										height={32}
-										className="h-8 w-8 rounded-full object-cover ring-2 ring-border"
+										className="ring-border h-8 w-8 rounded-full object-cover ring-2"
 									/>
 								) : (
 									<HiUserCircle className="text-muted-foreground h-8 w-8" />

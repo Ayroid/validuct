@@ -11,8 +11,13 @@ import VoteButtons from "@/components/VoteButtons";
 import CommentSection from "@/components/CommentSection";
 import ShareButton from "@/components/ShareButton";
 import ValidationSignals from "@/components/ValidationSignals";
+import IdeaWaitlist from "@/components/IdeaWaitlist";
 import Image from "next/image";
-import { HiArrowLeft, HiPencilSquare, HiArrowTopRightOnSquare } from "react-icons/hi2";
+import {
+	HiArrowLeft,
+	HiPencilSquare,
+	HiArrowTopRightOnSquare,
+} from "react-icons/hi2";
 
 export default function IdeaDetailPage() {
 	const params = useParams();
@@ -100,16 +105,16 @@ export default function IdeaDetailPage() {
 	return (
 		<div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
 			{/* Back Button */}
-			<button
-				onClick={() => router.back()}
-				className="text-muted-foreground hover:text-foreground mb-6 inline-flex cursor-pointer items-center gap-1.5 text-sm font-medium transition-colors"
+			<Link
+				href={`/home`}
+				className="text-muted-foreground hover:text-foreground mb-6 inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
 			>
 				<HiArrowLeft className="h-4 w-4" />
-				<span>BACK</span>
-			</button>
+				<span>HOME</span>
+			</Link>
 
 			{/* Main Content Card */}
-			<article className="bg-card rounded-xl border border-border/50 p-6 shadow-card sm:p-8">
+			<article className="bg-card border-border/50 shadow-card rounded-xl border p-6 sm:p-8">
 				{/* Header */}
 				<header className="mb-6 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
 					<div className="flex min-w-0 flex-1 flex-col gap-4">
@@ -147,10 +152,10 @@ export default function IdeaDetailPage() {
 								)}
 							</div>
 						</div>
-						<h1 className="text-foreground text-2xl font-bold leading-tight sm:text-3xl">
+						<h1 className="text-foreground text-2xl leading-tight font-bold sm:text-3xl">
 							{idea.heading}
 						</h1>
-						<p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+						<p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
 							{idea.description}
 						</p>
 						<div className="text-muted-foreground flex items-center gap-3 text-sm">
@@ -162,12 +167,12 @@ export default function IdeaDetailPage() {
 									<Image
 										src={idea.user.profilePicture}
 										alt={idea.user.username}
-										className="h-7 w-7 rounded-full ring-2 ring-border"
+										className="ring-border h-7 w-7 rounded-full ring-2"
 										width={28}
 										height={28}
 									/>
 								) : (
-									<div className="bg-muted text-foreground flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold ring-2 ring-border">
+									<div className="bg-muted text-foreground ring-border flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold ring-2">
 										{idea.user.username.charAt(0).toUpperCase()}
 									</div>
 								)}
@@ -222,8 +227,13 @@ export default function IdeaDetailPage() {
 					<ValidationSignals ideaId={idea.id} />
 				</section>
 
+				{/* Idea Waitlist */}
+				<section className="mt-4">
+					<IdeaWaitlist ideaId={idea.id} ideaOwnerId={idea.userId} />
+				</section>
+
 				{/* Comments Section */}
-				<section className="mt-8 border-t border-border/50 pt-8">
+				<section className="border-border/50 mt-8 border-t pt-8">
 					<CommentSection
 						ideaId={idea.id}
 						initialCommentsCount={idea.commentsCount}

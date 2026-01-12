@@ -62,7 +62,8 @@ const ACTION_CONFIG: Record<
 
 const PRIORITY_BADGE: Record<ActionPriority, string> = {
 	HIGH: "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400",
-	MEDIUM: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
+	MEDIUM:
+		"bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
 	LOW: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400",
 };
 
@@ -86,7 +87,7 @@ export default function BuilderSnapshotHeader({
 			</Link>
 
 			{/* Profile Card */}
-			<div className="bg-card rounded-xl border border-border/50 p-6 shadow-card sm:p-8">
+			<div className="bg-card border-border/50 shadow-card rounded-xl border p-6 sm:p-8">
 				<div className="flex flex-col gap-6">
 					<div className="flex flex-col gap-6 sm:flex-row">
 						{/* Profile Picture */}
@@ -97,10 +98,10 @@ export default function BuilderSnapshotHeader({
 									alt={profile.user.username}
 									width={96}
 									height={96}
-									className="h-20 w-20 rounded-full object-cover ring-4 ring-border sm:h-24 sm:w-24"
+									className="ring-border h-20 w-20 rounded-full object-cover ring-4 sm:h-24 sm:w-24"
 								/>
 							) : (
-								<div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-2xl font-bold text-white ring-4 ring-border sm:h-24 sm:w-24 sm:text-3xl">
+								<div className="from-primary to-accent ring-border flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br text-2xl font-bold text-white ring-4 sm:h-24 sm:w-24 sm:text-3xl">
 									{profile.user.username[0].toUpperCase()}
 								</div>
 							)}
@@ -188,7 +189,7 @@ export default function BuilderSnapshotHeader({
 
 					{/* Next Action Recommendation */}
 					{isOwnProfile && nextAction && actionConfig && (
-						<div className="bg-muted/50 rounded-xl border border-border/30 p-4">
+						<div className="bg-muted/50 border-border/30 rounded-xl border p-4">
 							<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 								<div className="flex items-center gap-3">
 									<div

@@ -19,11 +19,7 @@ export class SignalService {
    * @returns Object with the new signal state
    * @throws {AppError} If the idea is not found (404)
    */
-  static async toggleSignal(
-    ideaId: string,
-    userId: string,
-    signalType: SignalType
-  ) {
+  static async toggleSignal(ideaId: string, userId: string, signalType: SignalType) {
     // Verify idea exists
     const idea = await prisma.idea.findUnique({
       where: { id: ideaId },

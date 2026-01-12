@@ -95,7 +95,8 @@ export class AuthService {
     // If user doesn't exist, create a new one
     if (!user) {
       // Generate a random password for OAuth users (they won't use it)
-      const randomPassword = Math.random().toString(36).slice(-12) + Math.random().toString(36).slice(-12);
+      const randomPassword =
+        Math.random().toString(36).slice(-12) + Math.random().toString(36).slice(-12);
       const passwordHash = await hashPassword(randomPassword);
 
       // Ensure username is unique

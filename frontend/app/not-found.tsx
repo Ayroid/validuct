@@ -83,14 +83,14 @@ export default function NotFound() {
 					<div className="flex flex-wrap justify-center gap-4 text-sm">
 						<Link
 							href="/home"
-							className="text-primary hover:text-primary/80 underline underline-offset-4 transition-colors"
+							className="text-primary hover:text-primary/80 cursor-pointer underline underline-offset-4 transition-colors"
 						>
 							Timeline
 						</Link>
 						<span className="text-muted-foreground">•</span>
 						<Link
 							href="/signin"
-							className="text-primary hover:text-primary/80 underline underline-offset-4 transition-colors"
+							className="text-primary hover:text-primary/80 cursor-pointer underline underline-offset-4 transition-colors"
 						>
 							Sign In
 						</Link>

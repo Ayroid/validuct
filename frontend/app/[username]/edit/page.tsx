@@ -136,7 +136,7 @@ export default function ProfileSettingsPage() {
 							maxLength={500}
 							className="resize-none"
 						/>
-						<div className="text-right text-xs text-muted-foreground">
+						<div className="text-muted-foreground text-right text-xs">
 							{formData.bio?.length || 0}/500
 						</div>
 					</div>

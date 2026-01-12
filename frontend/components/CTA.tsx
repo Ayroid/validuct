@@ -23,7 +23,7 @@ const CTA = () => {
 						</h2>
 						<p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-xl md:text-2xl">
 							Get honest feedback, votes, and insights from a focused
-							community—so you don't ship something nobody wants.
+							community—so you don&apos;t ship something nobody wants.
 						</p>
 
 						<Link

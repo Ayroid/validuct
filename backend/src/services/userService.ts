@@ -420,7 +420,12 @@ export class UserService {
    * Determine the next recommended action based on signal patterns
    */
   private static determineNextAction(
-    ideas: Array<{ id: string; heading: string; signals: IdeaSignalCounts; validationState: ValidationState }>,
+    ideas: Array<{
+      id: string;
+      heading: string;
+      signals: IdeaSignalCounts;
+      validationState: ValidationState;
+    }>,
     totalIdeas: number
   ): NextActionRecommendation {
     if (totalIdeas === 0) {
@@ -582,25 +587,41 @@ export class UserService {
         signalType: 'PROBLEM_REAL',
         totalCount: aggregated.problemReal.total,
         ideasWithSignal: aggregated.problemReal.ideasWith,
-        strength: this.calculateStrength(aggregated.problemReal.ideasWith, totalIdeas, aggregated.problemReal.total),
+        strength: this.calculateStrength(
+          aggregated.problemReal.ideasWith,
+          totalIdeas,
+          aggregated.problemReal.total
+        ),
       },
       willingness: {
         signalType: 'WOULD_PAY',
         totalCount: aggregated.wouldPay.total,
         ideasWithSignal: aggregated.wouldPay.ideasWith,
-        strength: this.calculateStrength(aggregated.wouldPay.ideasWith, totalIdeas, aggregated.wouldPay.total),
+        strength: this.calculateStrength(
+          aggregated.wouldPay.ideasWith,
+          totalIdeas,
+          aggregated.wouldPay.total
+        ),
       },
       execution: {
         signalType: 'READY_TO_BUILD',
         totalCount: aggregated.readyToBuild.total,
         ideasWithSignal: aggregated.readyToBuild.ideasWith,
-        strength: this.calculateStrength(aggregated.readyToBuild.ideasWith, totalIdeas, aggregated.readyToBuild.total),
+        strength: this.calculateStrength(
+          aggregated.readyToBuild.ideasWith,
+          totalIdeas,
+          aggregated.readyToBuild.total
+        ),
       },
       clarity: {
         signalType: 'NEEDS_CLARITY',
         totalCount: aggregated.needsClarity.total,
         ideasWithSignal: aggregated.needsClarity.ideasWith,
-        strength: this.calculateStrength(aggregated.needsClarity.ideasWith, totalIdeas, aggregated.needsClarity.total),
+        strength: this.calculateStrength(
+          aggregated.needsClarity.ideasWith,
+          totalIdeas,
+          aggregated.needsClarity.total
+        ),
       },
       nextAction: this.determineNextAction(ideasWithSignals, totalIdeas),
       ideasByValidationState,
@@ -690,7 +711,9 @@ export class UserService {
         break;
       case 'ready_to_build':
         sortedIdeas = ideasWithSignals
-          .filter((i) => i.validationState === 'READY_TO_BUILD' || i.validationState === 'VALIDATED')
+          .filter(
+            (i) => i.validationState === 'READY_TO_BUILD' || i.validationState === 'VALIDATED'
+          )
           .sort((a, b) => {
             const aScore = a.signals.readyToBuild + a.signals.problemReal + a.signals.wouldPay;
             const bScore = b.signals.readyToBuild + b.signals.problemReal + b.signals.wouldPay;

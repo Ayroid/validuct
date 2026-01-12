@@ -173,7 +173,7 @@ export default function ProfilePage() {
 								setActiveTab("all");
 								setPage(1);
 							}}
-							className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+							className={`rounded-md px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
 								activeTab === "all"
 									? "bg-card text-foreground shadow-sm"
 									: "text-muted-foreground hover:text-foreground"
@@ -187,7 +187,7 @@ export default function ProfilePage() {
 									setActiveTab("pinned");
 									setPage(1);
 								}}
-								className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+								className={`rounded-md px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
 									activeTab === "pinned"
 										? "bg-card text-foreground shadow-sm"
 										: "text-muted-foreground hover:text-foreground"

@@ -89,6 +89,37 @@ export interface IdeaSignals {
 }
 
 // ============================================================================
+// Idea Waitlist Types
+// ============================================================================
+
+export interface IdeaWaitlistStats {
+	count: number;
+	accessToken: string | null;
+	isOwner: boolean;
+}
+
+export interface IdeaWaitlistEntry {
+	id: string;
+	email: string;
+	createdAt: string;
+}
+
+export interface IdeaWaitlistData {
+	ideaId: string;
+	ideaHeading: string;
+	totalCount: number;
+	entries: IdeaWaitlistEntry[];
+	pagination: PaginationMeta;
+}
+
+export interface IdeaWaitlistExport {
+	ideaId: string;
+	ideaHeading: string;
+	totalCount: number;
+	entries: { email: string; createdAt: string }[];
+}
+
+// ============================================================================
 // Validation Dashboard Types
 // ============================================================================
 

@@ -57,10 +57,10 @@ export default function IdeaCard({
 
 	return (
 		<article
-			className="group bg-card cursor-pointer rounded-xl border border-border/50 p-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover hover:border-border"
+			className="group bg-card border-border/50 shadow-card hover:shadow-card-hover hover:border-border cursor-pointer rounded-xl border p-5 transition-all duration-200 hover:-translate-y-0.5"
 			onClick={handleCardClick}
 		>
-			<div className="flex gap-4 items-center ">
+			<div className="flex items-center gap-4">
 				{/* Voting Column */}
 				<div className="flex shrink-0 items-start pt-0.5">
 					<VoteButtons
@@ -75,7 +75,7 @@ export default function IdeaCard({
 				<div className="flex min-w-0 flex-1 flex-col gap-3">
 					{/* Title Row with Status */}
 					<div className="flex items-start justify-between gap-3">
-						<h2 className="text-foreground group-hover:text-primary line-clamp-2 min-w-0 flex-1 text-base font-semibold leading-snug transition-colors sm:text-lg">
+						<h2 className="text-foreground group-hover:text-primary line-clamp-2 min-w-0 flex-1 text-base leading-snug font-semibold transition-colors sm:text-lg">
 							{idea.heading}
 						</h2>
 						<div className="flex shrink-0 items-center gap-2">
@@ -132,9 +132,11 @@ export default function IdeaCard({
 								}).replace(/^(about|over|almost) /, "")}
 							</span>
 							<span className="text-border hidden sm:inline">·</span>
-							<span className="hidden sm:inline"><span className="font-mono">{idea.commentsCount}</span> comments</span>
+							<span className="hidden sm:inline">
+								<span className="font-mono">{idea.commentsCount}</span> comments
+							</span>
 						</div>
-						<span className="text-muted-foreground shrink-0 font-medium transition-colors group-hover:text-primary">
+						<span className="text-muted-foreground group-hover:text-primary shrink-0 font-medium transition-colors">
 							View →
 						</span>
 					</div>

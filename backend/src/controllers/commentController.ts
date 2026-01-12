@@ -19,11 +19,7 @@ export class CommentController {
    * Request body: { content, parentCommentId? }
    * Returns 201 with created comment
    */
-  static async createComment(
-    req: AuthRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  static async createComment(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       if (!req.userId) {
         throw new Error('User ID not found');
@@ -62,11 +58,7 @@ export class CommentController {
    * Query parameters: page, limit
    * Returns nested comment tree with pagination metadata
    */
-  static async getIdeaComments(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  static async getIdeaComments(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id: ideaId } = req.params;
       const page = parseInt(req.query.page as string) || 1;
@@ -99,11 +91,7 @@ export class CommentController {
    * No authentication required
    * Returns comment with user information and direct replies
    */
-  static async getComment(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  static async getComment(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id: commentId } = req.params;
 
@@ -133,11 +121,7 @@ export class CommentController {
    * Request body: { content }
    * Returns updated comment
    */
-  static async updateComment(
-    req: AuthRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  static async updateComment(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       if (!req.userId) {
         throw new Error('User ID not found');
@@ -174,11 +158,7 @@ export class CommentController {
    * Returns 204 No Content on success
    * Deletes comment and all nested replies
    */
-  static async deleteComment(
-    req: AuthRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  static async deleteComment(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       if (!req.userId) {
         throw new Error('User ID not found');
@@ -206,11 +186,7 @@ export class CommentController {
    * Requires authentication
    * Returns helpful state and count
    */
-  static async toggleHelpful(
-    req: AuthRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  static async toggleHelpful(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       if (!req.userId) {
         throw new Error('User ID not found');

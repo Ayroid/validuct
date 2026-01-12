@@ -101,155 +101,155 @@ export default function NewIdeaPage() {
 
 	return (
 		<div className="mx-auto max-w-5xl px-6 py-8">
-				{/* Header */}
-				<div className="mb-10">
-					<Link
-						href="/home"
-						className="text-muted-foreground hover:text-foreground mb-8 inline-flex items-center gap-1 text-sm"
+			{/* Header */}
+			<div className="mb-10">
+				<Link
+					href="/home"
+					className="text-muted-foreground hover:text-foreground mb-8 inline-flex items-center gap-1 text-sm"
+				>
+					<svg
+						className="h-4 w-4"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
 					>
-						<svg
-							className="h-4 w-4"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={2}
-								d="M15 19l-7-7 7-7"
-							/>
-						</svg>
-						<span>BACK</span>
-					</Link>
-					<h1 className="mb-2 text-3xl font-bold">What&apos;s your idea?</h1>
-				</div>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth={2}
+							d="M15 19l-7-7 7-7"
+						/>
+					</svg>
+					<span>BACK</span>
+				</Link>
+				<h1 className="mb-2 text-3xl font-bold">What&apos;s your idea?</h1>
+			</div>
 
-				{/* Form */}
-				<div className="bg-card rounded-lg border p-8 md:p-10">
-					<form onSubmit={handleSubmit} className="space-y-8">
-						{/* Heading */}
+			{/* Form */}
+			<div className="bg-card rounded-lg border p-8 md:p-10">
+				<form onSubmit={handleSubmit} className="space-y-8">
+					{/* Heading */}
+					<div className="space-y-2">
+						<Label htmlFor="heading">
+							Idea title <span className="text-red-500">*</span>
+						</Label>
+						<Input
+							type="text"
+							id="heading"
+							name="heading"
+							value={formData.heading}
+							onChange={handleChange}
+							required
+							maxLength={100}
+							placeholder="A tool that helps..."
+						/>
+						<div className="text-muted-foreground text-right text-xs">
+							{formData.heading.length}/100
+						</div>
+					</div>
+
+					{/* Description */}
+					<div className="space-y-2">
+						<Label htmlFor="description">
+							Description <span className="text-red-500">*</span>
+						</Label>
+						<Textarea
+							id="description"
+							name="description"
+							value={formData.description}
+							onChange={handleChange}
+							required
+							rows={8}
+							maxLength={500}
+							placeholder="Describe your idea, the problem it solves, and who it's for..."
+							className="resize-none"
+						/>
+						<div className="text-muted-foreground text-right text-xs">
+							{formData.description.length}/500
+						</div>
+					</div>
+
+					{/* Status */}
+					<div className="space-y-3">
+						<Label>Current status</Label>
+						<div className="grid grid-cols-2 gap-3">
+							{statusOptions.map((option) => (
+								<Button
+									key={option.value}
+									type="button"
+									onClick={() =>
+										setFormData({ ...formData, status: option.value })
+									}
+									variant={
+										formData.status === option.value ? "default" : "outline"
+									}
+									className="justify-start"
+								>
+									<span className="mr-2">{option.emoji}</span>
+									{option.label}
+								</Button>
+							))}
+						</div>
+					</div>
+
+					{/* Launched Link */}
+					{(formData.status === "LAUNCHED" || formData.status === "WIP") && (
 						<div className="space-y-2">
-							<Label htmlFor="heading">
-								Idea title <span className="text-red-500">*</span>
+							<Label htmlFor="launchedLink">
+								Project Link
+								{formData.status === "LAUNCHED" && (
+									<span className="text-muted-foreground ml-1">(optional)</span>
+								)}
 							</Label>
 							<Input
-								type="text"
-								id="heading"
-								name="heading"
-								value={formData.heading}
+								type="url"
+								id="launchedLink"
+								name="launchedLink"
+								value={formData.launchedLink}
 								onChange={handleChange}
-								required
-								maxLength={100}
-								placeholder="A tool that helps..."
+								placeholder="https://your-project.com"
 							/>
-							<div className="text-right text-xs text-muted-foreground">
-								{formData.heading.length}/100
-							</div>
 						</div>
+					)}
 
-						{/* Description */}
-						<div className="space-y-2">
-							<Label htmlFor="description">
-								Description <span className="text-red-500">*</span>
-							</Label>
-							<Textarea
-								id="description"
-								name="description"
-								value={formData.description}
-								onChange={handleChange}
-								required
-								rows={8}
-								maxLength={500}
-								placeholder="Describe your idea, the problem it solves, and who it's for..."
-								className="resize-none"
-							/>
-							<div className="text-right text-xs text-muted-foreground">
-								{formData.description.length}/500
-							</div>
+					{/* Action Buttons */}
+					<div className="space-y-4">
+						<div className="flex gap-3">
+							<Button
+								type="button"
+								variant="outline"
+								className="flex-1"
+								size="lg"
+								asChild
+							>
+								<Link href="/home" className="block text-center text-sm">
+									Cancel
+								</Link>
+							</Button>
+							<Button
+								type="submit"
+								disabled={
+									submitting || !formData.heading || !formData.description
+								}
+								className="flex-1"
+								size="lg"
+							>
+								{submitting ? (
+									<>
+										<div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+										<span>Sharing...</span>
+									</>
+								) : (
+									<>
+										<HiSparkles className="h-5 w-5" />
+										<span>Share idea</span>
+									</>
+								)}
+							</Button>
 						</div>
-
-						{/* Status */}
-						<div className="space-y-3">
-							<Label>Current status</Label>
-							<div className="grid grid-cols-2 gap-3">
-								{statusOptions.map((option) => (
-									<Button
-										key={option.value}
-										type="button"
-										onClick={() =>
-											setFormData({ ...formData, status: option.value })
-										}
-										variant={
-											formData.status === option.value ? "default" : "outline"
-										}
-										className="justify-start"
-									>
-										<span className="mr-2">{option.emoji}</span>
-										{option.label}
-									</Button>
-								))}
-							</div>
-						</div>
-
-						{/* Launched Link */}
-						{(formData.status === "LAUNCHED" || formData.status === "WIP") && (
-							<div className="space-y-2">
-								<Label htmlFor="launchedLink">
-									Project Link
-									{formData.status === "LAUNCHED" && (
-										<span className="ml-1 text-muted-foreground">(optional)</span>
-									)}
-								</Label>
-								<Input
-									type="url"
-									id="launchedLink"
-									name="launchedLink"
-									value={formData.launchedLink}
-									onChange={handleChange}
-									placeholder="https://your-project.com"
-								/>
-							</div>
-						)}
-
-						{/* Action Buttons */}
-						<div className="space-y-4">
-							<div className="flex gap-3">
-								<Button
-									type="button"
-									variant="outline"
-									className="flex-1"
-									size="lg"
-									asChild
-								>
-									<Link href="/home" className="block text-center text-sm">
-										Cancel
-									</Link>
-								</Button>
-								<Button
-									type="submit"
-									disabled={
-										submitting || !formData.heading || !formData.description
-									}
-									className="flex-1"
-									size="lg"
-								>
-									{submitting ? (
-										<>
-											<div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-											<span>Sharing...</span>
-										</>
-									) : (
-										<>
-											<HiSparkles className="h-5 w-5" />
-											<span>Share idea</span>
-										</>
-									)}
-								</Button>
-							</div>
-						</div>
-					</form>
-				</div>
+					</div>
+				</form>
 			</div>
+		</div>
 	);
 }

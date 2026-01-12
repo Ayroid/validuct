@@ -78,7 +78,7 @@ export default function ValidationSummaryCard({
 	];
 
 	return (
-		<div className="bg-card rounded-xl border border-border/50 p-6 shadow-card">
+		<div className="bg-card border-border/50 shadow-card rounded-xl border p-6">
 			<h3 className="text-foreground mb-5 text-lg font-semibold">
 				Validation Signals
 			</h3>
@@ -91,7 +91,7 @@ export default function ValidationSummaryCard({
 					return (
 						<div
 							key={key}
-							className="bg-muted/30 rounded-xl border border-border/30 p-4 text-center"
+							className="bg-muted/30 border-border/30 rounded-xl border p-4 text-center"
 						>
 							<div
 								className={`mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full ${config.iconBg}`}
@@ -107,7 +107,10 @@ export default function ValidationSummaryCard({
 								{strengthConfig.label}
 							</div>
 							<div className="text-muted-foreground mt-2 text-xs">
-								<span className="font-mono">{data.ideasWithSignal}/{summary.totalIdeas}</span> ideas
+								<span className="font-mono">
+									{data.ideasWithSignal}/{summary.totalIdeas}
+								</span>{" "}
+								ideas
 							</div>
 						</div>
 					);
@@ -128,7 +131,7 @@ export default function ValidationSummaryCard({
 			)}
 
 			{/* Ideas by State */}
-			<div className="flex flex-wrap gap-4 border-t border-border/50 pt-4 text-sm sm:gap-6">
+			<div className="border-border/50 flex flex-wrap gap-4 border-t pt-4 text-sm sm:gap-6">
 				<div className="flex items-center gap-2">
 					<div className="h-2.5 w-2.5 rounded-full bg-emerald-500"></div>
 					<span className="text-foreground font-mono font-medium">

@@ -127,6 +127,21 @@ export const waitlistLimiter = rateLimit({
   validate: false,
 });
 
+/**
+ * Idea Waitlist limiter - For idea waitlist join endpoint
+ * 10 requests per hour per IP
+ */
+export const ideaWaitlistLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  limit: 10,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  store: createRedisStore('idea-waitlist'),
+  keyGenerator: ipKeyGenerator,
+  message: 'Too many waitlist requests, please try again later',
+  handler: rateLimitResponse,
+  validate: false,
+});
 
 /**
  * General API limiter - For all GET requests

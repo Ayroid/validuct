@@ -8,6 +8,12 @@ import { voteLimiter } from '../middleware/rateLimiter.js';
 const router = Router();
 
 // All vote routes are protected
-router.post('/ideas/:id/vote', protect, voteLimiter, validate(voteSchema), VoteController.voteOnIdea);
+router.post(
+  '/ideas/:id/vote',
+  protect,
+  voteLimiter,
+  validate(voteSchema),
+  VoteController.voteOnIdea
+);
 
 export default router;

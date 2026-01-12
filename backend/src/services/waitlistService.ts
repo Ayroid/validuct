@@ -6,7 +6,6 @@ import { waitlistEmail } from '../templates/waitlistEmailTemplate.js';
 
 export class WaitlistService {
   static async addToWaitlist(data: unknown) {
-
     console.log('Adding to waitlist with data:', data);
 
     // Validate input data

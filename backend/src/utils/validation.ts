@@ -75,3 +75,8 @@ export const toggleSignalSchema = z.object({
 export const waitlistSchema = z.object({
   email: z.string().email('Invalid email address'),
 });
+
+// Idea Waitlist validation schema
+export const ideaWaitlistSchema = z.object({
+  email: z.string().email('Invalid email address'),
+});

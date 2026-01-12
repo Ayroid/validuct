@@ -68,13 +68,13 @@ export default function ProfileIdeaCard({
 
 	return (
 		<article
-			className="group bg-card cursor-pointer rounded-xl border border-border/50 p-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover hover:border-border"
+			className="group bg-card border-border/50 shadow-card hover:shadow-card-hover hover:border-border cursor-pointer rounded-xl border p-5 transition-all duration-200 hover:-translate-y-0.5"
 			onClick={handleCardClick}
 		>
 			<div className="flex flex-col gap-4 sm:flex-row sm:gap-5">
 				{/* Signal Snapshot Column */}
 				<div className="flex w-full shrink-0 flex-row items-center gap-4 sm:w-20 sm:flex-col sm:gap-0">
-					<div className="bg-muted/50 rounded-xl border border-border/30 p-4 text-center">
+					<div className="bg-muted/50 border-border/30 rounded-xl border p-4 text-center">
 						<div className="text-foreground font-mono text-2xl font-bold">
 							{totalPositiveSignals}
 						</div>
@@ -149,7 +149,7 @@ export default function ProfileIdeaCard({
 				<div className="flex min-w-0 flex-1 flex-col gap-3">
 					{/* Title Row with Validation State */}
 					<div className="flex items-start justify-between gap-3">
-						<h2 className="text-foreground group-hover:text-primary line-clamp-2 min-w-0 flex-1 text-base font-semibold leading-snug transition-colors sm:text-lg">
+						<h2 className="text-foreground group-hover:text-primary line-clamp-2 min-w-0 flex-1 text-base leading-snug font-semibold transition-colors sm:text-lg">
 							{idea.heading}
 						</h2>
 						<div className="flex shrink-0 items-center gap-2">
@@ -183,9 +183,11 @@ export default function ProfileIdeaCard({
 								}).replace(/^(about|over|almost) /, "")}
 							</span>
 							<span className="text-border">·</span>
-							<span><span className="font-mono">{idea.commentsCount}</span> comments</span>
+							<span>
+								<span className="font-mono">{idea.commentsCount}</span> comments
+							</span>
 						</div>
-						<span className="text-muted-foreground font-medium transition-colors group-hover:text-primary">
+						<span className="text-muted-foreground group-hover:text-primary font-medium transition-colors">
 							View →
 						</span>
 					</div>

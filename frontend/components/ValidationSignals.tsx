@@ -121,7 +121,7 @@ export default function ValidationSignals({ ideaId }: ValidationSignalsProps) {
 
 	if (isLoading) {
 		return (
-			<div className="bg-card rounded-xl border border-border/50 p-5 shadow-card">
+			<div className="bg-card border-border/50 shadow-card rounded-xl border p-5">
 				<div className="bg-muted mb-4 h-4 w-32 animate-pulse rounded-md" />
 				<div className="grid grid-cols-2 gap-3">
 					{[1, 2, 3, 4].map((i) => (
@@ -145,8 +145,8 @@ export default function ValidationSignals({ ideaId }: ValidationSignalsProps) {
 	];
 
 	return (
-		<div className="bg-card rounded-xl border border-border/50 p-5 shadow-card">
-			<h3 className="text-foreground mb-4 text-sm font-semibold uppercase tracking-wide">
+		<div className="bg-card border-border/50 shadow-card rounded-xl border p-5">
+			<h3 className="text-foreground mb-4 text-sm font-semibold tracking-wide uppercase">
 				Validation Signals
 			</h3>
 			<div className="grid grid-cols-2 gap-3">
