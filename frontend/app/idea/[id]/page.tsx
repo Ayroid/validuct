@@ -113,23 +113,39 @@ export default function IdeaDetailPage() {
 				{/* Header */}
 				<header className="mb-6 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
 					<div className="flex min-w-0 flex-1 flex-col gap-4">
-						<div className="flex flex-wrap items-center gap-3">
-							<span
-								className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusBadgeStyles(idea.status)}`}
-							>
-								{formatStatus(idea.status)}
-							</span>
-							{idea.launchedLink && (
-								<Link
-									href={idea.launchedLink}
-									target="_blank"
-									rel="noopener noreferrer"
-									className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors ${getStatusBadgeStyles("LAUNCHED")} hover:opacity-80`}
+						{/* Status badges and share button row on mobile */}
+						<div className="flex items-start justify-between gap-3">
+							<div className="flex flex-wrap items-center gap-3">
+								<span
+									className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusBadgeStyles(idea.status)}`}
 								>
-									Visit
-									<HiArrowTopRightOnSquare className="h-3.5 w-3.5" />
-								</Link>
-							)}
+									{formatStatus(idea.status)}
+								</span>
+								{idea.launchedLink && (
+									<Link
+										href={idea.launchedLink}
+										target="_blank"
+										rel="noopener noreferrer"
+										className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors ${getStatusBadgeStyles("LAUNCHED")} hover:opacity-80`}
+									>
+										Visit
+										<HiArrowTopRightOnSquare className="h-3.5 w-3.5" />
+									</Link>
+								)}
+							</div>
+							{/* Share button - visible only on mobile */}
+							<div className="flex items-center gap-2 sm:hidden">
+								<ShareButton idea={idea} size="icon" showLabel={false} />
+								{user && user.id === idea.userId && (
+									<Link
+										href={`/idea/${idea.id}/edit`}
+										className="hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg p-2 transition-colors"
+										title="Edit idea"
+									>
+										<HiPencilSquare className="h-5 w-5" />
+									</Link>
+								)}
+							</div>
 						</div>
 						<h1 className="text-foreground text-2xl font-bold leading-tight sm:text-3xl">
 							{idea.heading}
@@ -164,10 +180,21 @@ export default function IdeaDetailPage() {
 								})}
 							</span>
 						</div>
+						{/* Vote buttons - horizontal on mobile */}
+						<div className="flex justify-center sm:hidden">
+							<VoteButtons
+								ideaId={idea.id}
+								initialUpvotesCount={idea.upvotesCount}
+								initialDownvotesCount={idea.downvotesCount}
+								initialUserVote={idea.userVote}
+								onVoteUpdate={handleVoteUpdate}
+								orientation="horizontal"
+							/>
+						</div>
 					</div>
 
-					{/* Actions Column */}
-					<div className="flex flex-row items-center gap-3 sm:flex-col sm:items-end">
+					{/* Actions Column - visible only on desktop */}
+					<div className="hidden flex-col items-end gap-2 sm:flex">
 						<div className="flex items-center gap-2">
 							<ShareButton idea={idea} size="icon" showLabel={false} />
 							{user && user.id === idea.userId && (

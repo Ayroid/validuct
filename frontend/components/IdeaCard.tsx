@@ -60,7 +60,7 @@ export default function IdeaCard({
 			className="group bg-card cursor-pointer rounded-xl border border-border/50 p-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover hover:border-border"
 			onClick={handleCardClick}
 		>
-			<div className="flex gap-4">
+			<div className="flex gap-4 items-center ">
 				{/* Voting Column */}
 				<div className="flex shrink-0 items-start pt-0.5">
 					<VoteButtons

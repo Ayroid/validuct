@@ -6,13 +6,18 @@ import { useRouter } from "next/navigation";
 import { votesApi } from "@/lib/api/votes";
 import { VoteButtonsProps } from "@/types";
 
+interface ExtendedVoteButtonsProps extends VoteButtonsProps {
+	orientation?: "vertical" | "horizontal";
+}
+
 export default function VoteButtons({
 	ideaId,
 	initialUpvotesCount,
 	initialDownvotesCount,
 	initialUserVote,
 	onVoteUpdate,
-}: VoteButtonsProps) {
+	orientation = "vertical",
+}: ExtendedVoteButtonsProps) {
 	const { data: session } = useSession();
 	const router = useRouter();
 	const [upvotesCount, setUpvotesCount] = useState(initialUpvotesCount);
@@ -87,17 +92,20 @@ export default function VoteButtons({
 
 	const netVotes = upvotesCount - downvotesCount;
 
+	const isHorizontal = orientation === "horizontal";
+
 	return (
 		<div
-			className="group/vote flex min-w-12 flex-col items-center gap-0.5"
+			className={`group/vote flex items-center gap-0.5 ${isHorizontal ? "flex-row" : "flex-col"}`}
 			data-no-navigate
 		>
+			{/* Upvote button - top in vertical, right in horizontal */}
 			<button
 				className={`rounded p-1 transition-all duration-150 hover:bg-amber-500/10 ${
 					userVote === "upvote"
 						? "text-amber-500"
 						: "text-muted-foreground/40 hover:text-amber-500/80"
-				}`}
+				} ${isHorizontal ? "order-3" : ""}`}
 				onClick={(e) => {
 					e.stopPropagation();
 					handleVote("upvote");
@@ -118,6 +126,7 @@ export default function VoteButtons({
 					/>
 				</svg>
 			</button>
+			{/* Vote count - center */}
 			<span
 				className={`font-mono text-lg font-bold transition-transform duration-150 group-hover/vote:scale-105 ${
 					userVote === "upvote"
@@ -125,16 +134,17 @@ export default function VoteButtons({
 						: userVote === "downvote"
 							? "text-blue-500"
 							: "text-foreground/80"
-				}`}
+				} ${isHorizontal ? "order-2 min-w-8 text-center" : ""}`}
 			>
 				{netVotes}
 			</span>
+			{/* Downvote button - bottom in vertical, left in horizontal */}
 			<button
 				className={`rounded p-1 transition-all duration-150 hover:bg-blue-500/10 ${
 					userVote === "downvote"
 						? "text-blue-500"
 						: "text-muted-foreground/40 hover:text-blue-500/80"
-				}`}
+				} ${isHorizontal ? "order-1" : ""}`}
 				onClick={(e) => {
 					e.stopPropagation();
 					handleVote("downvote");

@@ -124,6 +124,7 @@ export const waitlistLimiter = rateLimit({
   keyGenerator: ipKeyGenerator,
   message: 'Too many waitlist requests, please try again later',
   handler: rateLimitResponse,
+  validate: false,
 });
 
 
