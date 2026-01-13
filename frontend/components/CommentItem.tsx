@@ -8,6 +8,7 @@ import { commentsApi } from "@/lib/api/comments";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { CommentItemProps, CommentCategory } from "@/types";
+import Link from "next/dist/client/link";
 
 const CATEGORY_LABELS: Record<
 	CommentCategory,
@@ -110,14 +111,15 @@ export default function CommentItem({
 		>
 			<div className="flex items-start gap-3">
 				{/* User Avatar */}
-				<div className="relative shrink-0">
+				<Link href={`/${comment.user.username}`} className="relative shrink-0">
 					{comment.user.profilePicture ? (
 						<Image
 							src={comment.user.profilePicture}
 							alt={comment.user.username}
 							width={32}
 							height={32}
-							className="rounded-full"
+							className="cursor-pointer rounded-full"
+							onClick={() => router.push(`/${comment.user.username}`)}
 						/>
 					) : (
 						<div className="bg-muted text-foreground flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold">
@@ -127,15 +129,18 @@ export default function CommentItem({
 					{isIdeaOwner && (
 						<div className="bg-primary border-background absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2" />
 					)}
-				</div>
+				</Link>
 
 				{/* Comment Content */}
 				<div className="min-w-0 flex-1">
 					{/* User Info and Timestamp */}
 					<div className="mb-1 flex flex-wrap items-center gap-2">
-						<span className="text-foreground text-sm font-semibold">
+						<Link
+							href={`/${comment.user.username}`}
+							className="text-sm font-semibold cursor-pointer hover:text-foreground transition-colors text-muted-foreground"
+						>
 							{comment.user.username}
-						</span>
+						</Link>
 						{isIdeaOwner && (
 							<span className="bg-primary/10 text-primary rounded-full px-2 py-0.5 text-xs font-medium">
 								Author
@@ -169,10 +174,19 @@ export default function CommentItem({
 								autoFocus
 							/>
 							<div className="mt-2 flex gap-2">
-								<Button onClick={handleEdit} size="sm" className="cursor-pointer transition-colors">
+								<Button
+									onClick={handleEdit}
+									size="sm"
+									className="cursor-pointer transition-colors"
+								>
 									Save
 								</Button>
-								<Button onClick={handleCancelEdit} variant="outline" size="sm" className="cursor-pointer transition-colors">
+								<Button
+									onClick={handleCancelEdit}
+									variant="outline"
+									size="sm"
+									className="cursor-pointer transition-colors"
+								>
 									Cancel
 								</Button>
 							</div>
