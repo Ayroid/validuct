@@ -80,3 +80,15 @@ export const waitlistSchema = z.object({
 export const ideaWaitlistSchema = z.object({
   email: z.string().email('Invalid email address'),
 });
+
+// Notification preferences validation schema
+export const updatePreferencesSchema = z.object({
+  emailSignals: z.boolean().optional(),
+  emailComments: z.boolean().optional(),
+  emailReplies: z.boolean().optional(),
+  emailMilestones: z.boolean().optional(),
+  inAppUpVotes: z.boolean().optional(),
+  inAppUpSignals: z.boolean().optional(),
+  inAppUpComments: z.boolean().optional(),
+  inAppUpReplies: z.boolean().optional(),
+});

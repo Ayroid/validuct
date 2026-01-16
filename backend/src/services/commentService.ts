@@ -1,5 +1,6 @@
 import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { NotificationTriggers } from './notificationTriggers.js';
 
 /**
  * Comment category types for structured feedback
@@ -132,6 +133,13 @@ export class CommentService {
         },
       },
     });
+
+    // Trigger notification for new comment or reply
+    if (data.parentCommentId) {
+      NotificationTriggers.onReply(comment.id).catch(console.error);
+    } else {
+      NotificationTriggers.onComment(comment.id).catch(console.error);
+    }
 
     return comment;
   }

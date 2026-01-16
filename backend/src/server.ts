@@ -2,6 +2,7 @@ import app from './app.js';
 import { config } from './config/env.js';
 import { connectDatabase, disconnectDatabase } from './config/database.js';
 import { closeRedis } from './config/redis.js';
+import { EmailWorkerService } from './services/emailWorkerService.js';
 
 const startServer = async () => {
   try {
@@ -13,12 +14,16 @@ const startServer = async () => {
       console.log(`🚀 Server running on port ${config.PORT}`);
       console.log(`📝 Environment: ${config.NODE_ENV}`);
       console.log(`🌐 CORS Origin: ${config.CORS_ORIGIN}`);
+
+      // Start email background worker
+      EmailWorkerService.start(30); // Process every 30 seconds
     });
 
     // Graceful shutdown
     const shutdown = async (signal: string) => {
       console.log(`\n${signal} received. Closing server gracefully...`);
       server.close(async () => {
+        EmailWorkerService.stop();
         await closeRedis();
         await disconnectDatabase();
         process.exit(0);

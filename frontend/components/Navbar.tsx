@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { HiUserCircle } from "react-icons/hi2";
 import ThemeToggle from "@/components/ThemeToggle";
+import NotificationBell from "@/components/NotificationBell";
 import { auth } from "@/auth";
 
 const Navbar = async () => {
@@ -29,6 +30,8 @@ const Navbar = async () => {
 
 					<div className="flex items-center gap-2">
 						<ThemeToggle />
+
+						{session?.user && <NotificationBell />}
 
 						{session?.user ? (
 							<Link

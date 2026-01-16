@@ -1,5 +1,6 @@
 import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { NotificationTriggers } from './notificationTriggers.js';
 
 /**
  * Signal types for idea validation
@@ -59,6 +60,9 @@ export class SignalService {
           signalType,
         },
       });
+
+      // Trigger notification for new signal
+      NotificationTriggers.onValidationSignal(ideaId, signalType, userId).catch(console.error);
 
       return {
         hasSignal: true,

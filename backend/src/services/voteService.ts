@@ -1,6 +1,7 @@
 import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { VoteType } from '@prisma/client';
+import { NotificationTriggers } from './notificationTriggers.js';
 
 /**
  * Service class for managing vote-related operations on ideas
@@ -120,6 +121,11 @@ export class VoteService {
       });
 
       result = voteType;
+
+      // Trigger notification for new upvote
+      if (voteType === VoteType.UPVOTE) {
+        NotificationTriggers.onIdeaUpvote(ideaId, userId).catch(console.error);
+      }
     }
 
     // Get updated idea counts

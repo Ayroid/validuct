@@ -346,5 +346,52 @@ export interface BuilderSnapshotHeaderProps {
 }
 
 // ============================================================================
+// Notification Types
+// ============================================================================
+
+export type NotificationType = "UPVOTE" | "SIGNAL" | "COMMENT" | "REPLY" | "MILESTONE";
+export type NotificationPriority = "LOW" | "MEDIUM" | "HIGH";
+
+export interface Notification {
+	id: string;
+	userId: string;
+	type: NotificationType;
+	priority: NotificationPriority;
+	title: string;
+	message: string;
+	actionUrl: string | null;
+	ideaId: string | null;
+	commentId: string | null;
+	triggeredById: string | null;
+	read: boolean;
+	readAt: string | null;
+	createdAt: string;
+	triggeredBy?: {
+		id: string;
+		username: string;
+		profilePicture: string | null;
+	} | null;
+	idea?: {
+		id: string;
+		heading: string;
+	} | null;
+}
+
+export interface NotificationPreferences {
+	id: string;
+	userId: string;
+	emailSignals: boolean;
+	emailComments: boolean;
+	emailReplies: boolean;
+	emailMilestones: boolean;
+	inAppUpVotes: boolean;
+	inAppUpSignals: boolean;
+	inAppUpComments: boolean;
+	inAppUpReplies: boolean;
+	createdAt: string;
+	updatedAt: string;
+}
+
+// ============================================================================
 // Page Types
 // ============================================================================

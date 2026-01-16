@@ -21,12 +21,16 @@ model User {
   updatedAt      DateTime @updatedAt @map("updated_at")
 
   // Relations
-  ideas          Idea[]
-  votes          Vote[]
-  comments       Comment[]
-  pinnedIdeas    PinnedIdea[]
-  commentHelpful CommentHelpful[]
-  ideaSignals    IdeaSignal[]
+  ideas                   Idea[]
+  votes                   Vote[]
+  comments                Comment[]
+  pinnedIdeas             PinnedIdea[]
+  commentHelpful          CommentHelpful[]
+  ideaSignals             IdeaSignal[]
+  notifications           Notification[]
+  triggeredNotifications  Notification[]           @relation("TriggeredNotifications")
+  emailQueue              EmailQueue[]
+  notificationPreferences NotificationPreferences?
 
   @@index([username])
   @@index([email])
@@ -58,12 +62,13 @@ model Idea {
   updatedAt           DateTime   @updatedAt @map("updated_at")
 
   // Relations
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  votes       Vote[]
-  comments    Comment[]
-  pinnedIdeas PinnedIdea[]
-  signals     IdeaSignal[]
-  waitlist    IdeaWaitlist[]
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  votes         Vote[]
+  comments      Comment[]
+  pinnedIdeas   PinnedIdea[]
+  signals       IdeaSignal[]
+  waitlist      IdeaWaitlist[]
+  notifications Notification[]
 
   @@index([userId])
   @@index([createdAt])
@@ -97,6 +102,124 @@ enum SignalType {
   NEEDS_CLARITY
 
   @@map("signal_type")
+}
+
+// ============================================
+// NOTIFICATION SYSTEM ENUMS
+// ============================================
+
+// NotificationType enum - categorizes what triggered the notification
+// Using an enum instead of strings because:
+// 1. Type safety - TypeScript will catch typos
+// 2. Database efficiency - enums are stored as integers internally
+// 3. Validation - Prisma auto-validates, no invalid types possible
+enum NotificationType {
+  UPVOTE // Someone upvoted your idea
+  SIGNAL // Someone added a validation signal
+  COMMENT // Someone commented on your idea
+  REPLY // Someone replied to your comment
+  MILESTONE // Your idea hit a milestone (10, 25, 50, 100+ upvotes)
+
+  @@map("notification_type")
+}
+
+// Priority levels for notifications
+// HIGH = signals, milestones (things you really want to see)
+// MEDIUM = comments, replies (standard interactions)
+// LOW = upvotes (nice to know but not urgent)
+enum NotificationPriority {
+  LOW
+  MEDIUM
+  HIGH
+
+  @@map("notification_priority")
+}
+
+// Email queue status - tracks the lifecycle of a queued email
+// This is a state machine: PENDING -> SENT or PENDING -> FAILED
+enum EmailStatus {
+  PENDING // Waiting to be processed
+  SENT // Successfully delivered to Resend
+  FAILED // All retry attempts exhausted
+
+  @@map("email_status")
+}
+
+model Notification {
+  id            String               @id @default(uuid())
+  userId        String               @map("user_id")
+  type          NotificationType
+  priority      NotificationPriority @default(MEDIUM)
+  title         String               @db.VarChar(200)
+  message       String               @db.Text
+  actionUrl     String?              @map("action_url")
+  ideaId        String?              @map("idea_id")
+  commentId     String?              @map("comment_id")
+  triggeredById String?              @map("triggered_by_id")
+  read          Boolean              @default(false)
+  readAt        DateTime?            @map("read_at")
+  createdAt     DateTime             @default(now()) @map("created_at")
+
+  // Relations
+  user        User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  triggeredBy User? @relation("TriggeredNotifications", fields: [triggeredById], references: [id], onDelete: SetNull)
+  idea        Idea? @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read, createdAt])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
+
+// Email queue (background processing)
+model EmailQueue {
+  id             String               @id @default(uuid())
+  userId         String               @map("user_id")
+  type           NotificationType
+  priority       NotificationPriority @default(MEDIUM)
+  recipientEmail String               @map("recipient_email") @db.VarChar(255)
+  subject        String               @db.VarChar(500)
+  htmlBody       String               @map("html_body") @db.Text
+  status         EmailStatus          @default(PENDING)
+  sentAt         DateTime?            @map("sent_at")
+  failedAt       DateTime?            @map("failed_at")
+  errorMessage   String?              @map("error_message") @db.Text
+  retryCount     Int                  @default(0) @map("retry_count")
+  maxRetries     Int                  @default(3) @map("max_retries")
+  nextRetryAt    DateTime?            @map("next_retry_at")
+  createdAt      DateTime             @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status, priority, createdAt])
+  @@index([status, nextRetryAt])
+  @@map("email_queue")
+}
+
+// User Notification Preferences
+model NotificationPreferences {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+
+  // Email Preferences
+  emailSignals    Boolean @default(true) @map("email_signals")
+  emailComments   Boolean @default(true) @map("email_comments")
+  emailReplies    Boolean @default(true) @map("email_replies")
+  emailMilestones Boolean @default(true) @map("email_milestones")
+
+  // In-app preferences
+  inAppUpVotes    Boolean @default(true) @map("inapp_upvotes")
+  inAppUpSignals  Boolean @default(true) @map("inapp_signals")
+  inAppUpComments Boolean @default(true) @map("inapp_comments")
+  inAppUpReplies  Boolean @default(true) @map("inapp_replies")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
 }
 
 model Vote {
