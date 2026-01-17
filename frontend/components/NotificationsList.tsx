@@ -12,6 +12,7 @@ import {
 } from "@/lib/api/notifications";
 import { Notification } from "@/types";
 import { formatDistanceToNow } from "date-fns";
+import NotificationSettingsDialog from "./NotificationSettingsDialog";
 
 const getNotificationIcon = (type: Notification["type"]) => {
 	switch (type) {
@@ -99,15 +100,18 @@ export default function NotificationsList() {
 			{/* Header */}
 			<div className="border-border flex items-center justify-between border-b px-6 py-4">
 				<h1 className="text-foreground text-xl font-semibold">Notifications</h1>
-				{hasUnread && (
-					<button
-						onClick={handleMarkAllAsRead}
-						className="text-primary hover:text-primary/80 flex items-center gap-1.5 text-sm font-medium transition-colors cursor-pointer"
-					>
-						<HiCheck className="h-4 w-4" />
-						Mark all as read
-					</button>
-				)}
+				<div className="flex items-center gap-2">
+					{hasUnread && (
+						<button
+							onClick={handleMarkAllAsRead}
+							className="text-primary hover:text-primary/80 flex items-center gap-1.5 text-sm font-medium transition-colors cursor-pointer"
+						>
+							<HiCheck className="h-4 w-4" />
+							Mark all as read
+						</button>
+					)}
+					<NotificationSettingsDialog />
+				</div>
 			</div>
 
 			{/* Notifications List */}

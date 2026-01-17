@@ -90,7 +90,7 @@ const NotificationBell = () => {
 				className="hover:bg-muted relative rounded-full p-1.5 transition-colors cursor-pointer"
 				title="Notifications"
 			>
-				<HiBell className="text-muted-foreground h-6 w-6" />
+				<HiBell className="text-muted-foreground h-5 w-5" />
 				{unreadCount > 0 && (
 					<span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
 						{unreadCount > 99 ? "99+" : unreadCount}

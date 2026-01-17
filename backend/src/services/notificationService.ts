@@ -175,6 +175,8 @@ export class NotificationService {
 
   // Update preferences
   static async updatePreferences(userId: string, data: Partial<{
+    emailFirstFeedback: boolean;
+    emailDailySummary: boolean;
     emailSignals: boolean;
     emailComments: boolean;
     emailReplies: boolean;

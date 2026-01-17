@@ -3,6 +3,7 @@ import { config } from './config/env.js';
 import { connectDatabase, disconnectDatabase } from './config/database.js';
 import { closeRedis } from './config/redis.js';
 import { EmailWorkerService } from './services/emailWorkerService.js';
+import { SchedulerService } from './services/schedulerService.js';
 
 const startServer = async () => {
   try {
@@ -17,6 +18,9 @@ const startServer = async () => {
 
       // Start email background worker
       EmailWorkerService.start(30); // Process every 30 seconds
+
+      // Start scheduler for daily tasks (e.g., daily summary emails)
+      SchedulerService.start();
     });
 
     // Graceful shutdown
@@ -24,6 +28,7 @@ const startServer = async () => {
       console.log(`\n${signal} received. Closing server gracefully...`);
       server.close(async () => {
         EmailWorkerService.stop();
+        SchedulerService.stop();
         await closeRedis();
         await disconnectDatabase();
         process.exit(0);

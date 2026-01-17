@@ -206,6 +206,7 @@ export interface PaginationMeta {
 	limit: number;
 	total: number;
 	total_pages: number;
+	totalPages: number;
 }
 
 // ============================================================================
@@ -380,6 +381,8 @@ export interface Notification {
 export interface NotificationPreferences {
 	id: string;
 	userId: string;
+	emailFirstFeedback: boolean;
+	emailDailySummary: boolean;
 	emailSignals: boolean;
 	emailComments: boolean;
 	emailReplies: boolean;

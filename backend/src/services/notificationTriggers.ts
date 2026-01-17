@@ -3,6 +3,44 @@ import { NotificationService } from './notificationService.js';
 import { notificationEmailTemplate } from '../templates/notificationEmailTemplate.js';
 
 export class NotificationTriggers {
+  // Check if this is the first feedback (comment or signal) on an idea
+  private static async checkAndSendFirstFeedback(
+    ideaId: string,
+    ideaUserId: string,
+    ideaUserEmail: string,
+    ideaHeading: string,
+    feedbackType: 'comment' | 'signal',
+    triggeredByUsername: string
+  ) {
+    // Count existing comments and signals on the idea (excluding this one)
+    const [commentsCount, signalsCount] = await Promise.all([
+      prisma.comment.count({ where: { ideaId } }),
+      prisma.ideaSignal.count({ where: { ideaId } }),
+    ]);
+
+    // If this is the first feedback (total is 1, meaning just this one)
+    const totalFeedback = commentsCount + signalsCount;
+    if (totalFeedback === 1) {
+      const prefs = await NotificationService.getOrCreatePreferences(ideaUserId);
+      if (prefs.emailFirstFeedback) {
+        await NotificationService.queueEmail({
+          userId: ideaUserId,
+          type: feedbackType === 'comment' ? 'COMMENT' : 'SIGNAL',
+          recipientEmail: ideaUserEmail,
+          subject: `🎉 Your first feedback on "${ideaHeading}"!`,
+          htmlBody: notificationEmailTemplate({
+            type: 'first_feedback',
+            ideaTitle: ideaHeading,
+            feedbackType,
+            triggeredByUsername,
+            actionUrl: `${process.env.APP_URL}/idea/${ideaId}`,
+          }),
+          priority: 'HIGH',
+        });
+      }
+    }
+  }
+
   // When someone upvotes an idea
   static async onIdeaUpvote(ideaId: string, upvotedByUserId: string) {
     const idea = await prisma.idea.findUnique({
@@ -67,7 +105,17 @@ export class NotificationTriggers {
       priority: 'HIGH', // Signals are important
     });
 
-    // Queue email notification
+    // Check for first feedback email
+    await this.checkAndSendFirstFeedback(
+      ideaId,
+      idea.userId,
+      idea.user.email,
+      idea.heading,
+      'signal',
+      triggeredBy?.username || 'Someone'
+    );
+
+    // Queue regular email notification (skip if first feedback was sent)
     const prefs = await NotificationService.getOrCreatePreferences(idea.userId);
     if (NotificationService.shouldSendEmail('SIGNAL', prefs)) {
       await NotificationService.queueEmail({
@@ -113,7 +161,17 @@ export class NotificationTriggers {
       triggeredById: comment.userId,
     });
 
-    // Queue email
+    // Check for first feedback email
+    await this.checkAndSendFirstFeedback(
+      comment.ideaId,
+      comment.idea.userId,
+      comment.idea.user.email,
+      comment.idea.heading,
+      'comment',
+      comment.user.username
+    );
+
+    // Queue regular email (skip if first feedback was sent)
     const prefs = await NotificationService.getOrCreatePreferences(comment.idea.userId);
     if (NotificationService.shouldSendEmail('COMMENT', prefs)) {
       await NotificationService.queueEmail({

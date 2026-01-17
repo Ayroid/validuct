@@ -202,10 +202,12 @@ model NotificationPreferences {
   userId String @unique @map("user_id")
 
   // Email Preferences
-  emailSignals    Boolean @default(true) @map("email_signals")
-  emailComments   Boolean @default(true) @map("email_comments")
-  emailReplies    Boolean @default(true) @map("email_replies")
-  emailMilestones Boolean @default(true) @map("email_milestones")
+  emailFirstFeedback Boolean @default(true) @map("email_first_feedback")
+  emailDailySummary  Boolean @default(true) @map("email_daily_summary")
+  emailSignals       Boolean @default(true) @map("email_signals")
+  emailComments      Boolean @default(true) @map("email_comments")
+  emailReplies       Boolean @default(true) @map("email_replies")
+  emailMilestones    Boolean @default(true) @map("email_milestones")
 
   // In-app preferences
   inAppUpVotes    Boolean @default(true) @map("inapp_upvotes")
