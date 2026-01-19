@@ -1,6 +1,8 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
+// Load .env file only in development (in production, env vars are passed directly)
+if (process.env.NODE_ENV !== 'production') {
+  const dotenv = await import('dotenv');
+  dotenv.config();
+}
 
 /**
  * Environment configuration interface

@@ -1,6 +1,6 @@
 import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
-import { VoteType } from '@prisma/client';
+import { VoteType } from '../../prisma/client/client.js';
 import { NotificationTriggers } from './notificationTriggers.js';
 
 /**

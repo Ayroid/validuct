@@ -4,7 +4,7 @@
     "module": "ES2022",
     "lib": ["ES2022"],
     "moduleResolution": "bundler",
-    "rootDir": "./src",
+    "rootDir": "./",
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -23,6 +23,6 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "prisma/generated/**/*"],
   "exclude": ["node_modules", "dist", "tests"]
 }

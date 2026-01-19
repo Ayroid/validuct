@@ -1,5 +1,5 @@
 import { prisma } from '../config/database.js';
-import { NotificationType, NotificationPriority } from '@prisma/client';
+import { NotificationType, NotificationPriority } from '../../prisma/client/client.js';
 import { AppError } from '../middleware/errorHandler.js';
 
 interface CreateNotificationParams {

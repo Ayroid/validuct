@@ -1,6 +1,6 @@
 import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
-import { IdeaStatus } from '@prisma/client';
+import { IdeaStatus } from '../../prisma/client/client.js';
 
 /**
  * Data required to create a new idea

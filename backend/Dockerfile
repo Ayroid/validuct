@@ -1,5 +1,5 @@
 # Build stage
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 
 # Install OpenSSL for Prisma
@@ -15,12 +15,13 @@ RUN npm ci
 COPY tsconfig.json ./
 COPY src ./src
 COPY prisma ./prisma
+COPY scripts ./scripts
 
-# Generate Prisma client and build TypeScript
+# Generate Prisma client and build for production
 RUN npx prisma generate && npm run build
 
 # Production stage
-FROM node:18-alpine AS production
+FROM node:22-alpine AS production
 WORKDIR /app
 
 # Install OpenSSL for Prisma
@@ -33,11 +34,7 @@ ENV NODE_ENV=production
 COPY package.json package-lock.json ./
 RUN npm ci --only=production && npm cache clean --force
 
-# Copy Prisma schema and generate client for production
-COPY prisma ./prisma
-RUN npx prisma generate
-
-# Copy built application
+# Copy built application (includes compiled prisma client)
 COPY --from=builder /app/dist ./dist
 
 # Create non-root user for security

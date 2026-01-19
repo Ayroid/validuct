@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { IdeaService } from '../services/ideaService.js';
 import { AuthRequest } from '../types/index.js';
-import { IdeaStatus } from '@prisma/client';
+import { IdeaStatus } from '../../prisma/client/client.js';
 
 /**
  * Controller for handling idea-related HTTP requests

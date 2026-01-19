@@ -1,7 +1,7 @@
 import { Response, NextFunction } from 'express';
 import { VoteService } from '../services/voteService.js';
 import { AuthRequest } from '../types/index.js';
-import { VoteType } from '@prisma/client';
+import { VoteType } from '../../prisma/client/client.js';
 
 /**
  * Controller for handling vote-related HTTP requests

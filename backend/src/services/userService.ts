@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/database.js';
 import {
   SignalStrength,
   ValidationState,
@@ -9,8 +9,6 @@ import {
   PaginationMeta,
   ProfileSortMode,
 } from '../types/index.js';
-
-const prisma = new PrismaClient();
 
 /**
  * Service class for managing user-related operations

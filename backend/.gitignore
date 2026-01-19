@@ -29,3 +29,4 @@ coverage/
 
 # Prisma
 prisma/migrations/
+prisma/client/
