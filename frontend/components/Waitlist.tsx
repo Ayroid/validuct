@@ -19,19 +19,19 @@ type WaitlistState = "idle" | "loading" | "success" | "error";
 
 const upcomingFeatures = [
 	{
-		icon: HiCpuChip,
-		title: "AI-powered analysis",
-		description: "Competitor & market insights",
-	},
-	{
 		icon: HiUserGroup,
-		title: "Waitlist collection",
-		description: "Gather signups for your ideas",
+		title: "Payment intent capture",
+		description: "\"I'd pay $X\" signals from real users",
 	},
 	{
 		icon: HiChartBar,
-		title: "Analytics dashboard",
-		description: "Track your validation metrics",
+		title: "Conversion analytics",
+		description: "Track views vs. signups",
+	},
+	{
+		icon: HiCpuChip,
+		title: "AI-powered analysis",
+		description: "Competitor & market insights",
 	},
 ];
 
