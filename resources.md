@@ -1,0 +1,1 @@
+[Similar Idea to Validuct but around Waitlists](https://waitforit.me/?utm_source=trustmrr&utm_medium=referral&utm_campaign=sponsor_card)
