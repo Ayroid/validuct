@@ -3,7 +3,6 @@
 import { FaProductHunt, FaRedditAlien, FaXTwitter } from "react-icons/fa6";
 import { HiXCircle } from "react-icons/hi2";
 import FadeIn from "./FadeIn";
-import InteractiveCard from "./InteractiveCard";
 
 const problems = [
 	{
@@ -34,53 +33,58 @@ const problems = [
 
 export default function ProblemSection() {
 	return (
-		<section className="px-4 py-16 sm:py-20 md:py-24 lg:py-32 sm:px-6">
-			<div className="mx-auto max-w-6xl">
+		<section className="px-4 py-20 sm:px-6 sm:py-24 lg:py-32">
+			<div className="mx-auto max-w-7xl">
 				{/* Section Header */}
-				<FadeIn direction="up" className="mb-10 sm:mb-16 text-center">
-					<span className="bg-destructive/10 text-destructive mb-4 inline-block rounded-full px-4 py-1.5 text-sm font-medium shadow-sm">
+				<FadeIn direction="up" className="mb-12 text-center sm:mb-16 lg:mb-20">
+					<span className="bg-destructive/10 text-destructive mb-4 inline-block rounded-full px-4 py-2 text-sm font-medium sm:text-base">
 						The Problem
 					</span>
-					<h2 className="text-foreground mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
+					<h2 className="text-foreground mb-5 text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl">
 						Likes and Upvotes Don&apos;t Pay Bills
 					</h2>
-					<p className="text-muted-foreground mx-auto max-w-2xl text-base sm:text-lg">
+					<p className="text-muted-foreground mx-auto max-w-2xl text-lg sm:text-xl">
 						Twitter polls, Reddit posts, and Product Hunt launches give you
 						vanity metrics. None of them capture real buying intent.
 					</p>
 				</FadeIn>
 
 				{/* Problem Cards */}
-				<div className="grid gap-4 sm:gap-6 md:grid-cols-3">
+				<div className="grid gap-6 sm:gap-8 md:grid-cols-3">
 					{problems.map((problem, index) => (
 						<FadeIn key={problem.title} delay={index * 150} direction="up">
-							<InteractiveCard
-								hoverEffect="lift"
-								accentColor={problem.color}
-								className="h-full shadow-card"
-							>
-								<div className="p-5 sm:p-6 pl-6 sm:pl-8">
-									<div
-										className="mb-4 flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110"
-										style={{ backgroundColor: `${problem.color}15` }}
-									>
-										<problem.icon
-											className="h-6 w-6 sm:h-7 sm:w-7"
-											style={{ color: problem.color }}
-										/>
-									</div>
-									<h3 className="text-foreground mb-2 text-lg sm:text-xl font-semibold">
-										{problem.title}
-									</h3>
-									<p className="text-muted-foreground mb-4 text-sm sm:text-base">
-										{problem.description}
-									</p>
-									<div className="text-destructive flex items-center gap-2 text-sm">
-										<HiXCircle className="h-4 w-4" />
-										<span>{problem.issue}</span>
-									</div>
+							<div className="bg-card border-border group relative h-full overflow-hidden rounded-2xl border p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:rounded-3xl sm:p-8">
+								{/* Accent bar */}
+								<div
+									className="absolute top-0 left-0 h-full w-1 transition-all duration-300 group-hover:w-1.5"
+									style={{ backgroundColor: problem.color }}
+								/>
+
+								{/* Icon */}
+								<div
+									className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110 sm:h-16 sm:w-16"
+									style={{ backgroundColor: `${problem.color}15` }}
+								>
+									<problem.icon
+										className="h-7 w-7 sm:h-8 sm:w-8"
+										style={{ color: problem.color }}
+									/>
 								</div>
-							</InteractiveCard>
+
+								{/* Content */}
+								<h3 className="text-foreground mb-3 text-xl font-semibold sm:text-2xl">
+									{problem.title}
+								</h3>
+								<p className="text-muted-foreground mb-5 text-base sm:text-lg">
+									{problem.description}
+								</p>
+
+								{/* Issue badge */}
+								<div className="text-destructive inline-flex items-center gap-2 rounded-full bg-destructive/10 px-3 py-1.5 text-sm font-medium">
+									<HiXCircle className="h-4 w-4" />
+									<span>{problem.issue}</span>
+								</div>
+							</div>
 						</FadeIn>
 					))}
 				</div>

@@ -2,7 +2,6 @@
 
 import { HiCurrencyDollar, HiChartBar, HiCpuChip } from "react-icons/hi2";
 import FadeIn from "./FadeIn";
-import InteractiveCard from "./InteractiveCard";
 
 const roadmapItems = [
 	{
@@ -13,7 +12,8 @@ const roadmapItems = [
 		status: "In Progress",
 		statusColor: "text-amber-600",
 		statusBg: "bg-amber-500/10",
-		accentColor: "#f59e0b",
+		iconBg: "bg-amber-500/10",
+		iconColor: "text-amber-500",
 	},
 	{
 		icon: HiChartBar,
@@ -23,7 +23,8 @@ const roadmapItems = [
 		status: "Planned",
 		statusColor: "text-blue-600",
 		statusBg: "bg-blue-500/10",
-		accentColor: "#3b82f6",
+		iconBg: "bg-blue-500/10",
+		iconColor: "text-blue-500",
 	},
 	{
 		icon: HiCpuChip,
@@ -33,53 +34,55 @@ const roadmapItems = [
 		status: "Exploring",
 		statusColor: "text-purple-600",
 		statusBg: "bg-purple-500/10",
-		accentColor: "#8b5cf6",
+		iconBg: "bg-purple-500/10",
+		iconColor: "text-purple-500",
 	},
 ];
 
 export default function RoadmapSection() {
 	return (
-		<section className="px-4 py-16 sm:py-20 md:py-24 lg:py-32 sm:px-6">
-			<div className="mx-auto max-w-6xl">
-				<FadeIn direction="up" className="mb-10 sm:mb-16 text-center">
-					<span className="bg-primary/10 text-primary mb-4 inline-block rounded-full px-4 py-1.5 text-sm font-medium shadow-sm">
+		<section className="bg-muted/30 px-4 py-20 sm:px-6 sm:py-24 lg:py-32">
+			<div className="mx-auto max-w-7xl">
+				<FadeIn direction="up" className="mb-12 text-center sm:mb-16 lg:mb-20">
+					<span className="bg-primary/10 text-primary mb-4 inline-block rounded-full px-4 py-2 text-sm font-medium sm:text-base">
 						Roadmap
 					</span>
-					<h2 className="text-foreground mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
-						Even More Powerful Features Coming
+					<h2 className="text-foreground mb-5 text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl">
+						What&apos;s Coming Next
 					</h2>
-					<p className="text-muted-foreground mx-auto max-w-2xl text-base sm:text-lg">
+					<p className="text-muted-foreground mx-auto max-w-2xl text-lg sm:text-xl">
 						We&apos;re building the complete validation toolkit for builders.
 					</p>
 				</FadeIn>
 
-				<div className="grid gap-4 sm:gap-6 md:grid-cols-3">
+				<div className="grid gap-6 sm:gap-8 md:grid-cols-3">
 					{roadmapItems.map((item, index) => (
 						<FadeIn key={item.title} delay={index * 150} direction="up">
-							<InteractiveCard
-								hoverEffect="border"
-								accentColor={item.accentColor}
-								className="h-full shadow-card hover:shadow-lg"
-							>
-								<div className="p-5 sm:p-6 pl-6 sm:pl-8">
-									<div className="mb-4 flex items-center justify-between">
-										<div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110">
-											<item.icon className="text-primary h-6 w-6" />
-										</div>
-										<span
-											className={`rounded-full ${item.statusBg} px-3 py-1 text-xs font-medium ${item.statusColor}`}
-										>
-											{item.status}
-										</span>
+							<div className="bg-card border-border group relative h-full overflow-hidden rounded-2xl border p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:rounded-3xl sm:p-8">
+								{/* Header */}
+								<div className="mb-5 flex items-center justify-between">
+									<div
+										className={`${item.iconBg} flex h-14 w-14 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110 sm:h-16 sm:w-16`}
+									>
+										<item.icon
+											className={`h-7 w-7 sm:h-8 sm:w-8 ${item.iconColor}`}
+										/>
 									</div>
-									<h3 className="text-foreground mb-2 text-base sm:text-lg font-semibold">
-										{item.title}
-									</h3>
-									<p className="text-muted-foreground text-sm">
-										{item.description}
-									</p>
+									<span
+										className={`rounded-full ${item.statusBg} px-3 py-1.5 text-xs font-medium sm:text-sm ${item.statusColor}`}
+									>
+										{item.status}
+									</span>
 								</div>
-							</InteractiveCard>
+
+								{/* Content */}
+								<h3 className="text-foreground mb-3 text-xl font-semibold sm:text-2xl">
+									{item.title}
+								</h3>
+								<p className="text-muted-foreground text-base sm:text-lg">
+									{item.description}
+								</p>
+							</div>
 						</FadeIn>
 					))}
 				</div>

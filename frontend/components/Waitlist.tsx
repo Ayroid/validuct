@@ -5,35 +5,13 @@ import {
 	HiSparkles,
 	HiCheckCircle,
 	HiExclamationCircle,
-	HiCpuChip,
-	HiUserGroup,
-	HiChartBar,
-	HiBell,
+	HiEnvelope,
 } from "react-icons/hi2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { waitlistApi } from "@/lib/api/waitlist";
 
 type WaitlistState = "idle" | "loading" | "success" | "error";
-
-const upcomingFeatures = [
-	{
-		icon: HiUserGroup,
-		title: "Payment intent capture",
-		description: "\"I'd pay $X\" signals from real users",
-	},
-	{
-		icon: HiChartBar,
-		title: "Conversion analytics",
-		description: "Track views vs. signups",
-	},
-	{
-		icon: HiCpuChip,
-		title: "AI-powered analysis",
-		description: "Competitor & market insights",
-	},
-];
 
 const Waitlist = () => {
 	const [email, setEmail] = useState("");
@@ -77,162 +55,89 @@ const Waitlist = () => {
 
 	if (state === "success") {
 		return (
-			<Card className="bg-primary text-primary-foreground w-full border">
-				<CardContent className="p-0">
-					<div className="flex flex-col gap-8 md:flex-row">
-						{/* Left Side - Features Preview */}
-						<div className="flex-1 py-4 md:p-8">
-							<div className="mb-4 flex items-center gap-2">
-								<HiBell className="h-5 w-5" />
-								<span className="bg-primary-foreground/20 rounded-full px-3 py-1 text-xs font-semibold">
-									Coming Soon
-								</span>
-							</div>
-							<h3 className="mb-2 text-2xl font-bold md:text-3xl">
-								Don&apos;t miss what&apos;s next
-							</h3>
-							<p className="mb-6 opacity-90">
-								Powerful features to supercharge your validation journey.
-							</p>
-
-							{/* Feature List */}
-							<div className="space-y-3">
-								{upcomingFeatures.map((feature, index) => (
-									<div
-										key={index}
-										className="bg-muted text-card-foreground flex items-center gap-3 rounded-lg p-3 transition-colors"
-									>
-										<div className="bg-primary/20 border-primary text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2">
-											<feature.icon className="h-5 w-5" />
-										</div>
-										<div>
-											<p className="font-semibold">{feature.title}</p>
-											<p className="text-sm opacity-80">
-												{feature.description}
-											</p>
-										</div>
-									</div>
-								))}
-							</div>
-						</div>
-
-						{/* Right Side - Success Message */}
-						<div className="bg-card text-card-foreground flex flex-1 flex-col items-center justify-center rounded-xl p-6 text-center md:rounded-xl md:p-8">
-							<div className="bg-primary/20 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
-								<HiCheckCircle className="text-primary h-10 w-10" />
-							</div>
-							<h3 className="mb-2 text-2xl font-bold">
-								You&apos;re on the list!
-							</h3>
-							<p className="text-muted-foreground">
-								We&apos;ll notify you when new features drop. Get ready!
-							</p>
-						</div>
-					</div>
-				</CardContent>
-			</Card>
+			<div className="text-center">
+				<div className="bg-green-500/10 mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full sm:h-24 sm:w-24">
+					<HiCheckCircle className="h-10 w-10 text-green-500 sm:h-12 sm:w-12" />
+				</div>
+				<h3 className="text-foreground mb-3 text-2xl font-bold sm:text-3xl">
+					You&apos;re on the list!
+				</h3>
+				<p className="text-muted-foreground mx-auto max-w-md text-base sm:text-lg">
+					We&apos;ll notify you when new features drop. Get ready to supercharge
+					your validation journey.
+				</p>
+			</div>
 		);
 	}
 
 	return (
-		<Card className="bg-primary text-primary-foreground w-full border">
-			<CardContent className="p-0">
-				<div className="flex flex-col gap-8 md:flex-row">
-					{/* Left Side - Features Preview */}
-					<div className="flex-1 py-4 md:p-8">
-						<div className="mb-4 flex items-center gap-2">
-							<HiBell className="h-5 w-5" />
-							<span className="bg-primary-foreground/20 rounded-full px-3 py-1 text-xs font-semibold">
-								Coming Soon
-							</span>
-						</div>
-						<h3 className="mb-2 text-2xl font-bold md:text-3xl">
-							Don&apos;t miss what&apos;s next
-						</h3>
-						<p className="mb-6 opacity-90">
-							Powerful features to supercharge your validation journey.
-						</p>
+		<div className="text-center">
+			{/* Header */}
+			<div className="bg-primary/10 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full sm:h-20 sm:w-20">
+				<HiEnvelope className="text-primary h-8 w-8 sm:h-10 sm:w-10" />
+			</div>
 
-						{/* Feature List */}
-						<div className="space-y-3">
-							{upcomingFeatures.map((feature, index) => (
-								<div
-									key={index}
-									className="bg-muted text-card-foreground flex items-center gap-3 rounded-lg p-3 transition-colors"
-								>
-									<div className="bg-primary/20 border-primary text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2">
-										<feature.icon className="h-5 w-5" />
-									</div>
-									<div>
-										<p className="font-semibold">{feature.title}</p>
-										<p className="text-sm opacity-80">{feature.description}</p>
-									</div>
-								</div>
-							))}
-						</div>
-					</div>
+			<h3 className="text-foreground mb-3 text-2xl font-bold sm:text-3xl md:text-4xl">
+				Stay in the Loop
+			</h3>
+			<p className="text-muted-foreground mx-auto mb-8 max-w-lg text-base sm:text-lg">
+				Get notified when we launch new features like payment intent capture and
+				analytics dashboard.
+			</p>
 
-					{/* Right Side - Form */}
-					<div className="bg-card text-card-foreground flex flex-1 flex-col justify-center rounded-xl p-6 md:rounded-xl md:p-8">
-						<div className="mb-6">
-							<h4 className="mb-2 text-xl font-bold">Get early access</h4>
-							<p className="text-muted-foreground text-sm">
-								Be the first to try new features when they launch.
-							</p>
-						</div>
+			{/* Form */}
+			<form
+				onSubmit={handleSubmit}
+				className="mx-auto flex max-w-md flex-col gap-3 sm:flex-row"
+			>
+				<Input
+					type="email"
+					placeholder="Enter your email"
+					value={email}
+					onChange={(e) => {
+						setEmail(e.target.value);
+						if (state === "error") {
+							setState("idle");
+							setErrorMessage("");
+						}
+					}}
+					className="bg-card border-border h-12 flex-1 text-base sm:h-14"
+					disabled={state === "loading"}
+					aria-invalid={state === "error"}
+				/>
+				<Button
+					type="submit"
+					size="lg"
+					className="h-12 cursor-pointer gap-2 px-6 text-base transition-all sm:h-14 sm:px-8"
+					disabled={state === "loading"}
+				>
+					{state === "loading" ? (
+						<>
+							<span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+							<span>Subscribing...</span>
+						</>
+					) : (
+						<>
+							<span>Notify Me</span>
+							<HiSparkles className="h-4 w-4" />
+						</>
+					)}
+				</Button>
+			</form>
 
-						<form onSubmit={handleSubmit} className="space-y-4">
-							<div className="space-y-3">
-								<Input
-									type="email"
-									placeholder="Enter your email"
-									value={email}
-									onChange={(e) => {
-										setEmail(e.target.value);
-										if (state === "error") {
-											setState("idle");
-											setErrorMessage("");
-										}
-									}}
-									className="bg-muted w-full"
-									disabled={state === "loading"}
-									aria-invalid={state === "error"}
-								/>
-								<Button
-									type="submit"
-									size="lg"
-									className="w-full gap-2 cursor-pointer transition-colors"
-									disabled={state === "loading"}
-								>
-									{state === "loading" ? (
-										<>
-											<span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-											<span>Subscribing...</span>
-										</>
-									) : (
-										<>
-											<span>Notify Me</span>
-											<HiSparkles className="h-4 w-4" />
-										</>
-									)}
-								</Button>
-							</div>
-
-							{state === "error" && errorMessage && (
-								<div className="text-destructive flex items-center gap-2 text-sm">
-									<HiExclamationCircle className="h-4 w-4 shrink-0" />
-									<span>{errorMessage}</span>
-								</div>
-							)}
-						</form>
-
-						<p className="text-muted-foreground mt-4 text-center text-xs">
-							No spam, ever. Unsubscribe anytime.
-						</p>
-					</div>
+			{/* Error message */}
+			{state === "error" && errorMessage && (
+				<div className="text-destructive mx-auto mt-4 flex max-w-md items-center justify-center gap-2 text-sm">
+					<HiExclamationCircle className="h-4 w-4 shrink-0" />
+					<span>{errorMessage}</span>
 				</div>
-			</CardContent>
-		</Card>
+			)}
+
+			{/* Privacy note */}
+			<p className="text-muted-foreground mt-4 text-xs sm:text-sm">
+				No spam, ever. Unsubscribe anytime.
+			</p>
+		</div>
 	);
 };
 
