@@ -5,13 +5,17 @@ import ThemeToggle from "@/components/ThemeToggle";
 import NotificationBell from "@/components/NotificationBell";
 import { auth } from "@/auth";
 
-const Navbar = async () => {
+interface NavbarProps {
+	fixed?: boolean;
+}
+
+const Navbar = async ({ fixed = false }: NavbarProps) => {
 	const session = await auth();
 
 	return (
-		<header className="sticky top-0 z-50 w-full">
-			<div className="mx-auto max-w-5xl px-4 py-4 sm:px-6">
-				<nav className="bg-card/95 border-border/50 shadow-card flex items-center justify-between rounded-2xl border px-4 py-3 backdrop-blur-sm sm:px-6">
+		<header className={`${fixed ? "fixed top-0 left-0 right-0" : "sticky top-0"} z-50 w-full`}>
+			<div className="mx-auto max-w-5xl px-4 py-3 sm:py-4 sm:px-6">
+				<nav className={`${fixed ? "bg-card/90 backdrop-blur-md shadow-lg" : "bg-card/95 backdrop-blur-sm shadow-card"} border-border/50 flex items-center justify-between rounded-2xl border px-4 py-2.5 sm:py-3 sm:px-6 transition-all duration-300`}>
 					<Link
 						href={session?.user ? "/home" : "/landing"}
 						className="flex items-center gap-3 transition-opacity hover:opacity-80"

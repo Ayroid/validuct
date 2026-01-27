@@ -310,3 +310,110 @@
 		border-color: oklch(from var(--signal-clarity) l c h / 0.3);
 	}
 }
+
+/* Floating animation for hero decorative elements */
+@keyframes float {
+	0%, 100% {
+		transform: translateY(0px) rotate(0deg);
+	}
+	50% {
+		transform: translateY(-10px) rotate(2deg);
+	}
+}
+
+@keyframes float-reverse {
+	0%, 100% {
+		transform: translateY(0px) rotate(0deg);
+	}
+	50% {
+		transform: translateY(10px) rotate(-2deg);
+	}
+}
+
+@keyframes grow-bar {
+	0% {
+		transform: scaleY(0);
+		transform-origin: bottom;
+	}
+	100% {
+		transform: scaleY(1);
+		transform-origin: bottom;
+	}
+}
+
+@keyframes pulse-glow {
+	0%, 100% {
+		box-shadow: 0 0 0 0 rgba(255, 189, 89, 0.4);
+	}
+	50% {
+		box-shadow: 0 0 20px 10px rgba(255, 189, 89, 0);
+	}
+}
+
+@keyframes shimmer {
+	0% {
+		background-position: -200% 0;
+	}
+	100% {
+		background-position: 200% 0;
+	}
+}
+
+.animate-float {
+	animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+	animation: float-reverse 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+	animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(255, 255, 255, 0.1) 50%,
+		transparent 100%
+	);
+	background-size: 200% 100%;
+	animation: shimmer 2s infinite;
+}
+
+/* Stagger animation delays for children */
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 100ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 200ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 300ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 400ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 500ms; }
+
+/* Interactive card hover state */
+.interactive-card {
+	@apply transition-all duration-300;
+}
+.interactive-card:hover {
+	@apply -translate-y-1;
+	box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+}
+
+/* Gradient text animation */
+.gradient-text {
+	background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+/* Glass morphism effect */
+.glass {
+	background: rgba(255, 255, 255, 0.1);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+}
+
+.dark .glass {
+	background: rgba(0, 0, 0, 0.2);
+}

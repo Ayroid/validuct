@@ -1,7 +1,5 @@
 # Validuct Notification System - Learning-Focused Implementation Guide
 
-## User Preferences
-
 - **Teaching style:** Detailed explanations (explain each concept thoroughly)
 - **Scope:** All notification types (upvotes, signals, comments, replies, milestones)
 - **Email provider:** Resend (reuse existing integration)
@@ -28,6 +26,7 @@ User clicks upvote → API waits for email to send (500ms) → Returns response
 ```
 
 **Issues:**
+
 - User waits 500ms just because we're sending an email
 - If Resend is down, the API fails
 - If server crashes mid-send, email is lost forever
@@ -41,6 +40,7 @@ User clicks upvote → Save email to DB (5ms) → Returns response
 ```
 
 **Benefits:**
+
 - API responds in 60ms (instant feel)
 - If Resend is down, emails wait and retry later
 - If server crashes, emails are safe in the database
@@ -74,10 +74,10 @@ User clicks upvote → Save email to DB (5ms) → Returns response
 
 ### Learning: Why These Tables?
 
-| Table | Purpose |
-|-------|---------|
-| `Notification` | What users see in their notification dropdown |
-| `EmailQueue` | Pending emails waiting to be sent (the "queue") |
+| Table                    | Purpose                                         |
+| ------------------------ | ----------------------------------------------- |
+| `Notification`           | What users see in their notification dropdown   |
+| `EmailQueue`             | Pending emails waiting to be sent (the "queue") |
 | `NotificationPreference` | User settings (email me for comments? signals?) |
 
 ### Files to Modify
@@ -233,9 +233,9 @@ Your codebase uses static class services - all methods are `static async`. This 
 **Create:** `backend/src/services/notificationService.ts`
 
 ```typescript
-import { prisma } from '../config/database.js';
-import { NotificationType, NotificationPriority } from '@prisma/client';
-import { AppError } from '../middleware/errorHandler.js';
+import { prisma } from "../config/database.js";
+import { NotificationType, NotificationPriority } from "@prisma/client";
+import { AppError } from "../middleware/errorHandler.js";
 
 interface CreateNotificationParams {
   userId: string;
@@ -268,7 +268,7 @@ export class NotificationService {
       data: {
         userId: params.userId,
         type: params.type,
-        priority: params.priority || 'MEDIUM',
+        priority: params.priority || "MEDIUM",
         title: params.title,
         message: params.message,
         actionUrl: params.actionUrl,
@@ -299,7 +299,7 @@ export class NotificationService {
       data: {
         userId: params.userId,
         type: params.type,
-        priority: params.priority || 'MEDIUM',
+        priority: params.priority || "MEDIUM",
         recipientEmail: params.recipientEmail,
         subject: params.subject,
         htmlBody: params.htmlBody,
@@ -314,7 +314,7 @@ export class NotificationService {
     const [notifications, total] = await Promise.all([
       prisma.notification.findMany({
         where: { userId },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         skip,
         take: limit,
         include: {
@@ -354,11 +354,11 @@ export class NotificationService {
     });
 
     if (!notification) {
-      throw new AppError('Notification not found', 404);
+      throw new AppError("Notification not found", 404);
     }
 
     if (notification.userId !== userId) {
-      throw new AppError('Not authorized', 403);
+      throw new AppError("Not authorized", 403);
     }
 
     return prisma.notification.update({
@@ -382,11 +382,11 @@ export class NotificationService {
     });
 
     if (!notification) {
-      throw new AppError('Notification not found', 404);
+      throw new AppError("Notification not found", 404);
     }
 
     if (notification.userId !== userId) {
-      throw new AppError('Not authorized', 403);
+      throw new AppError("Not authorized", 403);
     }
 
     return prisma.notification.delete({ where: { id: notificationId } });
@@ -408,16 +408,19 @@ export class NotificationService {
   }
 
   // Update preferences
-  static async updatePreferences(userId: string, data: Partial<{
-    emailSignals: boolean;
-    emailComments: boolean;
-    emailReplies: boolean;
-    emailMilestones: boolean;
-    inappUpvotes: boolean;
-    inappSignals: boolean;
-    inappComments: boolean;
-    inappReplies: boolean;
-  }>) {
+  static async updatePreferences(
+    userId: string,
+    data: Partial<{
+      emailSignals: boolean;
+      emailComments: boolean;
+      emailReplies: boolean;
+      emailMilestones: boolean;
+      inappUpvotes: boolean;
+      inappSignals: boolean;
+      inappComments: boolean;
+      inappReplies: boolean;
+    }>,
+  ) {
     return prisma.notificationPreference.upsert({
       where: { userId },
       update: data,
@@ -428,24 +431,36 @@ export class NotificationService {
   // Check if user wants in-app notification for this type
   private static shouldSendInApp(type: NotificationType, prefs: any): boolean {
     switch (type) {
-      case 'UPVOTE': return prefs.inappUpvotes;
-      case 'SIGNAL': return prefs.inappSignals;
-      case 'COMMENT': return prefs.inappComments;
-      case 'REPLY': return prefs.inappReplies;
-      case 'MILESTONE': return true; // Always show milestones
-      default: return true;
+      case "UPVOTE":
+        return prefs.inappUpvotes;
+      case "SIGNAL":
+        return prefs.inappSignals;
+      case "COMMENT":
+        return prefs.inappComments;
+      case "REPLY":
+        return prefs.inappReplies;
+      case "MILESTONE":
+        return true; // Always show milestones
+      default:
+        return true;
     }
   }
 
   // Check if user wants email for this type
   static shouldSendEmail(type: NotificationType, prefs: any): boolean {
     switch (type) {
-      case 'UPVOTE': return false; // Don't email for upvotes (too spammy)
-      case 'SIGNAL': return prefs.emailSignals;
-      case 'COMMENT': return prefs.emailComments;
-      case 'REPLY': return prefs.emailReplies;
-      case 'MILESTONE': return prefs.emailMilestones;
-      default: return false;
+      case "UPVOTE":
+        return false; // Don't email for upvotes (too spammy)
+      case "SIGNAL":
+        return prefs.emailSignals;
+      case "COMMENT":
+        return prefs.emailComments;
+      case "REPLY":
+        return prefs.emailReplies;
+      case "MILESTONE":
+        return prefs.emailMilestones;
+      default:
+        return false;
     }
   }
 }
@@ -458,8 +473,8 @@ export class NotificationService {
 This is the background worker - the heart of the queue system.
 
 ```typescript
-import { prisma } from '../config/database.js';
-import { Resend } from 'resend';
+import { prisma } from "../config/database.js";
+import { Resend } from "resend";
 
 export class EmailWorkerService {
   private static intervalId: NodeJS.Timeout | null = null;
@@ -482,7 +497,7 @@ export class EmailWorkerService {
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
-      console.log('📧 Email worker stopped');
+      console.log("📧 Email worker stopped");
     }
   }
 
@@ -498,15 +513,12 @@ export class EmailWorkerService {
       // Get pending emails that are ready to send
       const pendingEmails = await prisma.emailQueue.findMany({
         where: {
-          status: 'PENDING',
-          OR: [
-            { nextRetryAt: null },
-            { nextRetryAt: { lte: now } },
-          ],
+          status: "PENDING",
+          OR: [{ nextRetryAt: null }, { nextRetryAt: { lte: now } }],
         },
         orderBy: [
-          { priority: 'desc' }, // HIGH first
-          { createdAt: 'asc' }, // Oldest first
+          { priority: "desc" }, // HIGH first
+          { createdAt: "asc" }, // Oldest first
         ],
         take: batchSize,
       });
@@ -517,7 +529,7 @@ export class EmailWorkerService {
 
       const resendApiKey = process.env.RESEND_API_KEY;
       if (!resendApiKey) {
-        console.error('RESEND_API_KEY not configured');
+        console.error("RESEND_API_KEY not configured");
         return;
       }
 
@@ -527,7 +539,7 @@ export class EmailWorkerService {
         try {
           // Send the email
           const { error } = await resend.emails.send({
-            from: 'Validuct <notifications@validuct.com>',
+            from: "Validuct <notifications@validuct.com>",
             to: [email.recipientEmail],
             subject: email.subject,
             html: email.htmlBody,
@@ -538,11 +550,10 @@ export class EmailWorkerService {
           // Mark as sent
           await prisma.emailQueue.update({
             where: { id: email.id },
-            data: { status: 'SENT', sentAt: new Date() },
+            data: { status: "SENT", sentAt: new Date() },
           });
 
           console.log(`✅ Email sent: ${email.id}`);
-
         } catch (error: any) {
           // Handle failure with retry logic
           const shouldRetry = email.retryCount < email.maxRetries;
@@ -557,19 +568,21 @@ export class EmailWorkerService {
               data: {
                 retryCount: email.retryCount + 1,
                 nextRetryAt: nextRetry,
-                errorMessage: error.message || 'Unknown error',
+                errorMessage: error.message || "Unknown error",
               },
             });
 
-            console.log(`⚠️ Email ${email.id} failed, retry in ${delayMinutes}min`);
+            console.log(
+              `⚠️ Email ${email.id} failed, retry in ${delayMinutes}min`,
+            );
           } else {
             // Max retries reached - mark as failed
             await prisma.emailQueue.update({
               where: { id: email.id },
               data: {
-                status: 'FAILED',
+                status: "FAILED",
                 failedAt: new Date(),
-                errorMessage: error.message || 'Unknown error',
+                errorMessage: error.message || "Unknown error",
               },
             });
 
@@ -585,9 +598,9 @@ export class EmailWorkerService {
   // Get queue stats (for monitoring)
   static async getStats() {
     const [pending, sent, failed] = await Promise.all([
-      prisma.emailQueue.count({ where: { status: 'PENDING' } }),
-      prisma.emailQueue.count({ where: { status: 'SENT' } }),
-      prisma.emailQueue.count({ where: { status: 'FAILED' } }),
+      prisma.emailQueue.count({ where: { status: "PENDING" } }),
+      prisma.emailQueue.count({ where: { status: "SENT" } }),
+      prisma.emailQueue.count({ where: { status: "FAILED" } }),
     ]);
 
     return { pending, sent, failed, total: pending + sent + failed };
@@ -602,9 +615,9 @@ export class EmailWorkerService {
 This connects your existing actions to the notification system.
 
 ```typescript
-import { prisma } from '../config/database.js';
-import { NotificationService } from './notificationService.js';
-import { notificationEmailTemplate } from '../templates/notificationEmailTemplate.js';
+import { prisma } from "../config/database.js";
+import { NotificationService } from "./notificationService.js";
+import { notificationEmailTemplate } from "../templates/notificationEmailTemplate.js";
 
 export class NotificationTriggers {
   // When someone upvotes an idea
@@ -619,8 +632,8 @@ export class NotificationTriggers {
     // Create in-app notification
     await NotificationService.createNotification({
       userId: idea.userId,
-      type: 'UPVOTE',
-      title: 'New upvote!',
+      type: "UPVOTE",
+      title: "New upvote!",
       message: `Someone upvoted "${idea.heading}"`,
       actionUrl: `/ideas/${ideaId}`,
       ideaId,
@@ -638,7 +651,7 @@ export class NotificationTriggers {
   static async onValidationSignal(
     ideaId: string,
     signalType: string,
-    signaledByUserId: string
+    signaledByUserId: string,
   ) {
     const idea = await prisma.idea.findUnique({
       where: { id: ideaId },
@@ -648,10 +661,10 @@ export class NotificationTriggers {
     if (!idea) return;
 
     const signalNames: Record<string, string> = {
-      PROBLEM_REAL: 'Problem is Real',
-      WOULD_PAY: 'Would Pay',
-      READY_TO_BUILD: 'Ready to Build',
-      NEEDS_CLARITY: 'Needs Clarity',
+      PROBLEM_REAL: "Problem is Real",
+      WOULD_PAY: "Would Pay",
+      READY_TO_BUILD: "Ready to Build",
+      NEEDS_CLARITY: "Needs Clarity",
     };
 
     const triggeredBy = await prisma.user.findUnique({
@@ -662,31 +675,31 @@ export class NotificationTriggers {
     // Create in-app notification
     await NotificationService.createNotification({
       userId: idea.userId,
-      type: 'SIGNAL',
+      type: "SIGNAL",
       title: `New "${signalNames[signalType] || signalType}" signal!`,
-      message: `@${triggeredBy?.username || 'Someone'} signaled on "${idea.heading}"`,
+      message: `@${triggeredBy?.username || "Someone"} signaled on "${idea.heading}"`,
       actionUrl: `/ideas/${ideaId}`,
       ideaId,
       triggeredById: signaledByUserId,
-      priority: 'HIGH', // Signals are important
+      priority: "HIGH", // Signals are important
     });
 
     // Queue email notification
     const prefs = await NotificationService.getOrCreatePreferences(idea.userId);
-    if (NotificationService.shouldSendEmail('SIGNAL', prefs)) {
+    if (NotificationService.shouldSendEmail("SIGNAL", prefs)) {
       await NotificationService.queueEmail({
         userId: idea.userId,
-        type: 'SIGNAL',
+        type: "SIGNAL",
         recipientEmail: idea.user.email,
         subject: `🎯 New validation signal on "${idea.heading}"`,
         htmlBody: notificationEmailTemplate({
-          type: 'signal',
+          type: "signal",
           ideaTitle: idea.heading,
           signalType: signalNames[signalType] || signalType,
           triggeredByUsername: triggeredBy?.username,
           actionUrl: `${process.env.APP_URL}/ideas/${ideaId}`,
         }),
-        priority: 'HIGH',
+        priority: "HIGH",
       });
     }
   }
@@ -697,7 +710,9 @@ export class NotificationTriggers {
       where: { id: commentId },
       include: {
         idea: {
-          include: { user: { select: { id: true, email: true, username: true } } },
+          include: {
+            user: { select: { id: true, email: true, username: true } },
+          },
         },
         user: { select: { id: true, username: true } },
       },
@@ -708,8 +723,8 @@ export class NotificationTriggers {
     // Notify idea owner
     await NotificationService.createNotification({
       userId: comment.idea.userId,
-      type: 'COMMENT',
-      title: 'New comment!',
+      type: "COMMENT",
+      title: "New comment!",
       message: `@${comment.user.username} commented on "${comment.idea.heading}"`,
       actionUrl: `/ideas/${comment.ideaId}`,
       ideaId: comment.ideaId,
@@ -718,15 +733,17 @@ export class NotificationTriggers {
     });
 
     // Queue email
-    const prefs = await NotificationService.getOrCreatePreferences(comment.idea.userId);
-    if (NotificationService.shouldSendEmail('COMMENT', prefs)) {
+    const prefs = await NotificationService.getOrCreatePreferences(
+      comment.idea.userId,
+    );
+    if (NotificationService.shouldSendEmail("COMMENT", prefs)) {
       await NotificationService.queueEmail({
         userId: comment.idea.userId,
-        type: 'COMMENT',
+        type: "COMMENT",
         recipientEmail: comment.idea.user.email,
         subject: `💬 New comment on "${comment.idea.heading}"`,
         htmlBody: notificationEmailTemplate({
-          type: 'comment',
+          type: "comment",
           ideaTitle: comment.idea.heading,
           commentPreview: comment.content.substring(0, 150),
           triggeredByUsername: comment.user.username,
@@ -742,7 +759,9 @@ export class NotificationTriggers {
       where: { id: replyId },
       include: {
         parentComment: {
-          include: { user: { select: { id: true, email: true, username: true } } },
+          include: {
+            user: { select: { id: true, email: true, username: true } },
+          },
         },
         idea: { select: { id: true, heading: true } },
         user: { select: { id: true, username: true } },
@@ -754,8 +773,8 @@ export class NotificationTriggers {
     // Notify parent comment author
     await NotificationService.createNotification({
       userId: reply.parentComment.userId,
-      type: 'REPLY',
-      title: 'New reply!',
+      type: "REPLY",
+      title: "New reply!",
       message: `@${reply.user.username} replied to your comment`,
       actionUrl: `/ideas/${reply.ideaId}`,
       ideaId: reply.ideaId,
@@ -764,15 +783,17 @@ export class NotificationTriggers {
     });
 
     // Queue email
-    const prefs = await NotificationService.getOrCreatePreferences(reply.parentComment.userId);
-    if (NotificationService.shouldSendEmail('REPLY', prefs)) {
+    const prefs = await NotificationService.getOrCreatePreferences(
+      reply.parentComment.userId,
+    );
+    if (NotificationService.shouldSendEmail("REPLY", prefs)) {
       await NotificationService.queueEmail({
         userId: reply.parentComment.userId,
-        type: 'REPLY',
+        type: "REPLY",
         recipientEmail: reply.parentComment.user.email,
         subject: `↩️ New reply to your comment`,
         htmlBody: notificationEmailTemplate({
-          type: 'reply',
+          type: "reply",
           ideaTitle: reply.idea.heading,
           commentPreview: reply.content.substring(0, 150),
           triggeredByUsername: reply.user.username,
@@ -786,29 +807,29 @@ export class NotificationTriggers {
   private static async onMilestoneReached(idea: any, count: number) {
     await NotificationService.createNotification({
       userId: idea.userId,
-      type: 'MILESTONE',
+      type: "MILESTONE",
       title: `🎉 ${count} upvotes!`,
       message: `"${idea.heading}" reached ${count} upvotes!`,
       actionUrl: `/ideas/${idea.id}`,
       ideaId: idea.id,
-      priority: 'HIGH',
+      priority: "HIGH",
     });
 
     // Queue celebratory email
     const prefs = await NotificationService.getOrCreatePreferences(idea.userId);
-    if (NotificationService.shouldSendEmail('MILESTONE', prefs)) {
+    if (NotificationService.shouldSendEmail("MILESTONE", prefs)) {
       await NotificationService.queueEmail({
         userId: idea.userId,
-        type: 'MILESTONE',
+        type: "MILESTONE",
         recipientEmail: idea.user.email,
         subject: `🎉 "${idea.heading}" hit ${count} upvotes!`,
         htmlBody: notificationEmailTemplate({
-          type: 'milestone',
+          type: "milestone",
           ideaTitle: idea.heading,
           milestoneCount: count,
           actionUrl: `${process.env.APP_URL}/ideas/${idea.id}`,
         }),
-        priority: 'HIGH',
+        priority: "HIGH",
       });
     }
   }
@@ -834,6 +855,7 @@ Follow the same pattern as your waitlist template - a function returning `{ from
 ### Learning: Following Your Existing Patterns
 
 Your routes use:
+
 - `protect` middleware for auth
 - `validate(schema)` for input validation
 - Static controller classes
@@ -841,26 +863,30 @@ Your routes use:
 **Create:** `backend/src/routes/notificationRoutes.ts`
 
 ```typescript
-import { Router } from 'express';
-import { NotificationController } from '../controllers/notificationController.js';
-import { protect } from '../middleware/auth.js';
-import { validate } from '../middleware/validator.js';
-import { updatePreferencesSchema } from '../utils/validation.js';
+import { Router } from "express";
+import { NotificationController } from "../controllers/notificationController.js";
+import { protect } from "../middleware/auth.js";
+import { validate } from "../middleware/validator.js";
+import { updatePreferencesSchema } from "../utils/validation.js";
 
 const router = Router();
 
 // All routes require authentication
 router.use(protect);
 
-router.get('/', NotificationController.getNotifications);
-router.get('/unread-count', NotificationController.getUnreadCount);
-router.patch('/:id/read', NotificationController.markAsRead);
-router.post('/mark-all-read', NotificationController.markAllAsRead);
-router.delete('/:id', NotificationController.deleteNotification);
+router.get("/", NotificationController.getNotifications);
+router.get("/unread-count", NotificationController.getUnreadCount);
+router.patch("/:id/read", NotificationController.markAsRead);
+router.post("/mark-all-read", NotificationController.markAllAsRead);
+router.delete("/:id", NotificationController.deleteNotification);
 
 // Preferences
-router.get('/preferences', NotificationController.getPreferences);
-router.patch('/preferences', validate(updatePreferencesSchema), NotificationController.updatePreferences);
+router.get("/preferences", NotificationController.getPreferences);
+router.patch(
+  "/preferences",
+  validate(updatePreferencesSchema),
+  NotificationController.updatePreferences,
+);
 
 export default router;
 ```
@@ -876,7 +902,7 @@ export default router;
 Add the email worker startup:
 
 ```typescript
-import { EmailWorkerService } from './services/emailWorkerService.js';
+import { EmailWorkerService } from "./services/emailWorkerService.js";
 
 // After server starts
 app.listen(PORT, () => {
@@ -887,7 +913,7 @@ app.listen(PORT, () => {
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
+process.on("SIGTERM", () => {
   EmailWorkerService.stop();
   // ... rest of shutdown
 });
@@ -927,13 +953,13 @@ if (parentCommentId) {
 
 ### Files to Create/Modify
 
-| File | Purpose |
-|------|---------|
-| `frontend/lib/api/notifications.ts` | API client module |
-| `frontend/components/NotificationBell.tsx` | Bell icon with badge (client component) |
-| `frontend/components/NotificationDropdown.tsx` | Notification list |
-| `frontend/components/Navbar.tsx` | Add bell between theme toggle and profile |
-| `frontend/types/index.ts` | Add notification types |
+| File                                           | Purpose                                   |
+| ---------------------------------------------- | ----------------------------------------- |
+| `frontend/lib/api/notifications.ts`            | API client module                         |
+| `frontend/components/NotificationBell.tsx`     | Bell icon with badge (client component)   |
+| `frontend/components/NotificationDropdown.tsx` | Notification list                         |
+| `frontend/components/Navbar.tsx`               | Add bell between theme toggle and profile |
+| `frontend/types/index.ts`                      | Add notification types                    |
 
 ### Frontend Polling Pattern
 
@@ -966,29 +992,29 @@ useEffect(() => {
 
 ## Verification Steps
 
-| Step | Action |
-|------|--------|
-| Database | Run `npx prisma migrate dev` - verify tables created |
-| API | Test `GET /api/v1/notifications` returns empty array |
-| Trigger | Upvote an idea → check notification appears in DB |
-| Email queue | Check `EmailQueue` table has pending email |
-| Worker | Wait 30s → check email marked as SENT |
-| Frontend | Bell shows unread count, clicking shows notifications |
-| Preferences | Update preference → verify notification respects it |
+| Step        | Action                                                |
+| ----------- | ----------------------------------------------------- |
+| Database    | Run `npx prisma migrate dev` - verify tables created  |
+| API         | Test `GET /api/v1/notifications` returns empty array  |
+| Trigger     | Upvote an idea → check notification appears in DB     |
+| Email queue | Check `EmailQueue` table has pending email            |
+| Worker      | Wait 30s → check email marked as SENT                 |
+| Frontend    | Bell shows unread count, clicking shows notifications |
+| Preferences | Update preference → verify notification respects it   |
 
 ---
 
 ## Key Learning Points Summary
 
-| Concept | Explanation |
-|---------|-------------|
-| **Queue Pattern** | Don't block user requests for background tasks |
-| **Retry Logic** | Exponential backoff (5min → 15min → 45min) |
-| **Preferences** | Always check before sending |
-| **Self-notification** | Never notify users about their own actions |
-| **Milestones** | Track meaningful achievements (10, 25, 50, 100) |
-| **Polling** | 30s intervals balance freshness vs server load |
-| **Static Services** | Match your existing codebase patterns |
+| Concept               | Explanation                                     |
+| --------------------- | ----------------------------------------------- |
+| **Queue Pattern**     | Don't block user requests for background tasks  |
+| **Retry Logic**       | Exponential backoff (5min → 15min → 45min)      |
+| **Preferences**       | Always check before sending                     |
+| **Self-notification** | Never notify users about their own actions      |
+| **Milestones**        | Track meaningful achievements (10, 25, 50, 100) |
+| **Polling**           | 30s intervals balance freshness vs server load  |
+| **Static Services**   | Match your existing codebase patterns           |
 
 ---
 
@@ -999,6 +1025,7 @@ Since you chose detailed explanations, here's how we'll work through each phase:
 ### Phase 1: Database Schema
 
 **Concepts we'll learn:**
+
 - Why we separate in-app notifications from email queue
 - How indexes work and why they matter for notification queries
 - The difference between `@map` and `@@map` in Prisma
@@ -1007,6 +1034,7 @@ Since you chose detailed explanations, here's how we'll work through each phase:
 ### Phase 2: Backend Services
 
 **Concepts we'll learn:**
+
 - The service layer pattern and why it exists
 - How background workers work (`setInterval` vs job queues)
 - Exponential backoff and why it prevents thundering herd problems
@@ -1015,6 +1043,7 @@ Since you chose detailed explanations, here's how we'll work through each phase:
 ### Phase 3: Email Templates
 
 **Concepts we'll learn:**
+
 - Why email HTML is different from web HTML
 - Template functions vs template strings
 - Making emails responsive across email clients
@@ -1022,6 +1051,7 @@ Since you chose detailed explanations, here's how we'll work through each phase:
 ### Phase 4: Routes & Controllers
 
 **Concepts we'll learn:**
+
 - RESTful API design for notifications
 - Why we separate controllers from services
 - Input validation patterns with Zod
@@ -1029,6 +1059,7 @@ Since you chose detailed explanations, here's how we'll work through each phase:
 ### Phase 5: Frontend
 
 **Concepts we'll learn:**
+
 - Polling vs WebSockets (and when to choose each)
 - Optimistic UI updates for better UX
 - Managing dropdown state and focus

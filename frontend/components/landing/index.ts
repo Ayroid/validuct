@@ -1,0 +1,13 @@
+export { default as AnimatedCounter } from "./AnimatedCounter";
+export { default as FadeIn } from "./FadeIn";
+export { default as FloatingElements } from "./FloatingElements";
+export { default as InteractiveCard } from "./InteractiveCard";
+export { default as HeroSection } from "./HeroSection";
+export { default as StatsSection } from "./StatsSection";
+export { default as ProblemSection } from "./ProblemSection";
+export { default as SolutionSection } from "./SolutionSection";
+export { default as HowItWorksSection } from "./HowItWorksSection";
+export { default as RoadmapSection } from "./RoadmapSection";
+export { default as WaitlistSection } from "./WaitlistSection";
+export { default as CTASection } from "./CTASection";
+export { default as Footer } from "./Footer";
