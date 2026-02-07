@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { votesApi } from "@/lib/api/votes";
@@ -8,6 +8,43 @@ import { VoteButtonsProps } from "@/types";
 
 interface ExtendedVoteButtonsProps extends VoteButtonsProps {
 	orientation?: "vertical" | "horizontal";
+}
+
+function RollingNumber({
+	value,
+	className,
+}: {
+	value: number;
+	className: string;
+}) {
+	const prevValue = useRef(value);
+	const [direction, setDirection] = useState<"up" | "down" | null>(null);
+	const [key, setKey] = useState(0);
+
+	useEffect(() => {
+		if (value !== prevValue.current) {
+			setDirection(value > prevValue.current ? "up" : "down");
+			setKey((k) => k + 1);
+			prevValue.current = value;
+		}
+	}, [value]);
+
+	return (
+		<span className={`relative inline-flex h-4 items-center overflow-hidden ${className}`}>
+			<span
+				key={key}
+				className={
+					direction === "up"
+						? "animate-roll-up"
+						: direction === "down"
+							? "animate-roll-down"
+							: ""
+				}
+			>
+				{value}
+			</span>
+		</span>
+	);
 }
 
 export default function VoteButtons({
@@ -96,73 +133,52 @@ export default function VoteButtons({
 
 	return (
 		<div
-			className={`group/vote flex items-center gap-0.5 ${isHorizontal ? "flex-row" : "flex-col"}`}
+			className={`group/vote flex items-center justify-center ${isHorizontal ? "flex-row gap-1.5 rounded-full bg-muted/60 px-2 py-1" : "flex-col gap-0"}`}
 			data-no-navigate
 		>
-			{/* Upvote button - top in vertical, right in horizontal */}
+			{/* Upvote button */}
 			<button
-				className={`rounded p-1 transition-all duration-150 hover:bg-amber-500/10 cursor-pointer ${
+				className={`flex items-center justify-center rounded-full p-1 transition-all duration-150 cursor-pointer ${
 					userVote === "upvote"
-						? "text-amber-500"
-						: "text-muted-foreground/40 hover:text-amber-500/80"
-				} ${isHorizontal ? "order-3" : ""}`}
+						? "text-primary"
+						: "text-muted-foreground/50 hover:text-primary/80"
+				} ${isHorizontal ? "order-1" : ""}`}
 				onClick={(e) => {
 					e.stopPropagation();
 					handleVote("upvote");
 				}}
 				aria-label="Upvote"
 			>
-				<svg
-					className="h-6 w-6"
-					fill={userVote === "upvote" ? "currentColor" : "none"}
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						strokeWidth={2.5}
-						d="M5 15l7-7 7 7"
-					/>
+				<svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+					<path d="M3.8 17a2 2 0 01-1.7-3l7.5-12a2.5 2.5 0 014.3 0L21.4 14a2 2 0 01-1.7 3z" />
 				</svg>
 			</button>
 			{/* Vote count - center */}
-			<span
-				className={`font-mono text-lg font-bold transition-transform duration-150 group-hover/vote:scale-105 ${
+			<RollingNumber
+				value={netVotes}
+				className={`font-mono text-xs font-bold tabular-nums leading-none ${
 					userVote === "upvote"
-						? "text-amber-500"
+						? "text-primary"
 						: userVote === "downvote"
 							? "text-blue-500"
 							: "text-foreground/80"
-				} ${isHorizontal ? "order-2 min-w-8 text-center" : ""}`}
-			>
-				{netVotes}
-			</span>
-			{/* Downvote button - bottom in vertical, left in horizontal */}
+				} ${isHorizontal ? "order-2" : ""}`}
+			/>
+			{/* Downvote button */}
 			<button
-				className={`rounded p-1 transition-all duration-150 hover:bg-blue-500/10 cursor-pointer ${
+				className={`flex items-center justify-center rounded-full p-1 transition-all duration-150 cursor-pointer ${
 					userVote === "downvote"
 						? "text-blue-500"
-						: "text-muted-foreground/40 hover:text-blue-500/80"
-				} ${isHorizontal ? "order-1" : ""}`}
+						: "text-muted-foreground/50 hover:text-blue-500/80"
+				} ${isHorizontal ? "order-3" : ""}`}
 				onClick={(e) => {
 					e.stopPropagation();
 					handleVote("downvote");
 				}}
 				aria-label="Downvote"
 			>
-				<svg
-					className="h-6 w-6"
-					fill={userVote === "downvote" ? "currentColor" : "none"}
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						strokeWidth={2.5}
-						d="M19 9l-7 7-7-7"
-					/>
+				<svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+					<path d="M20.2 7a2 2 0 011.7 3l-7.5 12a2.5 2.5 0 01-4.3 0L2.6 10a2 2 0 011.7-3z" />
 				</svg>
 			</button>
 		</div>

@@ -1,6 +1,7 @@
 import { prisma } from '../config/database.js';
 import {
   SignalStrength,
+  SignalType,
   ValidationState,
   ValidationSummary,
   NextActionRecommendation,
@@ -8,6 +9,9 @@ import {
   IdeaSignalCounts,
   PaginationMeta,
   ProfileSortMode,
+  ValidationAnalytics,
+  SignalDistribution,
+  DailySignalTrend,
 } from '../types/index.js';
 
 /**
@@ -743,6 +747,210 @@ export class UserService {
         limit,
         total,
         total_pages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  /**
+   * Get validation analytics for a user's ideas
+   *
+   * @param username - The username of the user
+   * @returns ValidationAnalytics object with charts data, or null if user not found
+   */
+  static async getValidationAnalytics(username: string): Promise<ValidationAnalytics | null> {
+    const user = await prisma.user.findUnique({
+      where: { username },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    // Get all ideas with their signals
+    const ideas = await prisma.idea.findMany({
+      where: { userId: user.id },
+      include: {
+        signals: {
+          select: {
+            id: true,
+            signalType: true,
+            createdAt: true,
+          },
+        },
+      },
+    });
+
+    const totalIdeas = ideas.length;
+
+    // Signal Distribution
+    const signalCounts: Record<SignalType, number> = {
+      PROBLEM_REAL: 0,
+      WOULD_PAY: 0,
+      READY_TO_BUILD: 0,
+      NEEDS_CLARITY: 0,
+    };
+
+    // Collect all signals for trend analysis
+    const allSignals: Array<{ signalType: SignalType; createdAt: Date }> = [];
+
+    // Process each idea
+    const ideasWithSignalCounts = ideas.map((idea) => {
+      const ideaSignals: IdeaSignalCounts = {
+        problemReal: 0,
+        wouldPay: 0,
+        readyToBuild: 0,
+        needsClarity: 0,
+      };
+
+      idea.signals.forEach((signal) => {
+        signalCounts[signal.signalType as SignalType]++;
+        allSignals.push({
+          signalType: signal.signalType as SignalType,
+          createdAt: signal.createdAt,
+        });
+
+        switch (signal.signalType) {
+          case 'PROBLEM_REAL':
+            ideaSignals.problemReal++;
+            break;
+          case 'WOULD_PAY':
+            ideaSignals.wouldPay++;
+            break;
+          case 'READY_TO_BUILD':
+            ideaSignals.readyToBuild++;
+            break;
+          case 'NEEDS_CLARITY':
+            ideaSignals.needsClarity++;
+            break;
+        }
+      });
+
+      return {
+        id: idea.id,
+        heading: idea.heading,
+        signals: ideaSignals,
+        totalSignals:
+          ideaSignals.problemReal +
+          ideaSignals.wouldPay +
+          ideaSignals.readyToBuild +
+          ideaSignals.needsClarity,
+        validationState: this.getIdeaValidationState(ideaSignals),
+      };
+    });
+
+    // Calculate total signals
+    const totalSignals = Object.values(signalCounts).reduce((a, b) => a + b, 0);
+
+    // Signal Distribution with percentages
+    const signalDistribution: SignalDistribution[] = [
+      {
+        type: 'PROBLEM_REAL',
+        count: signalCounts.PROBLEM_REAL,
+        percentage: totalSignals > 0 ? (signalCounts.PROBLEM_REAL / totalSignals) * 100 : 0,
+      },
+      {
+        type: 'WOULD_PAY',
+        count: signalCounts.WOULD_PAY,
+        percentage: totalSignals > 0 ? (signalCounts.WOULD_PAY / totalSignals) * 100 : 0,
+      },
+      {
+        type: 'READY_TO_BUILD',
+        count: signalCounts.READY_TO_BUILD,
+        percentage: totalSignals > 0 ? (signalCounts.READY_TO_BUILD / totalSignals) * 100 : 0,
+      },
+      {
+        type: 'NEEDS_CLARITY',
+        count: signalCounts.NEEDS_CLARITY,
+        percentage: totalSignals > 0 ? (signalCounts.NEEDS_CLARITY / totalSignals) * 100 : 0,
+      },
+    ];
+
+    // Validation State Breakdown
+    const stateCount = {
+      NEEDS_ACTION: 0,
+      READY_TO_BUILD: 0,
+      VALIDATED: 0,
+      NEUTRAL: 0,
+    };
+
+    ideasWithSignalCounts.forEach((idea) => {
+      stateCount[idea.validationState]++;
+    });
+
+    const validationStateBreakdown = [
+      { state: 'Needs Action', count: stateCount.NEEDS_ACTION },
+      { state: 'Ready to Build', count: stateCount.READY_TO_BUILD },
+      { state: 'Validated', count: stateCount.VALIDATED },
+      { state: 'Neutral', count: stateCount.NEUTRAL },
+    ];
+
+    // Daily Signal Trends (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const dailyTrendsMap: Map<string, DailySignalTrend> = new Map();
+
+    // Initialize last 30 days
+    for (let i = 0; i < 30; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      dailyTrendsMap.set(dateStr, {
+        date: dateStr,
+        problemReal: 0,
+        wouldPay: 0,
+        readyToBuild: 0,
+        needsClarity: 0,
+      });
+    }
+
+    // Populate with actual data
+    allSignals.forEach((signal) => {
+      if (signal.createdAt >= thirtyDaysAgo) {
+        const dateStr = signal.createdAt.toISOString().split('T')[0];
+        const dayData = dailyTrendsMap.get(dateStr);
+        if (dayData) {
+          switch (signal.signalType) {
+            case 'PROBLEM_REAL':
+              dayData.problemReal++;
+              break;
+            case 'WOULD_PAY':
+              dayData.wouldPay++;
+              break;
+            case 'READY_TO_BUILD':
+              dayData.readyToBuild++;
+              break;
+            case 'NEEDS_CLARITY':
+              dayData.needsClarity++;
+              break;
+          }
+        }
+      }
+    });
+
+    const dailyTrends = Array.from(dailyTrendsMap.values()).sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+
+    // Top Performing Ideas (by total signals)
+    const topIdeas = ideasWithSignalCounts
+      .sort((a, b) => b.totalSignals - a.totalSignals)
+      .slice(0, 5)
+      .map((idea) => ({
+        id: idea.id,
+        heading: idea.heading,
+        totalSignals: idea.totalSignals,
+      }));
+
+    return {
+      signalDistribution,
+      validationStateBreakdown,
+      dailyTrends,
+      topIdeas,
+      totals: {
+        totalSignals,
+        totalIdeas,
+        avgSignalsPerIdea: totalIdeas > 0 ? totalSignals / totalIdeas : 0,
       },
     };
   }

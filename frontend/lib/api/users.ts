@@ -2,6 +2,7 @@ import apiClient from "./client";
 import {
 	Idea,
 	ValidationSummary,
+	ValidationAnalytics,
 	IdeaWithSignals,
 	PaginationMeta,
 	ProfileSortMode,
@@ -85,6 +86,16 @@ export const userApi = {
 			{
 				params,
 			}
+		);
+		return response.data.data;
+	},
+
+	// Get user's validation analytics
+	getValidationAnalytics: async (
+		username: string
+	): Promise<ValidationAnalytics> => {
+		const response = await apiClient.get(
+			`/users/${username}/validation-analytics`
 		);
 		return response.data.data;
 	},

@@ -83,6 +83,8 @@ export const ideaWaitlistSchema = z.object({
 
 // Notification preferences validation schema
 export const updatePreferencesSchema = z.object({
+  emailFirstFeedback: z.boolean().optional(),
+  emailDailySummary: z.boolean().optional(),
   emailSignals: z.boolean().optional(),
   emailComments: z.boolean().optional(),
   emailReplies: z.boolean().optional(),

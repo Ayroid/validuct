@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+	Geist,
+	Geist_Mono,
+	DM_Serif_Display,
+	Instrument_Sans,
+	JetBrains_Mono,
+} from "next/font/google";
 import { Slide, ToastContainer } from "react-toastify";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
@@ -8,12 +14,33 @@ import ThemeProvider from "@/components/providers/ThemeProvider";
 
 const geist = Geist({
 	subsets: ["latin"],
-	variable: "--font-sans",
+	variable: "--font-geist",
 	display: "swap",
 });
 
 const geistMono = Geist_Mono({
 	subsets: ["latin"],
+	variable: "--font-geist-mono",
+	display: "swap",
+});
+
+const dmSerif = DM_Serif_Display({
+	subsets: ["latin"],
+	weight: ["400"],
+	style: ["normal", "italic"],
+	variable: "--font-display",
+	display: "swap",
+});
+
+const instrumentSans = Instrument_Sans({
+	subsets: ["latin"],
+	variable: "--font-sans",
+	display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+	subsets: ["latin"],
+	weight: ["400", "500"],
 	variable: "--font-mono",
 	display: "swap",
 });
@@ -70,7 +97,7 @@ export default function RootLayout({
 	return (
 		<html
 			lang="en"
-			className={`${geist.variable} ${geistMono.variable} scroll-smooth`}
+			className={`${geist.variable} ${geistMono.variable} ${dmSerif.variable} ${instrumentSans.variable} ${jetbrainsMono.variable} scroll-smooth`}
 			suppressHydrationWarning
 		>
 			<head>

@@ -21,7 +21,7 @@ const IdeaShare = () => {
 						</div>
 						<Button
 							size="lg"
-							className="hover:bg-primary/80 cursor-pointer gap-2 px-10 py-6 text-lg"
+							className="hover:bg-primary/80 cursor-pointer gap-2 px-10 py-6 text-lg text-foreground"
 						>
 							<HiSparkles className="h-5 w-5" />
 							<span>Share</span>

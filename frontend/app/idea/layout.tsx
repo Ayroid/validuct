@@ -7,9 +7,7 @@ export default function IdeaLayout({
 }>) {
 	return (
 		<div className="bg-background min-h-screen">
-			<div className="mx-auto max-w-5xl">
-				<Navbar />
-			</div>
+			<Navbar />
 			{children}
 		</div>
 	);

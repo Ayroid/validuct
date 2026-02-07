@@ -57,90 +57,93 @@ export default function IdeaCard({
 
 	return (
 		<article
-			className="group bg-card border-border/50 shadow-card hover:shadow-card-hover hover:border-border cursor-pointer rounded-xl border p-5 transition-all duration-200 hover:-translate-y-0.5"
+			className="group bg-[#FFFBF6] dark:bg-card border-border/50 shadow-card hover:shadow-card-hover hover:border-border cursor-pointer overflow-hidden rounded-xl border transition-all duration-200 hover:-translate-y-0.5"
 			onClick={handleCardClick}
 		>
-			<div className="flex items-center gap-4">
-				{/* Voting Column */}
-				<div className="flex shrink-0 items-start pt-0.5">
-					<VoteButtons
-						ideaId={idea.id}
-						initialUpvotesCount={idea.upvotesCount}
-						initialDownvotesCount={idea.downvotesCount}
-						initialUserVote={idea.userVote}
-					/>
-				</div>
-
-				{/* Content Section */}
-				<div className="flex min-w-0 flex-1 flex-col gap-3">
-					{/* Title Row with Status */}
-					<div className="flex items-start justify-between gap-3">
-						<h2 className="text-foreground group-hover:text-primary line-clamp-2 min-w-0 flex-1 text-base leading-snug font-semibold transition-colors sm:text-lg">
-							{idea.heading}
-						</h2>
-						<div className="flex shrink-0 items-center gap-2">
-							{showPinButton && (
-								<PinButton
-									ideaId={idea.id}
-									ideaUserId={idea.userId}
-									initialIsPinned={idea.isPinned}
-									onPinChange={onPinChange}
-								/>
-							)}
-							<span
-								className={`rounded-full px-2.5 py-1 text-xs font-medium ${getStatusBadgeStyles(
-									idea.status
-								)}`}
-							>
-								{formatStatus(idea.status)}
-							</span>
-						</div>
-					</div>
-
-					{/* Description */}
-					<p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed">
-						{idea.description}
-					</p>
-
-					{/* Meta Row */}
-					<div className="text-muted-foreground flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
-						<div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-							<Link
-								href={`/${idea.user.username}`}
-								className="hover:text-foreground flex shrink-0 items-center gap-1.5 transition-colors"
-								onClick={(e) => e.stopPropagation()}
-							>
-								{idea.user.profilePicture ? (
-									<Image
-										src={idea.user.profilePicture}
-										alt={idea.user.username}
-										width={18}
-										height={18}
-										className="rounded-full"
-									/>
-								) : (
-									<HiUserCircle className="h-4.5 w-4.5" />
-								)}
-								<span className="font-medium hover:underline">
-									{idea.user.username}
-								</span>
-							</Link>
-							<span className="text-border hidden sm:inline">·</span>
-							<span className="hidden sm:inline">
-								{formatDistanceToNow(new Date(idea.createdAt), {
-									addSuffix: false,
-								}).replace(/^(about|over|almost) /, "")}
-							</span>
-							<span className="text-border hidden sm:inline">·</span>
-							<span className="hidden sm:inline">
-								<span className="font-mono">{idea.commentsCount}</span> comments
-							</span>
-						</div>
-						<span className="text-muted-foreground group-hover:text-primary shrink-0 font-medium transition-colors">
-							View →
+			{/* Top Meta Row: Avatar + Username + Time + Status */}
+			<div className="flex items-center justify-between gap-3 bg-muted/50 px-6 py-3 dark:bg-muted/30">
+				<div className="flex min-w-0 items-center gap-2 text-xs">
+					<Link
+						href={`/${idea.user.username}`}
+						className="hover:text-foreground flex shrink-0 items-center gap-1.5 transition-colors"
+						onClick={(e) => e.stopPropagation()}
+					>
+						{idea.user.profilePicture ? (
+							<Image
+								src={idea.user.profilePicture}
+								alt={idea.user.username}
+								width={22}
+								height={22}
+								className="rounded-full"
+							/>
+						) : (
+							<HiUserCircle className="h-5.5 w-5.5 text-muted-foreground" />
+						)}
+						<span className="font-medium hover:underline">
+							{idea.user.username}
 						</span>
-					</div>
+					</Link>
+					<span className="text-muted-foreground/50">·</span>
+					<span className="text-muted-foreground">
+						{formatDistanceToNow(new Date(idea.createdAt), {
+							addSuffix: false,
+						}).replace(/^(about|over|almost) /, "")}
+					</span>
 				</div>
+				<div className="flex shrink-0 items-center gap-2">
+					{showPinButton && (
+						<PinButton
+							ideaId={idea.id}
+							ideaUserId={idea.userId}
+							initialIsPinned={idea.isPinned}
+							onPinChange={onPinChange}
+						/>
+					)}
+					<span
+						className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusBadgeStyles(
+							idea.status
+						)}`}
+					>
+						{formatStatus(idea.status)}
+					</span>
+				</div>
+			</div>
+
+			{/* Separator */}
+			<div className="border-t border-border/40" />
+
+			{/* Middle: Title & Description */}
+			<div className="px-6 py-5">
+				<h2 className="text-foreground line-clamp-2 text-base leading-snug font-semibold sm:text-lg">
+					{idea.heading}
+				</h2>
+				<p className="text-muted-foreground mt-2 line-clamp-2 text-sm leading-relaxed">
+					{idea.description}
+				</p>
+			</div>
+
+			{/* Separator */}
+			<div className="border-t border-border/40" />
+
+			{/* Bottom Action Bar */}
+			<div className="flex items-center gap-4 px-6 py-2.5 text-xs">
+				<VoteButtons
+					ideaId={idea.id}
+					initialUpvotesCount={idea.upvotesCount}
+					initialDownvotesCount={idea.downvotesCount}
+					initialUserVote={idea.userVote}
+					orientation="horizontal"
+				/>
+				<span className="text-border">·</span>
+				<span className="text-muted-foreground flex items-center gap-1.5">
+					<svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+						<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+					</svg>
+					<span className="font-mono">{idea.commentsCount}</span>
+				</span>
+				<span className="ml-auto text-muted-foreground group-hover:text-primary shrink-0 font-medium transition-colors">
+					View →
+				</span>
 			</div>
 		</article>
 	);

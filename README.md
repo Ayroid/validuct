@@ -1,123 +1,104 @@
-# VALIDUCT
+# Validuct
 
-**Stop guessing. Start validating.**
+**Know if people will pay before you build.**
 
-> The idea validation platform that gives builders real demand signals, not just opinions.
+Validuct is an idea validation platform for builders. Collect waitlist signups and real validation signals before investing months building something nobody wants.
 
-## Overview
+## The Problem
 
-Validuct is a validation platform that helps entrepreneurs and builders validate their product ideas with structured community feedback and real demand signals — before investing significant time and resources.
+Likes and upvotes don't pay bills.
 
-Unlike traditional forums where you just get opinions, Validuct provides **actionable validation**: real demand signals like "Would Pay" and "Problem Real", category-based feedback, and journey tracking from concept to launch.
+| Platform | The Issue |
+|----------|-----------|
+| Product Hunt | Need a finished product. Upvotes come from makers, not customers. |
+| Reddit | "Cool idea bro" isn't validation. No way to capture interested users. |
+| Twitter/X | Likes ≠ willingness to pay. Engagement rarely converts to customers. |
 
-## Why Validuct?
+## The Solution
 
-| Platform | What It Offers | What It Lacks |
-|----------|----------------|---------------|
-| Product Hunt | Launch showcase | Pre-launch validation, actionable feedback |
-| Reddit | Discussion | Structure, data, follow-through tracking |
-| Indie Hackers | Community stories | Systematic validation framework |
-| Twitter/X | Viral reach | Depth, organized feedback, persistence |
+Validuct gives you actual demand signals:
 
-**Validuct fills the gap:** Structured validation with real demand signals, not just opinions.
+- **Waitlist Collection** — Capture emails from people who want your product
+- **Validation Signals** — Know if the problem is real, if people would pay, and if it's ready to build
+- **Shareable Pages** — Get a landing page for your idea in minutes
+- **Analytics Dashboard** — Track signal trends and see which ideas are gaining traction
 
 ## Features
 
-### Live Now
+### Validation Signals
+Four structured signals that tell you what matters:
+- **Problem Real** — The problem actually exists and people feel it
+- **Would Pay** — Real willingness to pay, not just interest
+- **Ready to Build** — The idea is clear enough to execute
+- **Needs Clarity** — More detail needed before validation
 
-#### Validation Signals
-- **Would Pay** — Real demand indicator showing willingness to pay
-- **Problem Real** — Validates the problem actually exists
-- **Ready to Build** — Signals the idea is clear enough to execute
-- **Needs Clarity** — Feedback that more detail is needed
+### Waitlist Collection
+- Collect emails directly on your idea page
+- Export your waitlist anytime (CSV)
+- Track signups over time
 
-#### Category-Based Comments
-- Problem Clarity feedback
-- Target Users discussions
-- Willingness to Pay insights
-- Technical Feasibility assessments
+### Validation Analytics
+- Signal distribution charts
+- Daily trend tracking (last 30 days)
+- Ideas by validation state
+- Top performing ideas
+
+### Builder Profiles
+- Personal profile with bio and avatar
+- Validation summary across all ideas
+- Pin up to 5 ideas to showcase
+- Filter ideas by validation state (Needs Action, Ready to Build)
+
+### Category-Based Comments
+Structured feedback in specific areas:
+- Problem Clarity
+- Target Users
+- Willingness to Pay
+- Technical Feasibility
 - Feature Suggestions
-- General discussions
-- Nested replies for in-depth conversations
-- "Helpful" voting on comments
+- Nested replies and "Helpful" voting
 
-#### Builder Profiles
-- Personalized profiles with unique usernames and profile pictures
-- View all ideas by a specific user
-- Pin up to 5 favorite ideas for quick access
-- Validation summary showing aggregated signals across all ideas
+### Idea Lifecycle
+Track progress: Draft → Validated → WIP → Launched
 
-#### Idea Lifecycle
-- Track your idea from Draft → Validated → WIP → Launched
-- Add launch links when your idea ships
-- Community engagement metrics
-
-#### Discovery Timelines
-- **NEW**: Latest ideas submitted to the platform
-- **TRENDING**: Most upvoted ideas in the last 24 hours
-- **TOP**: All-time top-ranked ideas
-
-### Coming Soon
-
-- AI-powered competitor & market analysis
-- Waitlist collection for your ideas
-- Validation analytics & insights dashboard
+### Notifications
+- In-app notifications for signals, comments, and replies
+- Email notifications (configurable)
+- Milestone alerts
 
 ## Tech Stack
 
-- **Frontend**: Next.js 16, React 19, TypeScript, Tailwind CSS
-- **Backend**: Node.js with Express, TypeScript
+- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS, Recharts
+- **Backend**: Node.js, Express, TypeScript
 - **Database**: PostgreSQL with Prisma ORM
-- **Authentication**: NextAuth with OAuth + JWT
-- **Caching**: Redis for rate limiting
+- **Auth**: NextAuth with OAuth (Google, GitHub) + JWT
+- **Caching**: Redis
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v18 or higher)
-- npm or yarn
-- PostgreSQL database
-- Redis (optional, for rate limiting)
+- Node.js v18+
+- PostgreSQL
+- Redis (optional)
 
 ### Installation
 
-1. Clone the repository
 ```bash
+# Clone
 git clone https://github.com/Ayroid/Validuct.git
 cd Validuct
-```
 
-2. Install frontend dependencies
-```bash
+# Frontend
 cd frontend
 npm install
-```
-
-3. Install backend dependencies
-```bash
-cd ../backend
-npm install
-```
-
-4. Configure environment variables (see `.env.example` in each directory)
-
-5. Run database migrations
-```bash
-cd backend
-npx prisma migrate dev
-```
-
-6. Run the development servers
-
-**Frontend:**
-```bash
-cd frontend
+cp .env.example .env.local
 npm run dev
-```
 
-**Backend:**
-```bash
+# Backend (new terminal)
 cd backend
+npm install
+cp .env.example .env
+npx prisma migrate dev
 npm run dev
 ```
 
@@ -125,49 +106,66 @@ npm run dev
 
 ```
 Validuct/
-├── frontend/          # Next.js application
-│   ├── app/           # App router pages
-│   ├── components/    # React components
-│   └── lib/           # Utilities and API clients
-├── backend/           # Node.js API server
+├── frontend/
+│   ├── app/                 # Next.js app router
+│   ├── components/
+│   │   ├── analytics/       # Charts and dashboard
+│   │   ├── landing/         # Landing page sections
+│   │   └── ui/              # Shared UI components
+│   ├── lib/api/             # API client functions
+│   └── types/               # TypeScript types
+├── backend/
 │   ├── src/
-│   │   ├── routes/    # API routes
-│   │   ├── services/  # Business logic
-│   │   └── prisma/    # Database schema
-└── README.md          # This file
+│   │   ├── controllers/     # Request handlers
+│   │   ├── services/        # Business logic
+│   │   ├── routes/          # API routes
+│   │   └── utils/           # Validation, helpers
+│   └── prisma/              # Database schema
+└── README.md
 ```
 
-## API Endpoints
+## API Overview
 
 ### Ideas
-- `GET /api/v1/ideas` — Get ideas with timeline filter
-- `POST /api/v1/ideas` — Create new idea
-- `GET /api/v1/ideas/:id` — Get single idea
+- `GET /api/v1/ideas` — List ideas (timeline: new, trending, top)
+- `POST /api/v1/ideas` — Create idea
+- `GET /api/v1/ideas/:id` — Get idea with signals
 - `PATCH /api/v1/ideas/:id` — Update idea
 - `DELETE /api/v1/ideas/:id` — Delete idea
 
-### Validation Signals
-- `POST /api/v1/ideas/:id/signals` — Toggle validation signal
-- `GET /api/v1/ideas/:id/signals` — Get signals for idea
+### Signals
+- `POST /api/v1/ideas/:id/signals` — Toggle signal
+- `GET /api/v1/ideas/:id/signals` — Get idea signals
 
-### Comments
-- `POST /api/v1/ideas/:id/comments` — Create comment
-- `GET /api/v1/ideas/:id/comments` — Get comments
-- `POST /api/v1/comments/:id/helpful` — Toggle helpful vote
+### Waitlist
+- `POST /api/v1/ideas/:id/waitlist` — Join waitlist
+- `GET /api/v1/ideas/:id/waitlist` — Get waitlist (owner only)
 
 ### Users
-- `GET /api/v1/users/:username` — Get user profile
-- `GET /api/v1/users/:username/ideas` — Get user's ideas
-- `GET /api/v1/users/:username/validation-summary` — Get validation summary
+- `GET /api/v1/users/:username` — Profile
+- `GET /api/v1/users/:username/ideas-with-signals` — Ideas with validation data
+- `GET /api/v1/users/:username/validation-summary` — Aggregated signals
+- `GET /api/v1/users/:username/validation-analytics` — Analytics data
+
+### Notifications
+- `GET /api/v1/notifications` — Get notifications
+- `GET /api/v1/notifications/preferences` — Get preferences
+- `PATCH /api/v1/notifications/preferences` — Update preferences
+
+## Roadmap
+
+- [ ] Payment intent capture ("I'd pay $X")
+- [ ] AI-powered market analysis
+- [ ] Public API for integrations
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions welcome. Open an issue or submit a PR.
 
 ## License
 
-This project is licensed under the MIT License.
+MIT
 
 ---
 
-**Built by [Ayroid](https://ayroid.in)**
+Built by [Ayroid](https://ayroid.in)

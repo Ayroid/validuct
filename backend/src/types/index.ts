@@ -97,3 +97,39 @@ export interface IdeaWithSignals {
 }
 
 export type ProfileSortMode = 'needs_action' | 'ready_to_build' | 'newest' | 'oldest' | 'all';
+
+// ============================================================================
+// Validation Analytics Types
+// ============================================================================
+
+export interface SignalDistribution {
+  type: SignalType;
+  count: number;
+  percentage: number;
+}
+
+export interface DailySignalTrend {
+  date: string;
+  problemReal: number;
+  wouldPay: number;
+  readyToBuild: number;
+  needsClarity: number;
+}
+
+export interface TopIdea {
+  id: string;
+  heading: string;
+  totalSignals: number;
+}
+
+export interface ValidationAnalytics {
+  signalDistribution: SignalDistribution[];
+  validationStateBreakdown: { state: string; count: number }[];
+  dailyTrends: DailySignalTrend[];
+  topIdeas: TopIdea[];
+  totals: {
+    totalSignals: number;
+    totalIdeas: number;
+    avgSignalsPerIdea: number;
+  };
+}

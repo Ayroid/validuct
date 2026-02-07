@@ -7,7 +7,7 @@ import { HiHome, HiArrowLeft } from "react-icons/hi2";
 
 export default function NotFound() {
 	return (
-		<div className="bg-background mx-auto min-h-screen max-w-5xl">
+		<div className="bg-background min-h-screen">
 			<Navbar />
 
 			<div className="flex min-h-[80vh] flex-col items-center justify-center px-6 py-16 text-center">

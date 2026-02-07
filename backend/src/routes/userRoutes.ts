@@ -15,5 +15,6 @@ router.get('/:username', UserController.getUserProfile);
 router.get('/:username/ideas', UserController.getUserIdeas);
 router.get('/:username/validation-summary', UserController.getValidationSummary);
 router.get('/:username/ideas-with-signals', UserController.getUserIdeasWithSignals);
+router.get('/:username/validation-analytics', protect, UserController.getValidationAnalytics);
 
 export default router;

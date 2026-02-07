@@ -23,6 +23,7 @@ import {
 	HiChatBubbleLeftRight,
 	HiRocketLaunch,
 	HiPlusCircle,
+	HiChartBar,
 } from "react-icons/hi2";
 
 const ACTION_CONFIG: Record<
@@ -164,8 +165,11 @@ export default function BuilderSnapshotHeader({
 									<Link href="/idea/new">
 										<Button className="cursor-pointer transition-colors">New Idea</Button>
 									</Link>
-									<Link href={`/${profile.user.username}/edit`}>
-										<Button variant="outline" className="cursor-pointer transition-colors">Edit Profile</Button>
+									<Link href={`/${profile.user.username}/analytics`}>
+										<Button variant="outline" className="cursor-pointer transition-colors">
+											<HiChartBar className="h-4 w-4 mr-1.5" />
+											Analytics
+										</Button>
 									</Link>
 									<DropdownMenu>
 										<DropdownMenuTrigger asChild>
@@ -174,6 +178,11 @@ export default function BuilderSnapshotHeader({
 											</Button>
 										</DropdownMenuTrigger>
 										<DropdownMenuContent align="end">
+											<DropdownMenuItem asChild className="cursor-pointer">
+												<Link href={`/${profile.user.username}/edit`}>
+													Edit Profile
+												</Link>
+											</DropdownMenuItem>
 											<DropdownMenuItem
 												onClick={() => signOut({ callbackUrl: "/" })}
 												className="text-destructive focus:text-destructive cursor-pointer"

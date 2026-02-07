@@ -306,4 +306,40 @@ export class UserController {
       });
     }
   }
+
+  /**
+   * Handle retrieving validation analytics for a user
+   *
+   * @param req - Express request object
+   * @param res - Express response object
+   *
+   * @remarks
+   * Route: GET /api/users/:username/validation-analytics
+   * Requires authentication (owner only)
+   * Returns analytics data for charts and dashboards
+   */
+  static async getValidationAnalytics(req: AuthRequest, res: Response) {
+    try {
+      const { username } = req.params;
+
+      const result = await UserService.getValidationAnalytics(username);
+
+      if (!result) {
+        return res.status(404).json({
+          success: false,
+          error: 'User not found',
+        });
+      }
+
+      return res.json({
+        success: true,
+        data: result,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to fetch validation analytics',
+      });
+    }
+  }
 }

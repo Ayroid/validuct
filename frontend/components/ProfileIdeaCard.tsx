@@ -68,10 +68,10 @@ export default function ProfileIdeaCard({
 
 	return (
 		<article
-			className="group bg-card border-border/50 shadow-card hover:shadow-card-hover hover:border-border cursor-pointer rounded-xl border p-5 transition-all duration-200 hover:-translate-y-0.5"
+			className="group bg-card border-border/50 shadow-card hover:shadow-card-hover hover:border-border cursor-pointer rounded-xl border p-6 transition-all duration-200 hover:-translate-y-0.5"
 			onClick={handleCardClick}
 		>
-			<div className="flex flex-col gap-4 sm:flex-row sm:gap-5">
+			<div className="flex flex-col gap-5 sm:flex-row sm:gap-6">
 				{/* Signal Snapshot Column */}
 				<div className="flex w-full shrink-0 flex-row items-center gap-4 sm:w-20 sm:flex-col sm:gap-0">
 					<div className="bg-muted/50 border-border/30 rounded-xl border p-4 text-center">
@@ -146,7 +146,7 @@ export default function ProfileIdeaCard({
 				</div>
 
 				{/* Content Section */}
-				<div className="flex min-w-0 flex-1 flex-col gap-3">
+				<div className="flex min-w-0 flex-1 flex-col gap-3.5">
 					{/* Title Row with Validation State */}
 					<div className="flex items-start justify-between gap-3">
 						<h2 className="text-foreground group-hover:text-primary line-clamp-2 min-w-0 flex-1 text-base leading-snug font-semibold transition-colors sm:text-lg">

@@ -56,7 +56,7 @@ const Waitlist = () => {
 	if (state === "success") {
 		return (
 			<div className="text-center">
-				<div className="bg-green-500/10 mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full sm:h-24 sm:w-24">
+				<div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-500/10 sm:h-24 sm:w-24">
 					<HiCheckCircle className="h-10 w-10 text-green-500 sm:h-12 sm:w-12" />
 				</div>
 				<h3 className="text-foreground mb-3 text-2xl font-bold sm:text-3xl">
