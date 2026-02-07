@@ -75,6 +75,12 @@ export default function IdeaDetailPage() {
 		}
 	};
 
+	const handleCommentsCountChange = (count: number) => {
+		if (idea) {
+			setIdea({ ...idea, commentsCount: count });
+		}
+	};
+
 	const handleVoteUpdate = (
 		upvotesCount: number,
 		downvotesCount: number,
@@ -103,144 +109,148 @@ export default function IdeaDetailPage() {
 	}
 
 	return (
-		<div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-			{/* Back Button */}
+		<div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
+			{/* Back Link */}
 			<Link
-				href={`/home`}
-				className="text-muted-foreground hover:text-foreground mb-6 inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
+				href="/home"
+				className="text-muted-foreground hover:text-foreground mb-6 inline-flex items-center gap-1.5 text-xs font-medium tracking-wide uppercase transition-colors"
 			>
-				<HiArrowLeft className="h-4 w-4" />
-				<span>HOME</span>
+				<HiArrowLeft className="h-3.5 w-3.5" />
+				<span>Home</span>
 			</Link>
 
-			{/* Main Content Card */}
-			<article className="bg-card border-border/50 shadow-card rounded-xl border p-6 sm:p-8">
-				{/* Header */}
-				<header className="mb-6 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-					<div className="flex min-w-0 flex-1 flex-col gap-4">
-						{/* Status badges and share button row on mobile */}
-						<div className="flex items-start justify-between gap-3">
-							<div className="flex flex-wrap items-center gap-3">
-								<span
-									className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusBadgeStyles(idea.status)}`}
-								>
-									{formatStatus(idea.status)}
-								</span>
-								{idea.launchedLink && (
-									<Link
-										href={idea.launchedLink}
-										target="_blank"
-										rel="noopener noreferrer"
-										className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors ${getStatusBadgeStyles("LAUNCHED")} hover:opacity-80`}
-									>
-										Visit
-										<HiArrowTopRightOnSquare className="h-3.5 w-3.5" />
-									</Link>
-								)}
-							</div>
-							{/* Share button - visible only on mobile */}
-							<div className="flex items-center gap-2 sm:hidden">
-								<ShareButton idea={idea} size="icon" showLabel={false} />
-								{user && user.id === idea.userId && (
-									<Link
-										href={`/idea/${idea.id}/edit`}
-										className="hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg p-2 transition-colors"
-										title="Edit idea"
-									>
-										<HiPencilSquare className="h-5 w-5" />
-									</Link>
-								)}
-							</div>
-						</div>
-						<h1 className="text-foreground text-2xl leading-tight font-bold sm:text-3xl">
-							{idea.heading}
-						</h1>
-						<p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-							{idea.description}
-						</p>
-						<div className="text-muted-foreground flex items-center gap-3 text-sm">
-							<Link
-								href={`/${idea.user.username}`}
-								className="hover:text-foreground flex items-center gap-2 transition-colors"
-							>
-								{idea.user.profilePicture ? (
-									<Image
-										src={idea.user.profilePicture}
-										alt={idea.user.username}
-										className="ring-border h-7 w-7 rounded-full ring-2"
-										width={28}
-										height={28}
-									/>
-								) : (
-									<div className="bg-muted text-foreground ring-border flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold ring-2">
-										{idea.user.username.charAt(0).toUpperCase()}
-									</div>
-								)}
-								<span className="font-medium">{idea.user.username}</span>
-							</Link>
-							<span className="text-border">·</span>
-							<span>
-								{formatDistanceToNow(new Date(idea.createdAt), {
-									addSuffix: true,
-								})}
-							</span>
-						</div>
-						{/* Vote buttons - horizontal on mobile */}
-						<div className="flex justify-center sm:hidden">
-							<VoteButtons
-								ideaId={idea.id}
-								initialUpvotesCount={idea.upvotesCount}
-								initialDownvotesCount={idea.downvotesCount}
-								initialUserVote={idea.userVote}
-								onVoteUpdate={handleVoteUpdate}
-								orientation="horizontal"
-							/>
-						</div>
-					</div>
-
-					{/* Actions Column - visible only on desktop */}
-					<div className="hidden flex-col items-end gap-2 sm:flex">
-						<div className="flex items-center gap-2">
-							<ShareButton idea={idea} size="icon" showLabel={false} />
-							{user && user.id === idea.userId && (
-								<Link
-									href={`/idea/${idea.id}/edit`}
-									className="hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg p-2 transition-colors"
-									title="Edit idea"
-								>
-									<HiPencilSquare className="h-5 w-5" />
-								</Link>
+			{/* Hero Card */}
+			<article className="bg-card border-border/50 shadow-card overflow-hidden rounded-xl border">
+				{/* Top Meta Row */}
+				<div className="flex items-center justify-between gap-3 px-6 py-3">
+					<div className="flex min-w-0 items-center gap-2 text-xs">
+						<Link
+							href={`/${idea.user.username}`}
+							className="hover:text-foreground flex shrink-0 items-center gap-1.5 transition-colors"
+						>
+							{idea.user.profilePicture ? (
+								<Image
+									src={idea.user.profilePicture}
+									alt={idea.user.username}
+									width={22}
+									height={22}
+									className="rounded-full"
+								/>
+							) : (
+								<div className="bg-muted text-foreground flex h-5.5 w-5.5 items-center justify-center rounded-full text-[10px] font-semibold">
+									{idea.user.username.charAt(0).toUpperCase()}
+								</div>
 							)}
-						</div>
-						<VoteButtons
-							ideaId={idea.id}
-							initialUpvotesCount={idea.upvotesCount}
-							initialDownvotesCount={idea.downvotesCount}
-							initialUserVote={idea.userVote}
-							onVoteUpdate={handleVoteUpdate}
-						/>
+							<span className="font-medium hover:underline">
+								{idea.user.username}
+							</span>
+						</Link>
+						<span className="text-muted-foreground/50">·</span>
+						<span className="text-muted-foreground">
+							{formatDistanceToNow(new Date(idea.createdAt), {
+								addSuffix: true,
+							})}
+						</span>
 					</div>
-				</header>
+					<div className="flex shrink-0 items-center gap-2">
+						<span
+							className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusBadgeStyles(idea.status)}`}
+						>
+							{formatStatus(idea.status)}
+						</span>
+						{idea.launchedLink && (
+							<Link
+								href={idea.launchedLink}
+								target="_blank"
+								rel="noopener noreferrer"
+								className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${getStatusBadgeStyles("LAUNCHED")} hover:opacity-80`}
+							>
+								Visit
+								<HiArrowTopRightOnSquare className="h-3 w-3" />
+							</Link>
+						)}
+						<ShareButton idea={idea} size={null} showLabel={false} variant="ghost" className="hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg p-1.5 h-auto cursor-pointer transition-colors" />
+						{user && user.id === idea.userId && (
+							<Link
+								href={`/idea/${idea.id}/edit`}
+								className="hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg p-1.5 transition-colors"
+								title="Edit idea"
+							>
+								<HiPencilSquare className="h-4 w-4" />
+							</Link>
+						)}
+					</div>
+				</div>
 
-				{/* Validation Signals */}
-				<section className="mt-8">
-					<ValidationSignals ideaId={idea.id} />
-				</section>
+				{/* Separator */}
+				<div className="border-border/40 border-t" />
 
-				{/* Idea Waitlist */}
-				<section className="mt-4">
-					<IdeaWaitlist ideaId={idea.id} ideaOwnerId={idea.userId} />
-				</section>
+				{/* Content */}
+				<div className="px-6 py-6">
+					<h1 className="text-foreground text-2xl leading-tight font-bold sm:text-3xl">
+						{idea.heading}
+					</h1>
+					<p className="text-foreground mt-4 leading-relaxed whitespace-pre-wrap">
+						{idea.description}
+					</p>
+				</div>
 
-				{/* Comments Section */}
-				<section className="border-border/50 mt-8 border-t pt-8">
+				{/* Separator */}
+				<div className="border-border/40 border-t" />
+
+				{/* Bottom Action Bar */}
+				<div className="flex items-center gap-4 px-6 py-2.5 text-xs">
+					<VoteButtons
+						ideaId={idea.id}
+						initialUpvotesCount={idea.upvotesCount}
+						initialDownvotesCount={idea.downvotesCount}
+						initialUserVote={idea.userVote}
+						onVoteUpdate={handleVoteUpdate}
+						orientation="horizontal"
+					/>
+					<span className="text-border">·</span>
+					<span className="text-muted-foreground flex items-center gap-1.5">
+						<svg
+							className="h-4 w-4"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth={2}
+						>
+							<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+						</svg>
+						<span className="font-mono">{idea.commentsCount}</span>
+					</span>
+				</div>
+			</article>
+
+			{/* Community Validation Section */}
+			<section className="mt-10">
+				<h2 className="text-muted-foreground mb-5 text-xs font-semibold tracking-widest uppercase">
+					Community Validation
+				</h2>
+				<div className="bg-card border-border/50 shadow-card rounded-xl border">
+					<div className="p-5">
+						<ValidationSignals ideaId={idea.id} bare />
+					</div>
+					<div className="border-border/40 border-t" />
+					<div className="p-5">
+						<IdeaWaitlist ideaId={idea.id} ideaOwnerId={idea.userId} bare />
+					</div>
+				</div>
+			</section>
+
+			{/* Comments Section */}
+			<section className="mt-10">
+				<div className="bg-card border-border/50 shadow-card rounded-xl border p-5 sm:p-6">
 					<CommentSection
 						ideaId={idea.id}
 						initialCommentsCount={idea.commentsCount}
 						ideaOwnerId={idea.userId}
+						onCommentsCountChange={handleCommentsCountChange}
 					/>
-				</section>
-			</article>
+				</div>
+			</section>
 		</div>
 	);
 }

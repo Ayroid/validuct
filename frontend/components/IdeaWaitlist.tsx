@@ -17,11 +17,13 @@ import { Input } from "@/components/ui/input";
 interface IdeaWaitlistProps {
 	ideaId: string;
 	ideaOwnerId: string;
+	bare?: boolean;
 }
 
 export default function IdeaWaitlist({
 	ideaId,
 	ideaOwnerId,
+	bare,
 }: IdeaWaitlistProps) {
 	const router = useRouter();
 	const { user } = useAuth();
@@ -89,19 +91,23 @@ export default function IdeaWaitlist({
 		}
 	};
 
+	const Wrapper = bare ? "div" : ({ children }: { children: React.ReactNode }) => (
+		<div className="bg-card border-border/50 shadow-card rounded-xl border p-5">{children}</div>
+	);
+
 	if (isLoading) {
 		return (
-			<div className="bg-card border-border/50 shadow-card rounded-xl border p-5">
+			<Wrapper>
 				<div className="bg-muted mb-3 h-4 w-24 animate-pulse rounded-md" />
 				<div className="bg-muted/50 h-10 animate-pulse rounded-lg" />
-			</div>
+			</Wrapper>
 		);
 	}
 
 	// Owner View
 	if (isOwner) {
 		return (
-			<div className="bg-card border-border/50 shadow-card rounded-xl border p-5">
+			<Wrapper>
 				<h3 className="text-foreground mb-4 text-sm font-semibold tracking-wide uppercase">
 					Waitlist
 				</h3>
@@ -130,13 +136,13 @@ export default function IdeaWaitlist({
 						</Button>
 					)}
 				</div>
-			</div>
+			</Wrapper>
 		);
 	}
 
 	// Non-owner View (Join Form)
 	return (
-		<div className="bg-card border-border/50 shadow-card rounded-xl border p-5">
+		<Wrapper>
 			<h3 className="text-foreground mb-4 text-sm font-semibold tracking-wide uppercase">
 				Join Waitlist
 			</h3>
@@ -191,6 +197,6 @@ export default function IdeaWaitlist({
 					joined
 				</p>
 			)}
-		</div>
+		</Wrapper>
 	);
 }

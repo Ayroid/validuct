@@ -74,13 +74,13 @@ export default function HeroSection({ ctaLink }: HeroSectionProps) {
 
 			<div className="relative mx-auto max-w-[1080px]">
 				{/* Badge */}
-				<div className="mb-8 inline-flex animate-[fadeUp_0.6s_ease_both] items-center gap-2 rounded-full border border-primary/15 bg-[var(--accent-glow)] px-4 py-1.5 font-mono text-xs uppercase tracking-widest text-primary">
-					<span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
+				<div className="border-primary/15 text-primary mb-8 inline-flex animate-[fadeUp_0.6s_ease_both] items-center gap-2 rounded-full border bg-[var(--accent-glow)] px-4 py-1.5 font-mono text-xs tracking-widest uppercase">
+					<span className="bg-primary h-1.5 w-1.5 animate-pulse rounded-full" />
 					Live &amp; Free
 				</div>
 
 				{/* Headline */}
-				<h1 className="mx-auto mb-6 max-w-[700px] animate-[fadeUp_0.6s_ease_0.1s_both] font-display text-[clamp(42px,6vw,72px)] leading-[1.1]">
+				<h1 className="font-display mx-auto mb-6 max-w-[700px] animate-[fadeUp_0.6s_ease_0.1s_both] text-[clamp(42px,6vw,72px)] leading-[1.1]">
 					<span className="text-muted-foreground line-through decoration-[var(--red)] decoration-[3px]">
 						Opinions
 					</span>{" "}
@@ -89,17 +89,17 @@ export default function HeroSection({ ctaLink }: HeroSectionProps) {
 				</h1>
 
 				{/* Subtitle */}
-				<p className="mx-auto mb-10 max-w-[520px] animate-[fadeUp_0.6s_ease_0.2s_both] text-lg leading-relaxed text-muted-foreground">
+				<p className="text-muted-foreground mx-auto mb-10 max-w-[520px] animate-[fadeUp_0.6s_ease_0.2s_both] text-lg leading-relaxed">
 					Validuct gives builders real demand signals — not upvotes, not
-					&quot;cool idea bro.&quot; Know if people will actually pay before
-					you write a single line of code.
+					&quot;cool idea bro.&quot; Know if people will actually pay before you
+					write a single line of code.
 				</p>
 
 				{/* Actions */}
 				<div className="mb-16 flex animate-[fadeUp_0.6s_ease_0.3s_both] flex-wrap justify-center gap-4">
 					<Link
 						href={ctaLink}
-						className="inline-flex items-center gap-2 rounded-lg bg-foreground px-8 py-3.5 text-[15px] font-semibold text-background transition-all hover:-translate-y-0.5 hover:opacity-85 hover:shadow-lg"
+						className="bg-foreground text-background inline-flex items-center gap-2 rounded-lg px-8 py-3.5 text-[15px] font-semibold transition-all hover:-translate-y-0.5 hover:opacity-85 hover:shadow-lg"
 					>
 						Test Your Idea Free
 						<svg
@@ -118,7 +118,7 @@ export default function HeroSection({ ctaLink }: HeroSectionProps) {
 					</Link>
 					<a
 						href="#how"
-						className="inline-flex items-center gap-2 rounded-lg border border-border bg-transparent px-8 py-3.5 text-[15px] font-medium text-muted-foreground transition-all hover:border-[var(--border-light)] hover:bg-card hover:text-foreground"
+						className="border-border text-muted-foreground hover:bg-card hover:text-foreground inline-flex items-center gap-2 rounded-lg border bg-transparent px-8 py-3.5 text-[15px] font-medium transition-all hover:border-[var(--border-light)]"
 					>
 						See How It Works &darr;
 					</a>
@@ -126,9 +126,9 @@ export default function HeroSection({ ctaLink }: HeroSectionProps) {
 
 				{/* ── Interactive Product Demo ── */}
 				<div className="mx-auto max-w-[680px] animate-[fadeUp_0.8s_ease_0.4s_both]">
-					<div className="overflow-hidden rounded-xl border border-border bg-card shadow-lg">
+					<div className="border-border bg-card overflow-hidden rounded-xl border shadow-lg">
 						{/* App chrome bar */}
-						<div className="flex items-center gap-1.5 border-b border-border bg-muted/50 px-4 py-2.5">
+						<div className="border-border bg-muted/50 flex items-center gap-1.5 border-b px-4 py-2.5">
 							<span className="h-2.5 w-2.5 rounded-full bg-[var(--text-muted-extra)]/30" />
 							<span className="h-2.5 w-2.5 rounded-full bg-[var(--text-muted-extra)]/30" />
 							<span className="h-2.5 w-2.5 rounded-full bg-[var(--text-muted-extra)]/30" />
@@ -138,16 +138,14 @@ export default function HeroSection({ ctaLink }: HeroSectionProps) {
 						</div>
 
 						{/* Idea header */}
-						<div className="flex items-center justify-between border-b border-border px-6 py-5">
+						<div className="border-border flex items-center justify-between border-b px-6 py-5">
 							<div className="flex items-center gap-2.5">
-								<div className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-accent to-primary text-sm font-semibold text-white">
+								<div className="from-accent to-primary grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br text-sm font-semibold text-white">
 									A
 								</div>
-								<div className="text-[13px] text-muted-foreground">
-									<strong className="text-foreground">
-										@ayroid
-									</strong>{" "}
-									&middot; 2 days ago
+								<div className="text-muted-foreground text-[13px]">
+									<strong className="text-foreground">@ayroid</strong> &middot;
+									2 days ago
 								</div>
 							</div>
 							<span className="rounded-full border border-[var(--green)]/15 bg-[var(--green-light)] px-2.5 py-1 font-mono text-[11px] font-medium text-[var(--green)]">
@@ -157,17 +155,17 @@ export default function HeroSection({ ctaLink }: HeroSectionProps) {
 
 						{/* Idea body */}
 						<div className="px-6 py-6 text-left">
-							<div className="mb-2 font-display text-[22px]">
+							<div className="font-display mb-2 text-[22px]">
 								AI Writing Assistant for Developers
 							</div>
-							<div className="mb-5 text-sm leading-relaxed text-muted-foreground">
-								Technical documentation tool that understands your
-								codebase and generates contextual docs, READMEs, and
-								API references — not generic filler text.
+							<div className="text-muted-foreground mb-5 text-sm leading-relaxed">
+								Technical documentation tool that understands your codebase and
+								generates contextual docs, READMEs, and API references — not
+								generic filler text.
 							</div>
 
 							{/* Interactive signal buttons */}
-							<h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">
+							<h3 className="text-foreground mb-3 text-xs font-semibold tracking-wide uppercase">
 								Validation Signals
 							</h3>
 							<div className="grid grid-cols-2 gap-3">
@@ -177,9 +175,7 @@ export default function HeroSection({ ctaLink }: HeroSectionProps) {
 									return (
 										<button
 											key={signal.label}
-											onClick={() =>
-												handleSignalClick(idx)
-											}
+											onClick={() => handleSignalClick(idx)}
 											className={`group flex cursor-pointer items-center justify-between rounded-lg border px-3 py-2.5 text-left transition-all duration-200 sm:px-4 sm:py-3 ${
 												isActive
 													? `${signal.activeBorder} ${signal.activeBg}`
@@ -198,9 +194,7 @@ export default function HeroSection({ ctaLink }: HeroSectionProps) {
 											</span>
 											<span
 												className={`min-w-5 text-right font-mono text-sm font-semibold ${
-													isActive
-														? signal.activeText
-														: "text-muted-foreground"
+													isActive ? signal.activeText : "text-muted-foreground"
 												}`}
 											>
 												{counts[idx]}
@@ -211,8 +205,8 @@ export default function HeroSection({ ctaLink }: HeroSectionProps) {
 							</div>
 
 							<p className="mt-4 text-center font-mono text-[11px] text-[var(--text-muted-extra)]">
-								Try clicking the signals above — this is the real
-								experience &uarr;
+								Try clicking the signals above — this is the real experience
+								&uarr;
 							</p>
 						</div>
 					</div>

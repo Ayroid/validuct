@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { HiUserCircle, HiCheck, HiArrowUpRight, HiTrash } from "react-icons/hi2";
@@ -36,6 +36,7 @@ export default function NotificationsList() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
+	const observerRef = useRef<HTMLDivElement>(null);
 
 	const fetchNotifications = async (pageNum: number, append = false) => {
 		try {
@@ -54,9 +55,40 @@ export default function NotificationsList() {
 		}
 	};
 
+	const handleLoadMore = useCallback(() => {
+		if (!isLoading && hasMore) {
+			const nextPage = page + 1;
+			setPage(nextPage);
+			fetchNotifications(nextPage, true);
+		}
+	}, [isLoading, hasMore, page]);
+
 	useEffect(() => {
 		fetchNotifications(1);
 	}, []);
+
+	// Infinite scroll observer
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting && !isLoading && hasMore) {
+					handleLoadMore();
+				}
+			},
+			{ threshold: 0.1 }
+		);
+
+		const currentObserverRef = observerRef.current;
+		if (currentObserverRef) {
+			observer.observe(currentObserverRef);
+		}
+
+		return () => {
+			if (currentObserverRef) {
+				observer.unobserve(currentObserverRef);
+			}
+		};
+	}, [isLoading, hasMore, handleLoadMore]);
 
 	const handleMarkAsRead = async (notificationId: string) => {
 		try {
@@ -85,12 +117,6 @@ export default function NotificationsList() {
 		} catch (error) {
 			console.error("Failed to delete notification:", error);
 		}
-	};
-
-	const handleLoadMore = () => {
-		const nextPage = page + 1;
-		setPage(nextPage);
-		fetchNotifications(nextPage, true);
 	};
 
 	const hasUnread = notifications.some((n) => !n.read);
@@ -210,16 +236,14 @@ export default function NotificationsList() {
 				)}
 			</div>
 
-			{/* Load More */}
+			{/* Infinite Scroll Observer Target */}
 			{hasMore && notifications.length > 0 && (
-				<div className="border-border border-t px-6 py-4">
-					<button
-						onClick={handleLoadMore}
-						disabled={isLoading}
-						className="text-primary hover:text-primary/80 w-full text-center text-sm font-medium transition-colors disabled:opacity-50 cursor-pointer"
-					>
-						{isLoading ? "Loading..." : "Load more"}
-					</button>
+				<div ref={observerRef} className="border-border border-t px-6 py-4">
+					{isLoading && (
+						<div className="flex justify-center">
+							<div className="border-primary h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" />
+						</div>
+					)}
 				</div>
 			)}
 		</div>

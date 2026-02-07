@@ -284,6 +284,7 @@ export interface CommentSectionProps {
 	ideaId: string;
 	initialCommentsCount?: number;
 	ideaOwnerId?: string;
+	onCommentsCountChange?: (count: number) => void;
 }
 
 export interface CommentItemProps {

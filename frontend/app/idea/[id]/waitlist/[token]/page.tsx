@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -15,7 +15,12 @@ import {
 	HiArrowDownTray,
 	HiCheckCircle,
 } from "react-icons/hi2";
-import { Button } from "@/components/ui/button";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function WaitlistPage() {
 	const params = useParams();
@@ -30,6 +35,7 @@ export default function WaitlistPage() {
 
 	const [loading, setLoading] = useState(true);
 	const [loadingMore, setLoadingMore] = useState(false);
+	const observerRef = useRef<HTMLDivElement>(null);
 	const [exporting, setExporting] = useState(false);
 	const [error, setError] = useState(false);
 	const [copied, setCopied] = useState(false);
@@ -89,11 +95,13 @@ export default function WaitlistPage() {
 		}
 	};
 
-	const handleLoadMore = () => {
-		const nextPage = page + 1;
-		setPage(nextPage);
-		loadWaitlist(false, nextPage);
-	};
+	const handleLoadMore = useCallback(() => {
+		if (!loadingMore && !loading) {
+			const nextPage = page + 1;
+			setPage(nextPage);
+			loadWaitlist(false, nextPage);
+		}
+	}, [loadingMore, loading, page]);
 
 	const copyAllEmails = async () => {
 		try {
@@ -153,6 +161,29 @@ export default function WaitlistPage() {
 
 	const hasMore = pagination ? page < pagination.total_pages : false;
 
+	// Infinite scroll observer
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting && !loadingMore && !loading && hasMore) {
+					handleLoadMore();
+				}
+			},
+			{ threshold: 0.1 }
+		);
+
+		const currentObserverRef = observerRef.current;
+		if (currentObserverRef) {
+			observer.observe(currentObserverRef);
+		}
+
+		return () => {
+			if (currentObserverRef) {
+				observer.unobserve(currentObserverRef);
+			}
+		};
+	}, [loadingMore, loading, hasMore, handleLoadMore]);
+
 	if (status === "loading" || loading) {
 		return (
 			<div className="flex min-h-[50vh] items-center justify-center">
@@ -178,49 +209,57 @@ export default function WaitlistPage() {
 			</Link>
 
 			{/* Header */}
-			<div className="bg-card border-border/50 shadow-card mb-8 flex flex-col items-stretch gap-4 rounded-xl border p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
-				<div className="flex flex-col gap-2">
-					<h1 className="text-foreground text-2xl font-bold sm:text-3xl">
-						Waitlist for &quot;{ideaHeading}&quot;
-					</h1>
-					<p className="text-muted-foreground mt-2">
-						{totalCount} {totalCount === 1 ? "person has" : "people have"}{" "}
-						expressed interest
-					</p>
+			<div className="bg-card border-border/50 shadow-card mb-8 rounded-xl border p-6">
+				<div className="flex items-center justify-between">
+					<span className="text-muted-foreground text-xs font-semibold tracking-widest uppercase">
+						Waitlist
+					</span>
+					{totalCount > 0 && (
+						<TooltipProvider delayDuration={200}>
+							<div className="flex items-center gap-1">
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<button
+											onClick={copyAllEmails}
+											disabled={exporting}
+											className="text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer rounded-lg p-2 transition-colors disabled:opacity-50"
+										>
+											{copied ? (
+												<HiCheckCircle className="h-4.5 w-4.5 text-green-500" />
+											) : (
+												<HiClipboard className="h-4.5 w-4.5" />
+											)}
+										</button>
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>{copied ? "Copied!" : "Copy all emails"}</p>
+									</TooltipContent>
+								</Tooltip>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<button
+											onClick={downloadCSV}
+											disabled={exporting}
+											className="text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer rounded-lg p-2 transition-colors disabled:opacity-50"
+										>
+											<HiArrowDownTray className="h-4.5 w-4.5" />
+										</button>
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>Download CSV</p>
+									</TooltipContent>
+								</Tooltip>
+							</div>
+						</TooltipProvider>
+					)}
 				</div>
-
-				{/* Actions */}
-				{totalCount > 0 && (
-					<div className="flex flex-1 flex-wrap gap-3">
-						<Button
-							onClick={copyAllEmails}
-							variant="secondary"
-							className="w-full gap-2 sm:w-auto cursor-pointer transition-colors"
-							disabled={exporting}
-						>
-							{copied ? (
-								<>
-									<HiCheckCircle className="h-4 w-4 text-green-500" />
-									Copied!
-								</>
-							) : (
-								<>
-									<HiClipboard className="h-4 w-4" />
-									Copy All Emails
-								</>
-							)}
-						</Button>
-						<Button
-							onClick={downloadCSV}
-							variant="default"
-							className="w-full gap-2 sm:w-auto cursor-pointer transition-colors"
-							disabled={exporting}
-						>
-							<HiArrowDownTray className="h-4 w-4" />
-							Download CSV
-						</Button>
-					</div>
-				)}
+				<h1 className="text-foreground mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
+					{ideaHeading}
+				</h1>
+				<p className="text-muted-foreground mt-1.5 text-sm">
+					{totalCount} {totalCount === 1 ? "person has" : "people have"}{" "}
+					expressed interest
+				</p>
 			</div>
 
 			{/* Waitlist Entries */}
@@ -255,17 +294,12 @@ export default function WaitlistPage() {
 				)}
 			</div>
 
-			{/* Load More Button */}
+			{/* Infinite Scroll Observer Target */}
 			{hasMore && (
-				<div className="flex justify-center py-8">
-					<Button
-						onClick={handleLoadMore}
-						disabled={loadingMore}
-						variant="outline"
-						className="cursor-pointer transition-colors"
-					>
-						{loadingMore ? "Loading..." : "Load More"}
-					</Button>
+				<div ref={observerRef} className="flex justify-center py-8">
+					{loadingMore && (
+						<div className="border-primary h-8 w-8 animate-spin rounded-full border-2 border-t-transparent"></div>
+					)}
 				</div>
 			)}
 		</div>

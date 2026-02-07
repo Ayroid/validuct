@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import IdeaCard from "./IdeaCard";
 import { ideasApi } from "@/lib/api/ideas";
 import { Idea } from "@/types";
@@ -21,11 +21,7 @@ export default function Timeline() {
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
-
-	useEffect(() => {
-		loadIdeas(true);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [activeTimeline]);
+	const observerRef = useRef<HTMLDivElement>(null);
 
 	const loadIdeas = async (reset = false, pageOverride?: number) => {
 		try {
@@ -59,11 +55,41 @@ export default function Timeline() {
 		}
 	};
 
-	const handleLoadMore = () => {
-		const nextPage = page + 1;
-		setPage(nextPage);
-		loadIdeas(false, nextPage);
-	};
+	const handleLoadMore = useCallback(() => {
+		if (!loading && hasMore) {
+			const nextPage = page + 1;
+			setPage(nextPage);
+			loadIdeas(false, nextPage);
+		}
+	}, [loading, hasMore, page]);
+
+	useEffect(() => {
+		loadIdeas(true);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeTimeline]);
+
+	// Infinite scroll observer
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting && !loading && hasMore) {
+					handleLoadMore();
+				}
+			},
+			{ threshold: 0.1 }
+		);
+
+		const currentObserverRef = observerRef.current;
+		if (currentObserverRef) {
+			observer.observe(currentObserverRef);
+		}
+
+		return () => {
+			if (currentObserverRef) {
+				observer.unobserve(currentObserverRef);
+			}
+		};
+	}, [loading, hasMore, handleLoadMore]);
 
 	const tabs = [
 		{ id: TimelineType.NEW, label: "New", icon: "🆕" },
@@ -117,16 +143,12 @@ export default function Timeline() {
 								<IdeaCard key={idea.id} idea={idea} />
 							))}
 
-							{/* Load More Button */}
+							{/* Infinite Scroll Observer Target */}
 							{hasMore && (
-								<div className="flex justify-center py-8">
-									<button
-										onClick={handleLoadMore}
-										disabled={loading}
-										className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer rounded-lg px-6 py-3 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-									>
-										{loading ? "Loading..." : "Load More"}
-									</button>
+								<div ref={observerRef} className="flex justify-center py-8">
+									{loading && (
+										<div className="border-primary h-12 w-12 animate-spin rounded-full border-b-2"></div>
+									)}
 								</div>
 							)}
 						</>

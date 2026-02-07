@@ -9,11 +9,11 @@ const Navbar = async () => {
 	const session = await auth();
 
 	return (
-		<header className="sticky top-0 z-50 w-full border-b border-border bg-background/85 backdrop-blur-xl">
+		<header className="border-border bg-background/85 sticky top-0 z-50 w-full border-b backdrop-blur-xl">
 			<div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3 sm:px-8">
 				<Link
-					href={session?.user ? "/home" : "/"}
-					className="flex items-center gap-2.5 transition-opacity hover:opacity-80"
+					href="/"
+					className="flex items-center justify-center gap-2.5 transition-opacity hover:opacity-80"
 				>
 					<Image
 						src="/logo.png"
@@ -22,8 +22,9 @@ const Navbar = async () => {
 						height={28}
 						className="object-contain"
 					/>
-					<span className="text-foreground text-lg font-bold tracking-tight sm:text-xl">
-						VALIDUCT
+					<span className="text-primary font-mono text-[15px] font-medium tracking-wide uppercase">
+						Validuct
+						<span className="text-[var(--text-muted-extra)]">.com</span>
 					</span>
 				</Link>
 

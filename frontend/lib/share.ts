@@ -38,14 +38,11 @@ export interface ShareContent {
  * Character limit: 280 characters
  */
 export const getTwitterShareUrl = (content: ShareContent): string => {
-	// Format: "💡 {Title}\n\n{ShortDescription}\n\nby {author}\n\n{url}"
 	const text = `💡 ${content.title}
 
 ${content.shortDescription}
 
-by ${content.authorHandle}
-
-Check it out on Validuct! 🚀`;
+I've shared this idea on @validuct — check it out and let me know what you think!`;
 
 	const params = new URLSearchParams({
 		text,
@@ -59,11 +56,17 @@ Check it out on Validuct! 🚀`;
  * Generate LinkedIn share URL
  */
 export const getLinkedInShareUrl = (content: ShareContent): string => {
-	const params = new URLSearchParams({
-		url: content.url,
-	});
+	const text = `💡 ${content.title}
 
-	return `https://www.linkedin.com/sharing/share-offsite/?${params.toString()}`;
+${content.shortDescription}
+
+I've shared this idea on Validuct — check it out and share your feedback!
+
+${content.url}`;
+
+	const params = new URLSearchParams({ text });
+
+	return `https://www.linkedin.com/feed/?shareActive=true&${params.toString()}`;
 };
 
 /**
@@ -72,7 +75,7 @@ export const getLinkedInShareUrl = (content: ShareContent): string => {
 export const getRedditShareUrl = (content: ShareContent): string => {
 	const params = new URLSearchParams({
 		url: content.url,
-		title: `💡 ${content.title} - ${content.shortDescription}`,
+		title: `💡 ${content.title} — ${content.shortDescription} | Shared on Validuct, would love your feedback!`,
 	});
 
 	return `https://reddit.com/submit?${params.toString()}`;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, notFound } from "next/navigation";
 import { userApi, UserProfile } from "@/lib/api/users";
 import {
@@ -37,6 +37,7 @@ export default function ProfilePage() {
 	const [sortBy, setSortBy] = useState<ProfileSortMode>("all");
 	const [page, setPage] = useState(1);
 	const [pagination, setPagination] = useState<PaginationMeta | null>(null);
+	const observerRef = useRef<HTMLDivElement>(null);
 
 	const isOwnProfile = session?.user?.username === username;
 
@@ -128,6 +129,35 @@ export default function ProfilePage() {
 	};
 
 	const hasMore = pagination ? pagination.page < pagination.total_pages : false;
+
+	const handleLoadMore = useCallback(() => {
+		if (!ideasLoading && hasMore) {
+			setPage((p) => p + 1);
+		}
+	}, [ideasLoading, hasMore]);
+
+	// Infinite scroll observer
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting && !ideasLoading && hasMore) {
+					handleLoadMore();
+				}
+			},
+			{ threshold: 0.1 }
+		);
+
+		const currentObserverRef = observerRef.current;
+		if (currentObserverRef) {
+			observer.observe(currentObserverRef);
+		}
+
+		return () => {
+			if (currentObserverRef) {
+				observer.unobserve(currentObserverRef);
+			}
+		};
+	}, [ideasLoading, hasMore, handleLoadMore]);
 
 	if (loading) {
 		return (
@@ -291,17 +321,12 @@ export default function ProfilePage() {
 							/>
 						))}
 
-						{/* Load More */}
+						{/* Infinite Scroll Observer Target */}
 						{hasMore && (
-							<div className="pt-6 text-center">
-								<Button
-									variant="outline"
-									onClick={() => setPage((p) => p + 1)}
-									disabled={ideasLoading}
-									className="cursor-pointer transition-colors"
-								>
-									{ideasLoading ? "Loading..." : "Load More"}
-								</Button>
+							<div ref={observerRef} className="flex justify-center pt-6">
+								{ideasLoading && (
+									<div className="border-primary h-8 w-8 animate-spin rounded-full border-2 border-t-transparent"></div>
+								)}
 							</div>
 						)}
 					</div>
@@ -316,17 +341,12 @@ export default function ProfilePage() {
 							/>
 						))}
 
-						{/* Load More */}
+						{/* Infinite Scroll Observer Target */}
 						{hasMore && (
-							<div className="pt-6 text-center">
-								<Button
-									variant="outline"
-									onClick={() => setPage((p) => p + 1)}
-									disabled={ideasLoading}
-									className="cursor-pointer transition-colors"
-								>
-									{ideasLoading ? "Loading..." : "Load More"}
-								</Button>
+							<div ref={observerRef} className="flex justify-center pt-6">
+								{ideasLoading && (
+									<div className="border-primary h-8 w-8 animate-spin rounded-full border-2 border-t-transparent"></div>
+								)}
 							</div>
 						)}
 					</div>

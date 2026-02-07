@@ -5,6 +5,8 @@ import { Idea } from "@/types";
 import {
 	formatShareContent,
 	getTwitterShareUrl,
+	getLinkedInShareUrl,
+	getRedditShareUrl,
 	copyToClipboard,
 	openShareWindow,
 } from "@/lib/share";
@@ -16,14 +18,14 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { FaXTwitter } from "react-icons/fa6";
+import { FaXTwitter, FaLinkedinIn, FaRedditAlien } from "react-icons/fa6";
 import { IoShareSocial, IoCheckmarkCircle } from "react-icons/io5";
 import { HiLink } from "react-icons/hi2";
 
 interface ShareButtonProps {
 	idea: Idea;
 	variant?: "default" | "ghost" | "outline";
-	size?: "default" | "sm" | "lg" | "icon";
+	size?: "default" | "sm" | "lg" | "icon" | null;
 	showLabel?: boolean;
 	className?: string;
 }
@@ -47,6 +49,12 @@ export default function ShareButton({
 			case "twitter":
 				shareUrl = getTwitterShareUrl(shareContent);
 				break;
+			case "linkedin":
+				shareUrl = getLinkedInShareUrl(shareContent);
+				break;
+			case "reddit":
+				shareUrl = getRedditShareUrl(shareContent);
+				break;
 		}
 
 		if (shareUrl) {
@@ -69,7 +77,7 @@ export default function ShareButton({
 	return (
 		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
 			<DropdownMenuTrigger asChild>
-				<Button variant={variant} size={size} className={className}>
+				<Button variant={variant} size={size ?? undefined} className={className}>
 					<IoShareSocial className="h-4 w-4" />
 					{showLabel && <span className="ml-2">Share</span>}
 				</Button>
@@ -86,7 +94,20 @@ export default function ShareButton({
 					<FaXTwitter className="mr-3 h-4 w-4" />
 					<span>Share on X</span>
 				</DropdownMenuItem>
-				<DropdownMenuSeparator />
+				<DropdownMenuItem
+					onClick={() => handleShare("linkedin")}
+					className="cursor-pointer"
+				>
+					<FaLinkedinIn className="mr-3 h-4 w-4" />
+					<span>Share on LinkedIn</span>
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					onClick={() => handleShare("reddit")}
+					className="cursor-pointer"
+				>
+					<FaRedditAlien className="mr-3 h-4 w-4" />
+					<span>Share on Reddit</span>
+				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
 					{copied ? (

@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -57,11 +55,11 @@ export default function IdeaCard({
 
 	return (
 		<article
-			className="group bg-[#FFFBF6] dark:bg-card border-border/50 shadow-card hover:shadow-card-hover hover:border-border cursor-pointer overflow-hidden rounded-xl border transition-all duration-200 hover:-translate-y-0.5"
+			className="group dark:bg-card border-border/50 shadow-card hover:shadow-card-hover hover:border-border cursor-pointer overflow-hidden rounded-xl border bg-white transition-all duration-200 hover:-translate-y-0.5"
 			onClick={handleCardClick}
 		>
 			{/* Top Meta Row: Avatar + Username + Time + Status */}
-			<div className="flex items-center justify-between gap-3 bg-muted/50 px-6 py-3 dark:bg-muted/30">
+			<div className="bg-muted/50 dark:bg-muted/30 flex items-center justify-between gap-3 px-6 py-3">
 				<div className="flex min-w-0 items-center gap-2 text-xs">
 					<Link
 						href={`/${idea.user.username}`}
@@ -77,7 +75,7 @@ export default function IdeaCard({
 								className="rounded-full"
 							/>
 						) : (
-							<HiUserCircle className="h-5.5 w-5.5 text-muted-foreground" />
+							<HiUserCircle className="text-muted-foreground h-5.5 w-5.5" />
 						)}
 						<span className="font-medium hover:underline">
 							{idea.user.username}
@@ -110,7 +108,7 @@ export default function IdeaCard({
 			</div>
 
 			{/* Separator */}
-			<div className="border-t border-border/40" />
+			<div className="border-border/40 border-t" />
 
 			{/* Middle: Title & Description */}
 			<div className="px-6 py-5">
@@ -123,7 +121,7 @@ export default function IdeaCard({
 			</div>
 
 			{/* Separator */}
-			<div className="border-t border-border/40" />
+			<div className="border-border/40 border-t" />
 
 			{/* Bottom Action Bar */}
 			<div className="flex items-center gap-4 px-6 py-2.5 text-xs">
@@ -136,12 +134,18 @@ export default function IdeaCard({
 				/>
 				<span className="text-border">·</span>
 				<span className="text-muted-foreground flex items-center gap-1.5">
-					<svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+					<svg
+						className="h-4 w-4"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						strokeWidth={2}
+					>
 						<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
 					</svg>
 					<span className="font-mono">{idea.commentsCount}</span>
 				</span>
-				<span className="ml-auto text-muted-foreground group-hover:text-primary shrink-0 font-medium transition-colors">
+				<span className="text-muted-foreground group-hover:text-primary ml-auto shrink-0 font-medium transition-colors">
 					View →
 				</span>
 			</div>

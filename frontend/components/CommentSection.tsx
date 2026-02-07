@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { commentsApi, Comment } from "@/lib/api/comments";
 import CommentItem from "./CommentItem";
@@ -58,6 +58,7 @@ export default function CommentSection({
 	ideaId,
 	initialCommentsCount = 0,
 	ideaOwnerId,
+	onCommentsCountChange,
 }: CommentSectionProps) {
 	const { data: session } = useSession();
 	const router = useRouter();
@@ -75,6 +76,18 @@ export default function CommentSection({
 	const [hasMore, setHasMore] = useState(true);
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 	const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
+	const observerRef = useRef<HTMLDivElement>(null);
+
+	const updateTotalComments = useCallback(
+		(updater: (prev: number) => number) => {
+			setTotalComments((prev) => {
+				const next = updater(prev);
+				onCommentsCountChange?.(next);
+				return next;
+			});
+		},
+		[onCommentsCountChange]
+	);
 
 	// Fetch comments
 	const fetchComments = useCallback(async () => {
@@ -93,7 +106,6 @@ export default function CommentSection({
 				setComments((prev) => [...prev, ...response.comments]);
 			}
 
-			setTotalComments(response.pagination.total);
 			setHasMore(page < response.pagination.total_pages);
 		} catch (error: unknown) {
 			const err = error as ErrorResponse;
@@ -103,9 +115,38 @@ export default function CommentSection({
 		}
 	}, [ideaId, page]);
 
+	const handleLoadMore = useCallback(() => {
+		if (!isLoading && hasMore) {
+			setPage((prev) => prev + 1);
+		}
+	}, [isLoading, hasMore]);
+
 	useEffect(() => {
 		fetchComments();
 	}, [fetchComments]);
+
+	// Infinite scroll observer
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting && !isLoading && hasMore) {
+					handleLoadMore();
+				}
+			},
+			{ threshold: 0.1 }
+		);
+
+		const currentObserverRef = observerRef.current;
+		if (currentObserverRef) {
+			observer.observe(currentObserverRef);
+		}
+
+		return () => {
+			if (currentObserverRef) {
+				observer.unobserve(currentObserverRef);
+			}
+		};
+	}, [isLoading, hasMore, handleLoadMore]);
 
 	const handleCreateComment = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -129,7 +170,7 @@ export default function CommentSection({
 			setComments([newComment, ...comments]);
 			setNewCommentContent("");
 			setSelectedCategory("GENERAL");
-			setTotalComments((prev) => prev + 1);
+			updateTotalComments((prev) => prev + 1);
 		} catch (error: unknown) {
 			const err = error as ErrorResponse;
 			setError(err.response?.data?.message || "Failed to post comment");
@@ -165,7 +206,7 @@ export default function CommentSection({
 
 			setReplyToCommentId(null);
 			setReplyContent("");
-			setTotalComments((prev) => prev + 1);
+			updateTotalComments((prev) => prev + 1);
 		} catch (error: unknown) {
 			const err = error as ErrorResponse;
 			setError(err.response?.data?.message || "Failed to post reply");
@@ -219,6 +260,7 @@ export default function CommentSection({
 			// Refresh comments
 			setPage(1);
 			await fetchComments();
+			updateTotalComments((prev) => Math.max(0, prev - 1));
 			setDeleteDialogOpen(false);
 			setCommentToDelete(null);
 		} catch (error: unknown) {
@@ -228,12 +270,8 @@ export default function CommentSection({
 		}
 	};
 
-	const handleLoadMore = () => {
-		setPage((prev) => prev + 1);
-	};
-
 	return (
-		<div className="mt-8">
+		<div>
 			<h2 className="text-foreground mb-6 text-xl font-bold">
 				Discussion{" "}
 				<span className="text-muted-foreground text-base font-normal">
@@ -344,17 +382,12 @@ export default function CommentSection({
 						/>
 					))}
 
-					{/* Load More Button */}
+					{/* Infinite Scroll Observer Target */}
 					{hasMore && (
-						<div className="flex justify-center pt-6">
-							<Button
-								onClick={handleLoadMore}
-								variant="outline"
-								disabled={isLoading}
-								className="cursor-pointer transition-colors"
-							>
-								{isLoading ? "Loading..." : "Load More Comments"}
-							</Button>
+						<div ref={observerRef} className="flex justify-center pt-6">
+							{isLoading && (
+								<div className="border-primary inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-r-transparent"></div>
+							)}
 						</div>
 					)}
 				</div>

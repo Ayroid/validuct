@@ -14,6 +14,7 @@ import {
 
 interface ValidationSignalsProps {
 	ideaId: string;
+	bare?: boolean;
 }
 
 const SIGNAL_CONFIG: Record<
@@ -61,7 +62,7 @@ const SIGNAL_CONFIG: Record<
 	},
 };
 
-export default function ValidationSignals({ ideaId }: ValidationSignalsProps) {
+export default function ValidationSignals({ ideaId, bare }: ValidationSignalsProps) {
 	const { data: session } = useSession();
 	const router = useRouter();
 	const [signals, setSignals] = useState<IdeaSignals | null>(null);
@@ -119,19 +120,23 @@ export default function ValidationSignals({ ideaId }: ValidationSignalsProps) {
 		}
 	};
 
+	const Wrapper = bare ? "div" : ({ children }: { children: React.ReactNode }) => (
+		<div className="bg-card border-border/50 shadow-card rounded-xl border p-5">{children}</div>
+	);
+
 	if (isLoading) {
 		return (
-			<div className="bg-card border-border/50 shadow-card rounded-xl border p-5">
+			<Wrapper>
 				<div className="bg-muted mb-4 h-4 w-32 animate-pulse rounded-md" />
-				<div className="grid grid-cols-2 gap-3">
+				<div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
 					{[1, 2, 3, 4].map((i) => (
 						<div
 							key={i}
-							className="bg-muted/50 h-12 animate-pulse rounded-lg"
+							className="bg-muted/50 h-24 animate-pulse rounded-lg"
 						/>
 					))}
 				</div>
-			</div>
+			</Wrapper>
 		);
 	}
 
@@ -145,11 +150,11 @@ export default function ValidationSignals({ ideaId }: ValidationSignalsProps) {
 	];
 
 	return (
-		<div className="bg-card border-border/50 shadow-card rounded-xl border p-5">
+		<Wrapper>
 			<h3 className="text-foreground mb-4 text-sm font-semibold tracking-wide uppercase">
 				Validation Signals
 			</h3>
-			<div className="grid grid-cols-2 gap-3">
+			<div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
 				{signalTypes.map((type) => {
 					const config = SIGNAL_CONFIG[type];
 					const count = signals.counts[type] || 0;
@@ -160,30 +165,23 @@ export default function ValidationSignals({ ideaId }: ValidationSignalsProps) {
 						<button
 							key={type}
 							onClick={() => handleToggleSignal(type)}
-							className={`group flex cursor-pointer items-center justify-between rounded-lg border px-3 py-2.5 text-left transition-all duration-200 sm:px-4 sm:py-3 ${
+							className={`group flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border px-3 py-4 transition-all duration-200 ${
 								isActive
 									? `${config.activeBorder} ${config.activeBg}`
 									: "border-border/50 bg-background hover:border-border hover:bg-muted/50"
 							}`}
 							title={config.description}
 						>
-							<span className="flex items-center gap-2 text-sm sm:gap-2.5">
-								<IconComponent
-									className={`h-5 w-5 shrink-0 ${isActive ? config.activeText : "text-muted-foreground"}`}
-								/>
-								<span
-									className={`hidden font-medium sm:inline ${isActive ? "text-foreground" : "text-muted-foreground"}`}
-								>
-									{config.label}
-								</span>
-								<span
-									className={`font-medium sm:hidden ${isActive ? "text-foreground" : "text-muted-foreground"}`}
-								>
-									{config.label.split(" ")[0]}
-								</span>
+							<IconComponent
+								className={`h-6 w-6 ${isActive ? config.activeText : "text-muted-foreground"}`}
+							/>
+							<span
+								className={`text-center text-xs font-medium leading-tight ${isActive ? "text-foreground" : "text-muted-foreground"}`}
+							>
+								{config.label}
 							</span>
 							<span
-								className={`min-w-5 text-right font-mono text-sm font-semibold ${
+								className={`font-mono text-lg font-semibold ${
 									isActive ? config.activeText : "text-muted-foreground"
 								}`}
 							>
@@ -193,6 +191,6 @@ export default function ValidationSignals({ ideaId }: ValidationSignalsProps) {
 					);
 				})}
 			</div>
-		</div>
+		</Wrapper>
 	);
 }

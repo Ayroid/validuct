@@ -30,7 +30,9 @@ function RollingNumber({
 	}, [value]);
 
 	return (
-		<span className={`relative inline-flex h-4 items-center overflow-hidden ${className}`}>
+		<span
+			className={`relative inline-flex h-5 items-center overflow-hidden ${className}`}
+		>
 			<span
 				key={key}
 				className={
@@ -133,12 +135,12 @@ export default function VoteButtons({
 
 	return (
 		<div
-			className={`group/vote flex items-center justify-center ${isHorizontal ? "flex-row gap-1.5 rounded-full bg-muted/60 px-2 py-1" : "flex-col gap-0"}`}
+			className={`group/vote flex items-center justify-center ${isHorizontal ? "bg-muted/60 flex-row gap-1.5 rounded-full px-2 py-1" : "flex-col gap-0"}`}
 			data-no-navigate
 		>
 			{/* Upvote button */}
 			<button
-				className={`flex items-center justify-center rounded-full p-1 transition-all duration-150 cursor-pointer ${
+				className={`flex cursor-pointer items-center justify-center rounded-full p-1 transition-all duration-150 ${
 					userVote === "upvote"
 						? "text-primary"
 						: "text-muted-foreground/50 hover:text-primary/80"
@@ -149,14 +151,14 @@ export default function VoteButtons({
 				}}
 				aria-label="Upvote"
 			>
-				<svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+				<svg className={isHorizontal ? "h-4 w-4" : "h-5 w-5"} viewBox="0 0 24 24" fill="currentColor">
 					<path d="M3.8 17a2 2 0 01-1.7-3l7.5-12a2.5 2.5 0 014.3 0L21.4 14a2 2 0 01-1.7 3z" />
 				</svg>
 			</button>
 			{/* Vote count - center */}
 			<RollingNumber
 				value={netVotes}
-				className={`font-mono text-xs font-bold tabular-nums leading-none ${
+				className={`font-mono leading-none font-bold tabular-nums ${isHorizontal ? "text-xs" : "text-sm"} ${
 					userVote === "upvote"
 						? "text-primary"
 						: userVote === "downvote"
@@ -166,7 +168,7 @@ export default function VoteButtons({
 			/>
 			{/* Downvote button */}
 			<button
-				className={`flex items-center justify-center rounded-full p-1 transition-all duration-150 cursor-pointer ${
+				className={`flex cursor-pointer items-center justify-center rounded-full p-1 transition-all duration-150 ${
 					userVote === "downvote"
 						? "text-blue-500"
 						: "text-muted-foreground/50 hover:text-blue-500/80"
@@ -177,7 +179,7 @@ export default function VoteButtons({
 				}}
 				aria-label="Downvote"
 			>
-				<svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+				<svg className={isHorizontal ? "h-4 w-4" : "h-5 w-5"} viewBox="0 0 24 24" fill="currentColor">
 					<path d="M20.2 7a2 2 0 011.7 3l-7.5 12a2.5 2.5 0 01-4.3 0L2.6 10a2 2 0 011.7-3z" />
 				</svg>
 			</button>
