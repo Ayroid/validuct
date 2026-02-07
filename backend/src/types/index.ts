@@ -122,6 +122,17 @@ export interface TopIdea {
   totalSignals: number;
 }
 
+export interface IdeaAnalytics {
+  id: string;
+  heading: string;
+  signalDistribution: SignalDistribution[];
+  dailyTrends: DailySignalTrend[];
+  totals: {
+    totalSignals: number;
+  };
+  validationState: ValidationState;
+}
+
 export interface ValidationAnalytics {
   signalDistribution: SignalDistribution[];
   validationStateBreakdown: { state: string; count: number }[];
@@ -132,4 +143,5 @@ export interface ValidationAnalytics {
     totalIdeas: number;
     avgSignalsPerIdea: number;
   };
+  perIdeaAnalytics: IdeaAnalytics[];
 }

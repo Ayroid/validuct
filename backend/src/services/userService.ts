@@ -12,6 +12,7 @@ import {
   ValidationAnalytics,
   SignalDistribution,
   DailySignalTrend,
+  IdeaAnalytics,
 } from '../types/index.js';
 
 /**
@@ -791,7 +792,7 @@ export class UserService {
     };
 
     // Collect all signals for trend analysis
-    const allSignals: Array<{ signalType: SignalType; createdAt: Date }> = [];
+    const allSignals: Array<{ signalType: SignalType; createdAt: Date; ideaId: string }> = [];
 
     // Process each idea
     const ideasWithSignalCounts = ideas.map((idea) => {
@@ -807,6 +808,7 @@ export class UserService {
         allSignals.push({
           signalType: signal.signalType as SignalType,
           createdAt: signal.createdAt,
+          ideaId: idea.id,
         });
 
         switch (signal.signalType) {
@@ -942,6 +944,87 @@ export class UserService {
         totalSignals: idea.totalSignals,
       }));
 
+    // Per-Idea Analytics
+    const perIdeaAnalytics: IdeaAnalytics[] = ideasWithSignalCounts
+      .filter((idea) => idea.totalSignals > 0)
+      .map((idea) => {
+        const ideaTotalSignals = idea.totalSignals;
+
+        const ideaSignalDistribution: SignalDistribution[] = [
+          {
+            type: 'PROBLEM_REAL',
+            count: idea.signals.problemReal,
+            percentage: ideaTotalSignals > 0 ? (idea.signals.problemReal / ideaTotalSignals) * 100 : 0,
+          },
+          {
+            type: 'WOULD_PAY',
+            count: idea.signals.wouldPay,
+            percentage: ideaTotalSignals > 0 ? (idea.signals.wouldPay / ideaTotalSignals) * 100 : 0,
+          },
+          {
+            type: 'READY_TO_BUILD',
+            count: idea.signals.readyToBuild,
+            percentage: ideaTotalSignals > 0 ? (idea.signals.readyToBuild / ideaTotalSignals) * 100 : 0,
+          },
+          {
+            type: 'NEEDS_CLARITY',
+            count: idea.signals.needsClarity,
+            percentage: ideaTotalSignals > 0 ? (idea.signals.needsClarity / ideaTotalSignals) * 100 : 0,
+          },
+        ];
+
+        // Build daily trends for this idea
+        const ideaDailyTrendsMap: Map<string, DailySignalTrend> = new Map();
+        for (let i = 0; i < 30; i++) {
+          const date = new Date();
+          date.setDate(date.getDate() - i);
+          const dateStr = date.toISOString().split('T')[0];
+          ideaDailyTrendsMap.set(dateStr, {
+            date: dateStr,
+            problemReal: 0,
+            wouldPay: 0,
+            readyToBuild: 0,
+            needsClarity: 0,
+          });
+        }
+
+        allSignals
+          .filter((s) => s.ideaId === idea.id && s.createdAt >= thirtyDaysAgo)
+          .forEach((signal) => {
+            const dateStr = signal.createdAt.toISOString().split('T')[0];
+            const dayData = ideaDailyTrendsMap.get(dateStr);
+            if (dayData) {
+              switch (signal.signalType) {
+                case 'PROBLEM_REAL':
+                  dayData.problemReal++;
+                  break;
+                case 'WOULD_PAY':
+                  dayData.wouldPay++;
+                  break;
+                case 'READY_TO_BUILD':
+                  dayData.readyToBuild++;
+                  break;
+                case 'NEEDS_CLARITY':
+                  dayData.needsClarity++;
+                  break;
+              }
+            }
+          });
+
+        const ideaDailyTrends = Array.from(ideaDailyTrendsMap.values()).sort(
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+        );
+
+        return {
+          id: idea.id,
+          heading: idea.heading,
+          signalDistribution: ideaSignalDistribution,
+          dailyTrends: ideaDailyTrends,
+          totals: { totalSignals: ideaTotalSignals },
+          validationState: idea.validationState,
+        };
+      });
+
     return {
       signalDistribution,
       validationStateBreakdown,
@@ -952,6 +1035,7 @@ export class UserService {
         totalIdeas,
         avgSignalsPerIdea: totalIdeas > 0 ? totalSignals / totalIdeas : 0,
       },
+      perIdeaAnalytics,
     };
   }
 }
