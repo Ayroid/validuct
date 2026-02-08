@@ -58,7 +58,7 @@ export class CommentController {
    * Query parameters: page, limit
    * Returns nested comment tree with pagination metadata
    */
-  static async getIdeaComments(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async getIdeaComments(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id: ideaId } = req.params;
       const page = parseInt(req.query.page as string) || 1;
@@ -66,6 +66,7 @@ export class CommentController {
 
       const result = await CommentService.getIdeaComments({
         ideaId,
+        userId: req.userId,
         page,
         limit,
       });

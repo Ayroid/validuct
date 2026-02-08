@@ -78,15 +78,15 @@ export default function CommentSection({
 	const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
 	const observerRef = useRef<HTMLDivElement>(null);
 
+	useEffect(() => {
+		onCommentsCountChange?.(totalComments);
+	}, [totalComments, onCommentsCountChange]);
+
 	const updateTotalComments = useCallback(
 		(updater: (prev: number) => number) => {
-			setTotalComments((prev) => {
-				const next = updater(prev);
-				onCommentsCountChange?.(next);
-				return next;
-			});
+			setTotalComments(updater);
 		},
-		[onCommentsCountChange]
+		[]
 	);
 
 	// Fetch comments

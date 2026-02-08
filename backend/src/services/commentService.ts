@@ -34,6 +34,7 @@ interface UpdateCommentData {
  */
 interface GetCommentsParams {
   ideaId: string;
+  userId?: string;
   page?: number;
   limit?: number;
 }
@@ -49,6 +50,7 @@ interface CommentWithReplies {
   parentCommentId: string | null;
   category: string;
   helpfulCount: number;
+  isHelpful?: boolean;
   createdAt: Date;
   updatedAt: Date;
   user: {
@@ -182,7 +184,7 @@ export class CommentService {
    * - Default pagination: page 1, limit 50
    */
   static async getIdeaComments(params: GetCommentsParams) {
-    const { ideaId, page = 1, limit = 50 } = params;
+    const { ideaId, userId, page = 1, limit = 50 } = params;
     const skip = (page - 1) * limit;
 
     // Verify idea exists
@@ -207,14 +209,31 @@ export class CommentService {
             profilePicture: true,
           },
         },
+        ...(userId
+          ? {
+              helpfulVotes: {
+                where: { userId },
+                select: { id: true },
+              },
+            }
+          : {}),
       },
       orderBy: {
         createdAt: 'asc',
       },
     });
 
+    // Map comments to include isHelpful flag
+    const commentsWithHelpful = allComments.map((comment) => {
+      const { helpfulVotes, ...rest } = comment as typeof comment & { helpfulVotes?: { id: string }[] };
+      return {
+        ...rest,
+        isHelpful: helpfulVotes ? helpfulVotes.length > 0 : false,
+      };
+    });
+
     // Build nested comment tree recursively
-    const commentTree = this.buildCommentTree(allComments, null);
+    const commentTree = this.buildCommentTree(commentsWithHelpful, null);
 
     // Apply pagination to top-level comments only
     const paginatedComments = commentTree

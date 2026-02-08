@@ -81,7 +81,9 @@ export default function CommentItem({
 		setHelpfulCount(Math.max(0, newHelpfulCount));
 
 		try {
-			await commentsApi.toggleHelpful(comment.id);
+			const result = await commentsApi.toggleHelpful(comment.id);
+			setIsHelpful(result.isHelpful);
+			setHelpfulCount(result.helpfulCount);
 		} catch {
 			// Revert on error
 			setIsHelpful(prevIsHelpful);

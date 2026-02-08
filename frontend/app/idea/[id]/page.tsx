@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ideasApi } from "@/lib/api/ideas";
@@ -75,11 +75,9 @@ export default function IdeaDetailPage() {
 		}
 	};
 
-	const handleCommentsCountChange = (count: number) => {
-		if (idea) {
-			setIdea({ ...idea, commentsCount: count });
-		}
-	};
+	const handleCommentsCountChange = useCallback((count: number) => {
+		setIdea((prev) => prev ? { ...prev, commentsCount: count } : prev);
+	}, []);
 
 	const handleVoteUpdate = (
 		upvotesCount: number,
