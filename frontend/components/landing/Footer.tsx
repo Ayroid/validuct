@@ -18,6 +18,12 @@ export default function Footer() {
 				{/* Center: Links */}
 				<div className="flex gap-5">
 					<Link
+						href="/change-logs"
+						className="text-[13px] text-[var(--text-muted-extra)] transition-colors hover:text-foreground"
+					>
+						Changelog
+					</Link>
+					<Link
 						href="/privacy"
 						className="text-[13px] text-[var(--text-muted-extra)] transition-colors hover:text-foreground"
 					>
