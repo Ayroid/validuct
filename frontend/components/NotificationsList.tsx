@@ -3,7 +3,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { HiUserCircle, HiCheck, HiArrowUpRight, HiTrash } from "react-icons/hi2";
+import {
+	HiUserCircle,
+	HiCheck,
+	HiArrowUpRight,
+	HiTrash,
+} from "react-icons/hi2";
 import {
 	getNotifications,
 	markAsRead,
@@ -130,7 +135,7 @@ export default function NotificationsList() {
 					{hasUnread && (
 						<button
 							onClick={handleMarkAllAsRead}
-							className="text-primary hover:text-primary/80 flex items-center gap-1.5 text-sm font-medium transition-colors cursor-pointer"
+							className="text-primary hover:text-primary/80 flex cursor-pointer items-center gap-1.5 text-sm font-medium transition-colors"
 						>
 							<HiCheck className="h-4 w-4" />
 							Mark all as read
@@ -163,7 +168,7 @@ export default function NotificationsList() {
 						>
 							{/* Unread indicator */}
 							{!notification.read && (
-								<div className="bg-primary absolute left-2 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full" />
+								<div className="bg-primary absolute top-1/2 left-2 h-2 w-2 -translate-y-1/2 rounded-full" />
 							)}
 
 							{/* Icon or Avatar */}
@@ -187,7 +192,9 @@ export default function NotificationsList() {
 
 							{/* Content */}
 							<div className="min-w-0 flex-1">
-								<p className="text-foreground font-medium">{notification.title}</p>
+								<p className="text-foreground font-medium">
+									{notification.title}
+								</p>
 								<p className="text-muted-foreground mt-0.5 text-sm">
 									{notification.message}
 								</p>
@@ -217,7 +224,7 @@ export default function NotificationsList() {
 								{!notification.read && (
 									<button
 										onClick={() => handleMarkAsRead(notification.id)}
-										className="hover:bg-muted rounded-lg p-2 transition-colors cursor-pointer"
+										className="hover:bg-muted cursor-pointer rounded-lg p-2 transition-colors"
 										title="Mark as read"
 									>
 										<HiCheck className="text-muted-foreground h-5 w-5" />
@@ -225,7 +232,7 @@ export default function NotificationsList() {
 								)}
 								<button
 									onClick={() => handleDelete(notification.id)}
-									className="hover:bg-muted rounded-lg p-2 transition-colors cursor-pointer"
+									className="hover:bg-muted cursor-pointer rounded-lg p-2 transition-colors"
 									title="Delete"
 								>
 									<HiTrash className="text-muted-foreground h-5 w-5" />

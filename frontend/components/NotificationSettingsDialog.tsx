@@ -34,9 +34,9 @@ function PreferenceRow({
 }: PreferenceRowProps) {
 	return (
 		<div className="flex items-center justify-between gap-4 py-3">
-			<div className="flex-1 min-w-0">
+			<div className="min-w-0 flex-1">
 				<p className="text-foreground text-sm font-medium">{label}</p>
-				<p className="text-muted-foreground text-xs mt-0.5">{description}</p>
+				<p className="text-muted-foreground mt-0.5 text-xs">{description}</p>
 			</div>
 			<Switch
 				checked={checked}
@@ -52,8 +52,11 @@ export default function NotificationSettingsDialog() {
 	const [open, setOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [saving, setSaving] = useState(false);
-	const [preferences, setPreferences] = useState<NotificationPreferences | null>(null);
-	const [localPrefs, setLocalPrefs] = useState<Partial<NotificationPreferences>>({});
+	const [preferences, setPreferences] =
+		useState<NotificationPreferences | null>(null);
+	const [localPrefs, setLocalPrefs] = useState<
+		Partial<NotificationPreferences>
+	>({});
 
 	useEffect(() => {
 		if (open && !preferences) {
@@ -87,7 +90,10 @@ export default function NotificationSettingsDialog() {
 		}
 	};
 
-	const updateLocalPref = (key: keyof NotificationPreferences, value: boolean) => {
+	const updateLocalPref = (
+		key: keyof NotificationPreferences,
+		value: boolean
+	) => {
 		setLocalPrefs((prev) => ({ ...prev, [key]: value }));
 	};
 
@@ -95,13 +101,13 @@ export default function NotificationSettingsDialog() {
 		<AlertDialog open={open} onOpenChange={setOpen}>
 			<AlertDialogTrigger asChild>
 				<button
-					className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg p-2 transition-colors cursor-pointer"
+					className="text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer rounded-lg p-2 transition-colors"
 					title="Notification settings"
 				>
 					<HiCog6Tooth className="h-5 w-5" />
 				</button>
 			</AlertDialogTrigger>
-			<AlertDialogContent className="sm:min-w-xl md:mx-0 mx-2">
+			<AlertDialogContent className="mx-2 sm:min-w-xl md:mx-0">
 				<AlertDialogHeader>
 					<AlertDialogTitle>Notification Preferences</AlertDialogTitle>
 					<AlertDialogDescription>
@@ -114,16 +120,16 @@ export default function NotificationSettingsDialog() {
 						<div className="border-primary h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" />
 					</div>
 				) : (
-					<div className="max-h-[60vh] overflow-y-auto -mx-6 px-6">
+					<div className="-mx-6 max-h-[60vh] overflow-y-auto px-6">
 						{/* Email Notifications Section */}
 						<div className="mb-6">
-							<h3 className="text-foreground text-sm font-semibold mb-1">
+							<h3 className="text-foreground mb-1 text-sm font-semibold">
 								Email Notifications
 							</h3>
-							<p className="text-muted-foreground text-xs mb-3">
+							<p className="text-muted-foreground mb-3 text-xs">
 								Receive emails for important updates
 							</p>
-							<div className="divide-border divide-y border-border border rounded-lg px-4">
+							<div className="divide-border border-border divide-y rounded-lg border px-4">
 								<PreferenceRow
 									label="First Feedback"
 									description="When you receive the first comment or signal on an idea"
@@ -177,13 +183,13 @@ export default function NotificationSettingsDialog() {
 
 						{/* In-App Notifications Section */}
 						<div>
-							<h3 className="text-foreground text-sm font-semibold mb-1">
+							<h3 className="text-foreground mb-1 text-sm font-semibold">
 								In-App Notifications
 							</h3>
-							<p className="text-muted-foreground text-xs mb-3">
+							<p className="text-muted-foreground mb-3 text-xs">
 								Show notifications in your notification bell
 							</p>
-							<div className="divide-border divide-y border-border border rounded-lg px-4">
+							<div className="divide-border border-border divide-y rounded-lg border px-4">
 								<PreferenceRow
 									label="Upvotes"
 									description="When someone upvotes your idea"
@@ -222,8 +228,14 @@ export default function NotificationSettingsDialog() {
 				)}
 
 				<AlertDialogFooter className="mt-4">
-					<AlertDialogCancel disabled={saving} className="cursor-pointer" >Cancel</AlertDialogCancel>
-					<AlertDialogAction onClick={handleSave} className="cursor-pointer" disabled={saving || loading}>
+					<AlertDialogCancel disabled={saving} className="cursor-pointer">
+						Cancel
+					</AlertDialogCancel>
+					<AlertDialogAction
+						onClick={handleSave}
+						className="cursor-pointer"
+						disabled={saving || loading}
+					>
 						{saving ? "Saving..." : "Save preferences"}
 					</AlertDialogAction>
 				</AlertDialogFooter>

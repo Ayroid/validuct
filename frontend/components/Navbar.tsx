@@ -12,7 +12,7 @@ const Navbar = async () => {
 		<header className="border-border bg-background/85 sticky top-0 z-50 w-full border-b backdrop-blur-xl">
 			<div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3 sm:px-8">
 				<Link
-					href="/"
+					href="/home"
 					className="flex items-center justify-center gap-2.5 transition-opacity hover:opacity-80"
 				>
 					<Image
@@ -22,9 +22,8 @@ const Navbar = async () => {
 						height={28}
 						className="object-contain"
 					/>
-					<span className="text-primary font-mono text-[15px] font-medium tracking-wide uppercase">
+					<span className="text-primary text-[15px] font-medium tracking-wide uppercase" style={{ fontFamily: 'var(--font-geist)' }}>
 						Validuct
-						<span className="text-[var(--text-muted-extra)]">.com</span>
 					</span>
 				</Link>
 
