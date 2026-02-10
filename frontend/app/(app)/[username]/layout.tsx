@@ -48,22 +48,6 @@ export default function UserLayout({
 		fetchData();
 	}, [username]);
 
-	if (error || !profile) {
-		return (
-			<div className="flex min-h-[50vh] items-center justify-center">
-				<div className="text-destructive">{error || "Profile not found"}</div>
-			</div>
-		);
-	}
-
-	if (loading) {
-		return (
-			<div className="flex min-h-[50vh] items-center justify-center">
-				<div className="border-primary h-12 w-12 animate-spin rounded-full border-b-2"></div>
-			</div>
-		);
-	}
-
 	return (
 		<>
 			<div className="bg-background/85 sticky top-0 z-10 backdrop-blur-lg">
@@ -74,13 +58,25 @@ export default function UserLayout({
 					>
 						<HiArrowLeft className="h-5 w-5" />
 					</button>
-					<h1 className="text-foreground text-lg font-bold">
-						{profile.user.username}
-					</h1>
+					{profile && (
+						<h1 className="text-foreground text-lg font-bold">
+							{profile.user.username}
+						</h1>
+					)}
 				</div>
 				<div className="border-border/50 border-b" />
 			</div>
-			{children}
+			{loading ? (
+				<div className="flex min-h-[50vh] items-center justify-center">
+					<div className="border-primary h-12 w-12 animate-spin rounded-full border-b-2"></div>
+				</div>
+			) : error || !profile ? (
+				<div className="flex min-h-[50vh] items-center justify-center">
+					<div className="text-destructive">{error || "Profile not found"}</div>
+				</div>
+			) : (
+				children
+			)}
 		</>
 	);
 }
