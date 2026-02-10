@@ -32,6 +32,15 @@ const badgeLabels: Record<ChangeType, string> = {
 
 const changelog: Version[] = [
 	{
+		version: "v0.6.0",
+		date: "Feb 9 – 11, 2026",
+		changes: [
+			{ type: "feat", text: "Added changelog page" },
+			{ type: "update", text: "Restructured app routes with sidebar shell" },
+			{ type: "fix", text: "Fixed profile page showing 'not found' before loading" },
+		],
+	},
+	{
 		version: "v0.5.0",
 		date: "Feb 7 – 8, 2026",
 		changes: [
