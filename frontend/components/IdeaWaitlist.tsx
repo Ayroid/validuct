@@ -86,9 +86,7 @@ export default function IdeaWaitlist({
 	};
 
 	const handleViewWaitlist = () => {
-		if (stats?.accessToken) {
-			router.push(`/idea/${ideaId}/waitlist/${stats.accessToken}`);
-		}
+		router.push(`/idea/${ideaId}/waitlist`);
 	};
 
 	const Wrapper = bare ? "div" : ({ children }: { children: React.ReactNode }) => (

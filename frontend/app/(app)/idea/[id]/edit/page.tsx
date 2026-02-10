@@ -1,0 +1,349 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { ideasApi } from "@/lib/api/ideas";
+import { Idea } from "@/types";
+import { HiPencil, HiTrash, HiArrowLeft } from "react-icons/hi2";
+
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+type IdeaStatus = "DRAFT" | "VALIDATED" | "WIP" | "LAUNCHED";
+
+const statusOptions: {
+	value: IdeaStatus;
+	label: string;
+	emoji: string;
+	color: string;
+}[] = [
+	{
+		value: "DRAFT",
+		label: "Draft",
+		emoji: "✏️",
+		color: "bg-muted text-foreground hover:bg-muted/80",
+	},
+	{
+		value: "VALIDATED",
+		label: "Validated",
+		emoji: "✅",
+		color:
+			"bg-yellow-100 text-yellow-900 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/40",
+	},
+	{
+		value: "WIP",
+		label: "In Progress",
+		emoji: "🚧",
+		color:
+			"bg-orange-100 text-orange-900 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:hover:bg-orange-900/40",
+	},
+	{
+		value: "LAUNCHED",
+		label: "Launched",
+		emoji: "🚀",
+		color:
+			"bg-red-100 text-red-900 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/40",
+	},
+];
+
+export default function EditIdeaPage() {
+	const params = useParams();
+	const router = useRouter();
+	const { data: session, status } = useSession();
+	const [loading, setLoading] = useState(true);
+	const [submitting, setSubmitting] = useState(false);
+	const [idea, setIdea] = useState<Idea | null>(null);
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+	const [formData, setFormData] = useState({
+		heading: "",
+		description: "",
+		status: "DRAFT" as IdeaStatus,
+		launchedLink: "",
+	});
+
+	useEffect(() => {
+		// Redirect to login if not authenticated
+		if (status === "unauthenticated") {
+			router.push("/signin");
+			return;
+		}
+
+		if (params.id && status === "authenticated") {
+			loadIdea();
+		}
+		//eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [params.id, status]);
+
+	const loadIdea = async () => {
+		try {
+			setLoading(true);
+			const data = await ideasApi.getIdeaById(params.id as string);
+
+			// Check if user owns this idea
+			if (data.userId !== session?.user?.id) {
+				alert("You do not have permission to edit this idea");
+				router.push(`/idea/${params.id}`);
+				return;
+			}
+
+			setIdea(data);
+			setFormData({
+				heading: data.heading,
+				description: data.description,
+				status: data.status,
+				launchedLink: data.launchedLink || "",
+			});
+		} catch (error) {
+			console.error("Failed to load idea:", error);
+			router.push("/");
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+
+		try {
+			setSubmitting(true);
+			await ideasApi.updateIdea(params.id as string, {
+				heading: formData.heading,
+				description: formData.description,
+				status: formData.status,
+				launchedLink: formData.launchedLink || undefined,
+			});
+
+			router.push(`/idea/${params.id}`);
+		} catch (error) {
+			console.error("Failed to update idea:", error);
+			alert("Failed to update idea. Please try again.");
+		} finally {
+			setSubmitting(false);
+		}
+	};
+
+	const handleDelete = async () => {
+		try {
+			await ideasApi.deleteIdea(params.id as string);
+			router.push("/home");
+		} catch (error) {
+			console.error("Failed to delete idea:", error);
+			alert("Failed to delete idea. Please try again.");
+		}
+	};
+
+	const handleChange = (
+		e: React.ChangeEvent<
+			HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+		>
+	) => {
+		setFormData({
+			...formData,
+			[e.target.name]: e.target.value,
+		});
+	};
+
+	if (loading || status === "loading") {
+		return (
+			<div className="flex min-h-[50vh] items-center justify-center">
+				<div className="border-primary h-12 w-12 animate-spin rounded-full border-b-2"></div>
+			</div>
+		);
+	}
+
+	if (!idea) {
+		return null;
+	}
+
+	return (
+		<div>
+			{/* Sticky header */}
+			<div className="bg-background/85 sticky top-0 z-10 backdrop-blur-lg">
+				<div className="flex items-center gap-3 px-4 py-3">
+					<button
+						onClick={() => router.back()}
+						className="text-foreground hover:bg-muted -ml-1 cursor-pointer rounded-full p-1 transition-colors"
+					>
+						<HiArrowLeft className="h-5 w-5" />
+					</button>
+					<h1 className="text-foreground text-lg font-bold">Edit Idea</h1>
+				</div>
+				<div className="border-border/50 border-b" />
+			</div>
+
+		<div className="px-4 py-6 sm:px-6">
+
+			{/* Form */}
+			<div className="bg-card rounded-lg border p-8 md:p-10">
+				<form onSubmit={handleSubmit} className="space-y-8">
+					{/* Heading */}
+					<div className="space-y-2">
+						<Label htmlFor="heading">
+							Idea title <span className="text-red-500">*</span>
+						</Label>
+						<Input
+							type="text"
+							id="heading"
+							name="heading"
+							value={formData.heading}
+							onChange={handleChange}
+							required
+							maxLength={100}
+							placeholder="A tool that helps..."
+						/>
+						<div className="text-muted-foreground text-right text-xs">
+							{formData.heading.length}/100
+						</div>
+					</div>
+
+					{/* Description */}
+					<div className="space-y-2">
+						<Label htmlFor="description">
+							Description <span className="text-red-500">*</span>
+						</Label>
+						<Textarea
+							id="description"
+							name="description"
+							value={formData.description}
+							onChange={handleChange}
+							required
+							rows={8}
+							maxLength={500}
+							placeholder="Describe your idea, the problem it solves, and who it's for..."
+							className="resize-none"
+						/>
+						<div className="text-muted-foreground text-right text-xs">
+							{formData.description.length}/500
+						</div>
+					</div>
+
+					{/* Status */}
+					<div className="space-y-3">
+						<Label>Current status</Label>
+						<div className="grid grid-cols-2 gap-3">
+							{statusOptions.map((option) => (
+								<Button
+									key={option.value}
+									type="button"
+									onClick={() =>
+										setFormData({ ...formData, status: option.value })
+									}
+									variant={
+										formData.status === option.value ? "default" : "outline"
+									}
+									className="justify-start cursor-pointer transition-colors"
+								>
+									<span className="mr-2">{option.emoji}</span>
+									{option.label}
+								</Button>
+							))}
+						</div>
+					</div>
+
+					{/* Launched Link */}
+					{(formData.status === "LAUNCHED" || formData.status === "WIP") && (
+						<div className="space-y-2">
+							<Label htmlFor="launchedLink">
+								Project Link
+								<span className="text-muted-foreground ml-1">(Optional)</span>
+							</Label>
+							<Input
+								type="url"
+								id="launchedLink"
+								name="launchedLink"
+								value={formData.launchedLink}
+								onChange={handleChange}
+								placeholder="https://your-project.com"
+							/>
+						</div>
+					)}
+
+					{/* Action Buttons */}
+					<div className="space-y-4">
+						<div className="flex gap-3">
+							<Button
+								type="button"
+								variant="outline"
+								className="flex-1 cursor-pointer transition-colors"
+								size="lg"
+								asChild
+							>
+								<Link href={`/idea/${params.id}`}>Cancel</Link>
+							</Button>
+							<Button
+								type="submit"
+								disabled={
+									submitting || !formData.heading || !formData.description
+								}
+								className="flex-1 cursor-pointer transition-colors"
+								size="lg"
+							>
+								{submitting ? (
+									<>
+										<div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+										<span>Updating...</span>
+									</>
+								) : (
+									<>
+										<HiPencil className="h-4 w-4" />
+										<span>Update idea</span>
+									</>
+								)}
+							</Button>
+						</div>
+
+						{/* Delete Button */}
+						<Button
+							type="button"
+							variant="destructive"
+							onClick={() => setDeleteDialogOpen(true)}
+							className="w-full cursor-pointer justify-center transition-colors"
+						>
+							<HiTrash className="h-4 w-4" />
+							<span>Delete idea</span>
+						</Button>
+					</div>
+				</form>
+			</div>
+
+			{/* Delete Confirmation Dialog */}
+			<AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+						<AlertDialogDescription>
+							This action cannot be undone. This will permanently delete your
+							idea.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel className="cursor-pointer">
+							Cancel
+						</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={handleDelete}
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90 cursor-pointer"
+						>
+							Delete
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
+		</div>
+		</div>
+	);
+}

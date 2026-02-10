@@ -132,4 +132,34 @@ export class IdeaWaitlistController {
       next(error);
     }
   }
+
+  static async getWaitlistEntries(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.userId) throw new Error('User ID not found');
+
+      const { ideaId } = req.params;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = Math.min(parseInt(req.query.limit as string) || 20, 50);
+
+      const result = await IdeaWaitlistService.getWaitlistEntries(ideaId, req.userId, page, limit);
+
+      res.status(200).json({ success: true, data: result });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async exportWaitlistEmails(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.userId) throw new Error('User ID not found');
+
+      const { ideaId } = req.params;
+
+      const result = await IdeaWaitlistService.exportWaitlistEmails(ideaId, req.userId);
+
+      res.status(200).json({ success: true, data: result });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

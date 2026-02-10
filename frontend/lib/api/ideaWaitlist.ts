@@ -69,4 +69,29 @@ export const ideaWaitlistApi = {
 		);
 		return response.data.data!;
 	},
+
+	/**
+	 * Get paginated waitlist entries (session-auth, owner only)
+	 */
+	getWaitlistEntries: async (
+		ideaId: string,
+		params: GetWaitlistParams = {}
+	): Promise<IdeaWaitlistData> => {
+		const { page = 1, limit = 20 } = params;
+		const response = await apiClient.get<ApiResponse<IdeaWaitlistData>>(
+			`/ideas/${ideaId}/waitlist/entries`,
+			{ params: { page, limit } }
+		);
+		return response.data.data!;
+	},
+
+	/**
+	 * Export all waitlist emails (session-auth, owner only)
+	 */
+	exportWaitlistEmails: async (ideaId: string): Promise<IdeaWaitlistExport> => {
+		const response = await apiClient.get<ApiResponse<IdeaWaitlistExport>>(
+			`/ideas/${ideaId}/waitlist/export`
+		);
+		return response.data.data!;
+	},
 };

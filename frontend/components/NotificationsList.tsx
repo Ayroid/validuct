@@ -6,9 +6,11 @@ import Image from "next/image";
 import {
 	HiUserCircle,
 	HiCheck,
-	HiArrowUpRight,
 	HiTrash,
+	HiArrowLeft,
+	HiCog6Tooth,
 } from "react-icons/hi2";
+import { useRouter } from "next/navigation";
 import {
 	getNotifications,
 	markAsRead,
@@ -17,7 +19,6 @@ import {
 } from "@/lib/api/notifications";
 import { Notification } from "@/types";
 import { formatDistanceToNow } from "date-fns";
-import NotificationSettingsDialog from "./NotificationSettingsDialog";
 
 const getNotificationIcon = (type: Notification["type"]) => {
 	switch (type) {
@@ -37,6 +38,7 @@ const getNotificationIcon = (type: Notification["type"]) => {
 };
 
 export default function NotificationsList() {
+	const router = useRouter();
 	const [notifications, setNotifications] = useState<Notification[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [page, setPage] = useState(1);
@@ -127,52 +129,70 @@ export default function NotificationsList() {
 	const hasUnread = notifications.some((n) => !n.read);
 
 	return (
-		<div className="bg-card border-border rounded-2xl border shadow-sm">
-			{/* Header */}
-			<div className="border-border flex items-center justify-between border-b px-6 py-4">
-				<h1 className="text-foreground text-xl font-semibold">Notifications</h1>
-				<div className="flex items-center gap-2">
-					{hasUnread && (
+		<div>
+			{/* Sticky header — X style */}
+			<div className="bg-background/85 sticky top-0 z-10 backdrop-blur-lg">
+				<div className="flex items-center justify-between px-4 py-3">
+					<div className="flex items-center gap-3">
 						<button
-							onClick={handleMarkAllAsRead}
-							className="text-primary hover:text-primary/80 flex cursor-pointer items-center gap-1.5 text-sm font-medium transition-colors"
+							onClick={() => router.back()}
+							className="text-foreground hover:bg-muted -ml-1 cursor-pointer rounded-full p-1 transition-colors"
 						>
-							<HiCheck className="h-4 w-4" />
-							Mark all as read
+							<HiArrowLeft className="h-5 w-5" />
 						</button>
-					)}
-					<NotificationSettingsDialog />
+						<h1 className="text-foreground text-lg font-bold">Notifications</h1>
+					</div>
+					<div className="flex items-center gap-1">
+						{hasUnread && (
+							<button
+								onClick={handleMarkAllAsRead}
+								className="text-primary hover:bg-muted cursor-pointer rounded-full p-2 transition-colors"
+								title="Mark all as read"
+							>
+								<HiCheck className="h-5 w-5" />
+							</button>
+						)}
+						<Link
+							href="/settings/notifications"
+							className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-full p-2 transition-colors"
+							title="Notification settings"
+						>
+							<HiCog6Tooth className="h-5 w-5" />
+						</Link>
+					</div>
 				</div>
+				<div className="border-border/50 border-b" />
 			</div>
 
 			{/* Notifications List */}
-			<div className="divide-border divide-y">
+			<div>
 				{isLoading && notifications.length === 0 ? (
-					<div className="flex items-center justify-center py-12">
+					<div className="flex items-center justify-center py-16">
 						<div className="border-primary h-8 w-8 animate-spin rounded-full border-2 border-t-transparent" />
 					</div>
 				) : notifications.length === 0 ? (
-					<div className="text-muted-foreground py-12 text-center">
-						<p className="text-base">No notifications yet</p>
-						<p className="mt-1 text-sm">
+					<div className="text-muted-foreground py-16 text-center">
+						<p className="text-sm font-medium">Nothing here yet</p>
+						<p className="mt-1 text-xs">
 							When someone interacts with your ideas, you&apos;ll see it here.
 						</p>
 					</div>
 				) : (
 					notifications.map((notification) => (
-						<div
+						<Link
 							key={notification.id}
-							className={`hover:bg-muted/50 relative flex gap-4 px-6 py-4 transition-colors ${
-								!notification.read ? "bg-primary/5" : ""
+							href={notification.actionUrl || "#"}
+							onClick={() => {
+								if (!notification.read) {
+									handleMarkAsRead(notification.id);
+								}
+							}}
+							className={`hover:bg-muted/50 border-border/50 flex gap-3.5 border-b px-4 py-4 transition-colors ${
+								!notification.read ? "bg-primary/3" : ""
 							}`}
 						>
-							{/* Unread indicator */}
-							{!notification.read && (
-								<div className="bg-primary absolute top-1/2 left-2 h-2 w-2 -translate-y-1/2 rounded-full" />
-							)}
-
-							{/* Icon or Avatar */}
-							<div className="flex-shrink-0">
+							{/* Avatar */}
+							<div className="relative shrink-0 pt-0.5">
 								{notification.triggeredBy?.profilePicture ? (
 									<Image
 										src={notification.triggeredBy.profilePicture}
@@ -184,68 +204,63 @@ export default function NotificationsList() {
 								) : notification.triggeredBy ? (
 									<HiUserCircle className="text-muted-foreground h-11 w-11" />
 								) : (
-									<span className="flex h-11 w-11 items-center justify-center text-2xl">
+									<span className="flex h-11 w-11 items-center justify-center rounded-full text-xl">
 										{getNotificationIcon(notification.type)}
 									</span>
 								)}
+								{/* Type indicator */}
+								<span className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-background text-xs">
+									{getNotificationIcon(notification.type)}
+								</span>
 							</div>
 
 							{/* Content */}
 							<div className="min-w-0 flex-1">
-								<p className="text-foreground font-medium">
-									{notification.title}
+								<p className="text-sm leading-snug">
+									{notification.triggeredBy ? (
+										<>
+											<span className="text-foreground font-semibold">
+												{notification.triggeredBy.username}
+											</span>{" "}
+											<span className="text-muted-foreground">
+												{notification.message}
+											</span>
+										</>
+									) : (
+										<span className="text-muted-foreground">
+											{notification.message}
+										</span>
+									)}
 								</p>
-								<p className="text-muted-foreground mt-0.5 text-sm">
-									{notification.message}
-								</p>
-								<p className="text-muted-foreground mt-1.5 text-xs">
+								<p className="text-muted-foreground mt-0.5 text-xs">
 									{formatDistanceToNow(new Date(notification.createdAt), {
 										addSuffix: true,
 									})}
 								</p>
 							</div>
 
-							{/* Actions */}
-							<div className="flex flex-shrink-0 items-center gap-1">
-								{notification.actionUrl && (
-									<Link
-										href={notification.actionUrl}
-										onClick={() => {
-											if (!notification.read) {
-												handleMarkAsRead(notification.id);
-											}
-										}}
-										className="hover:bg-muted rounded-lg p-2 transition-colors"
-										title="View"
-									>
-										<HiArrowUpRight className="text-muted-foreground h-5 w-5" />
-									</Link>
-								)}
-								{!notification.read && (
-									<button
-										onClick={() => handleMarkAsRead(notification.id)}
-										className="hover:bg-muted cursor-pointer rounded-lg p-2 transition-colors"
-										title="Mark as read"
-									>
-										<HiCheck className="text-muted-foreground h-5 w-5" />
-									</button>
-								)}
+							{/* Delete action */}
+							<div className="flex shrink-0 items-center">
 								<button
-									onClick={() => handleDelete(notification.id)}
-									className="hover:bg-muted cursor-pointer rounded-lg p-2 transition-colors"
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										handleDelete(notification.id);
+									}}
+									className="hover:bg-muted text-muted-foreground hover:text-destructive cursor-pointer rounded-full p-1.5 transition-colors"
 									title="Delete"
 								>
-									<HiTrash className="text-muted-foreground h-5 w-5" />
+									<HiTrash className="h-4 w-4" />
 								</button>
 							</div>
-						</div>
+						</Link>
 					))
 				)}
 			</div>
 
 			{/* Infinite Scroll Observer Target */}
 			{hasMore && notifications.length > 0 && (
-				<div ref={observerRef} className="border-border border-t px-6 py-4">
+				<div ref={observerRef} className="py-6">
 					{isLoading && (
 						<div className="flex justify-center">
 							<div className="border-primary h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" />

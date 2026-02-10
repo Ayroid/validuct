@@ -422,7 +422,8 @@ export class UserService {
   /**
    * Determine the next recommended action based on signal patterns
    */
-  private static determineNextAction(
+  private static
+  determineNextAction(
     ideas: Array<{
       id: string;
       heading: string;

@@ -2,27 +2,23 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-
-import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 
 const ThemeToggle = () => {
 	const { theme, setTheme } = useTheme();
-
-	const toggleTheme = () => {
-		setTheme(theme === "dark" ? "light" : "dark");
-	};
+	const isDark = theme === "dark";
 
 	return (
-		<Button
-			variant="ghost"
-			size="default"
-			onClick={toggleTheme}
-			className="relative h-8 w-8 rounded-full cursor-pointer transition-colors"
-		>
-			<Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-			<Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-			<span className="sr-only">Toggle theme</span>
-		</Button>
+		<div className="flex items-center gap-2">
+			<Sun className="text-muted-foreground h-4 w-4" />
+			<Switch
+				checked={isDark}
+				onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+				size="sm"
+				aria-label="Toggle theme"
+			/>
+			<Moon className="text-muted-foreground h-4 w-4" />
+		</div>
 	);
 };
 

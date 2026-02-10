@@ -92,41 +92,46 @@ export default function Timeline() {
 	}, [loading, hasMore, handleLoadMore]);
 
 	const tabs = [
-		{ id: TimelineType.NEW, label: "New", icon: "🆕" },
-		{ id: TimelineType.TRENDING, label: "Trending", icon: "🔥" },
-		{ id: TimelineType.TOP, label: "Top", icon: "📈" },
+		{ id: TimelineType.NEW, label: "🆕 New" },
+		{ id: TimelineType.TRENDING, label: "🔥 Trending" },
+		{ id: TimelineType.TOP, label: "📈 Top" },
 	];
 
 	return (
-		<div className="px-6 py-8">
-			<div className="w-full">
-				{/* Centered Tabs */}
-				<div className="mb-8 flex justify-between border-b">
-					{tabs.map((tab) => (
-						<button
-							key={tab.id}
-							onClick={() => {
-								setActiveTimeline(tab.id);
-								setPage(1);
-							}}
-							className={`relative w-full flex-1 cursor-pointer px-4 py-3 font-medium transition-all sm:px-8 md:px-12 ${
-								activeTimeline === tab.id
-									? "text-foreground bg-primary/10"
-									: "text-muted-foreground hover:text-foreground/80"
-							}`}
-						>
-							<span className="flex items-center justify-center gap-2">
-								<span>{tab.icon}</span>
-								<span>{tab.label}</span>
-							</span>
-							{activeTimeline === tab.id && (
-								<div className="bg-primary absolute right-0 bottom-0 left-0 h-0.5"></div>
-							)}
-						</button>
-					))}
+		<div>
+			{/* Sticky header */}
+			<div className="bg-background/85 sticky top-0 z-10 backdrop-blur-lg">
+				<div className="px-4 py-3">
+					<h1 className="text-foreground text-lg font-bold">Home</h1>
 				</div>
+				<div className="border-border/50 border-b" />
+			</div>
 
-				{/* Ideas List */}
+			{/* Tabs — full-width border */}
+			<div className="flex border-b border-border/50">
+				{tabs.map((tab) => (
+					<button
+						key={tab.id}
+						onClick={() => {
+							setActiveTimeline(tab.id);
+							setPage(1);
+						}}
+						className={`relative flex-1 cursor-pointer py-3.5 text-center text-sm font-semibold transition-colors ${
+							activeTimeline === tab.id
+								? "text-foreground"
+								: "text-muted-foreground hover:text-foreground/80"
+						}`}
+					>
+						{tab.label}
+						{activeTimeline === tab.id && (
+							<div className="bg-primary absolute bottom-0 left-1/2 h-[3px] w-14 -translate-x-1/2 rounded-full"></div>
+						)}
+					</button>
+				))}
+			</div>
+
+			{/* Ideas List */}
+			<div className="px-4 py-6">
 				<div className="space-y-4">
 					{loading && ideas.length === 0 ? (
 						<div className="flex items-center justify-center py-12">

@@ -18,6 +18,12 @@ router.post(
 // Get waitlist stats for an idea (public, includes access token for owner)
 router.get('/ideas/:ideaId/waitlist', optionalProtect, IdeaWaitlistController.getWaitlistStats);
 
+// Get paginated waitlist entries (session-auth, owner only)
+router.get('/ideas/:ideaId/waitlist/entries', protect, IdeaWaitlistController.getWaitlistEntries);
+
+// Export all waitlist emails (session-auth, owner only)
+router.get('/ideas/:ideaId/waitlist/export', protect, IdeaWaitlistController.exportWaitlistEmails);
+
 // Get paginated waitlist by access token (protected, owner only)
 router.get(
   '/ideas/:ideaId/waitlist/:accessToken',

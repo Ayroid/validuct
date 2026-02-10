@@ -59,7 +59,7 @@ export default function IdeaCard({
 			onClick={handleCardClick}
 		>
 			{/* Top Meta Row: Avatar + Username + Time + Status */}
-			<div className="bg-muted/50 dark:bg-muted/30 flex items-center justify-between gap-3 px-6 py-3">
+			<div className="bg-muted/80 dark:bg-muted/30 flex items-center justify-between gap-3 px-6 py-3 ">
 				<div className="flex min-w-0 items-center gap-2 text-xs">
 					<Link
 						href={`/${idea.user.username}`}

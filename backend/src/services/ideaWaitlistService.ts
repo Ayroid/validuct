@@ -205,4 +205,56 @@ export class IdeaWaitlistService {
       entries,
     };
   }
+
+  private static async verifyOwnership(ideaId: string, userId: string) {
+    const idea = await prisma.idea.findUnique({
+      where: { id: ideaId },
+      select: { id: true, userId: true, heading: true },
+    });
+
+    if (!idea || idea.userId !== userId) {
+      throw new AppError('Not found', 404);
+    }
+
+    return idea;
+  }
+
+  static async getWaitlistEntries(ideaId: string, userId: string, page: number = 1, limit: number = 20) {
+    const idea = await this.verifyOwnership(ideaId, userId);
+
+    const total = await prisma.ideaWaitlist.count({ where: { ideaId } });
+
+    const entries = await prisma.ideaWaitlist.findMany({
+      where: { ideaId },
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * limit,
+      take: limit,
+      select: { id: true, email: true, createdAt: true },
+    });
+
+    return {
+      ideaId: idea.id,
+      ideaHeading: idea.heading,
+      totalCount: total,
+      entries,
+      pagination: { page, limit, total, total_pages: Math.ceil(total / limit) },
+    };
+  }
+
+  static async exportWaitlistEmails(ideaId: string, userId: string) {
+    const idea = await this.verifyOwnership(ideaId, userId);
+
+    const entries = await prisma.ideaWaitlist.findMany({
+      where: { ideaId },
+      orderBy: { createdAt: 'desc' },
+      select: { email: true, createdAt: true },
+    });
+
+    return {
+      ideaId: idea.id,
+      ideaHeading: idea.heading,
+      totalCount: entries.length,
+      entries,
+    };
+  }
 }
