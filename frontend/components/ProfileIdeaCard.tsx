@@ -83,7 +83,7 @@ export default function ProfileIdeaCard({
 					{/* Mini signal icons */}
 					<div className="flex w-full items-center justify-start gap-2 sm:mt-3 sm:justify-center">
 						{idea.signals.problemReal > 0 && (
-							<Tooltip>
+							<Tooltip delayDuration={250}>
 								<TooltipTrigger asChild>
 									<div className="flex flex-col items-center gap-0.5">
 										<HiCheckBadge className="text-signal-problem h-4 w-4" />
@@ -92,13 +92,13 @@ export default function ProfileIdeaCard({
 										</span>
 									</div>
 								</TooltipTrigger>
-								<TooltipContent>
+								<TooltipContent className="animate-in fade-in-0 duration-200 data-open:zoom-in-100 data-closed:zoom-out-100">
 									{idea.signals.problemReal} Problem Real
 								</TooltipContent>
 							</Tooltip>
 						)}
 						{idea.signals.wouldPay > 0 && (
-							<Tooltip>
+							<Tooltip delayDuration={250}>
 								<TooltipTrigger asChild>
 									<div className="flex flex-col items-center gap-0.5">
 										<HiCurrencyDollar className="text-signal-pay h-4 w-4" />
@@ -107,13 +107,13 @@ export default function ProfileIdeaCard({
 										</span>
 									</div>
 								</TooltipTrigger>
-								<TooltipContent>
+								<TooltipContent className="animate-in fade-in-0 duration-200 data-open:zoom-in-100 data-closed:zoom-out-100">
 									{idea.signals.wouldPay} Would Pay
 								</TooltipContent>
 							</Tooltip>
 						)}
 						{idea.signals.readyToBuild > 0 && (
-							<Tooltip>
+							<Tooltip delayDuration={250}>
 								<TooltipTrigger asChild>
 									<div className="flex flex-col items-center gap-0.5">
 										<HiRocketLaunch className="text-signal-build h-4 w-4" />
@@ -122,13 +122,13 @@ export default function ProfileIdeaCard({
 										</span>
 									</div>
 								</TooltipTrigger>
-								<TooltipContent>
+								<TooltipContent className="animate-in fade-in-0 duration-200 data-open:zoom-in-100 data-closed:zoom-out-100">
 									{idea.signals.readyToBuild} Ready to Build
 								</TooltipContent>
 							</Tooltip>
 						)}
 						{idea.signals.needsClarity > 0 && (
-							<Tooltip>
+							<Tooltip delayDuration={250}>
 								<TooltipTrigger asChild>
 									<div className="flex flex-col items-center gap-0.5">
 										<HiExclamationTriangle className="text-signal-clarity h-4 w-4" />
@@ -137,7 +137,7 @@ export default function ProfileIdeaCard({
 										</span>
 									</div>
 								</TooltipTrigger>
-								<TooltipContent>
+								<TooltipContent className="animate-in fade-in-0 duration-200 data-open:zoom-in-100 data-closed:zoom-out-100">
 									{idea.signals.needsClarity} Needs Clarity
 								</TooltipContent>
 							</Tooltip>
