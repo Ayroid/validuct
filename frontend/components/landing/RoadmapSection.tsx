@@ -37,7 +37,7 @@ export default function RoadmapSection() {
 				<div className="max-w-2xl mb-12">
 					<p className="text-primary font-medium text-sm mb-3">Roadmap</p>
 					<h2 className="text-foreground text-3xl font-bold sm:text-4xl mb-4">
-						What's coming next
+						What&apos;s coming next
 					</h2>
 					<p className="text-muted-foreground text-lg">
 						Building the complete validation toolkit for builders.
