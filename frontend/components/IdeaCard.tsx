@@ -6,6 +6,8 @@ import { formatDistanceToNow } from "date-fns";
 import VoteButtons from "./VoteButtons";
 import PinButton from "./PinButton";
 import { HiUserCircle } from "react-icons/hi2";
+import { MessageSquareMore } from "lucide-react";
+import ShareButton from "./ShareButton";
 
 export default function IdeaCard({
 	idea,
@@ -24,7 +26,7 @@ export default function IdeaCard({
 				return "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-400";
 			case "DRAFT":
 			default:
-				return "bg-muted text-muted-foreground";
+				return "bg-zinc-200 text-zinc-600 dark:bg-zinc-700/50 dark:text-zinc-400";
 		}
 	};
 
@@ -59,7 +61,7 @@ export default function IdeaCard({
 			onClick={handleCardClick}
 		>
 			{/* Top Meta Row: Avatar + Username + Time + Status */}
-			<div className="bg-muted/80 dark:bg-muted/30 flex items-center justify-between gap-3 px-6 py-3 ">
+			<div className="bg-muted/80 dark:bg-muted/30 flex items-center justify-between gap-3 px-6 py-3">
 				<div className="flex min-w-0 items-center gap-2 text-xs">
 					<Link
 						href={`/${idea.user.username}`}
@@ -120,11 +122,8 @@ export default function IdeaCard({
 				</p>
 			</div>
 
-			{/* Separator */}
-			<div className="border-border/40 border-t" />
-
 			{/* Bottom Action Bar */}
-			<div className="flex items-center gap-4 px-6 py-2.5 text-xs">
+			<div className="flex items-center gap-3 px-6 pb-2.5 text-xs">
 				<VoteButtons
 					ideaId={idea.id}
 					initialUpvotesCount={idea.upvotesCount}
@@ -132,22 +131,17 @@ export default function IdeaCard({
 					initialUserVote={idea.userVote}
 					orientation="horizontal"
 				/>
-				<span className="text-border">·</span>
-				<span className="text-muted-foreground flex items-center gap-1.5">
-					<svg
-						className="h-4 w-4"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						strokeWidth={2}
-					>
-						<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-					</svg>
+				<span className="text-muted-foreground bg-muted/60 hover:bg-muted flex flex-row items-center gap-1.5 rounded-full px-4 py-2 transition-colors duration-150">
+					<MessageSquareMore className="h-3.5 w-3.5" />
 					<span className="font-mono">{idea.commentsCount}</span>
 				</span>
-				<span className="text-muted-foreground group-hover:text-primary ml-auto shrink-0 font-medium transition-colors">
-					View →
-				</span>
+				<ShareButton
+					idea={idea}
+					size={null}
+					showLabel={true}
+					variant="ghost"
+					className="text-muted-foreground bg-muted/60 hover:bg-muted hover:text-foreground h-auto cursor-pointer gap-1.5 rounded-full px-4 py-2 text-xs transition-colors duration-150"
+				/>
 			</div>
 		</article>
 	);
