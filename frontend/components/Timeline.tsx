@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import IdeaCard from "./IdeaCard";
 import { ideasApi } from "@/lib/api/ideas";
 import { Idea } from "@/types";
+import { Hexagon, Flame, ChartNoAxesCombined } from "lucide-react";
 
 const TimelineType = {
 	NEW: "new",
@@ -61,6 +62,7 @@ export default function Timeline() {
 			setPage(nextPage);
 			loadIdeas(false, nextPage);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loading, hasMore, page]);
 
 	useEffect(() => {
@@ -92,42 +94,39 @@ export default function Timeline() {
 	}, [loading, hasMore, handleLoadMore]);
 
 	const tabs = [
-		{ id: TimelineType.NEW, label: "🆕 New" },
-		{ id: TimelineType.TRENDING, label: "🔥 Trending" },
-		{ id: TimelineType.TOP, label: "📈 Top" },
+		{ id: TimelineType.NEW, label: "Latest", icon: Hexagon },
+		{ id: TimelineType.TRENDING, label: "Trending", icon: Flame },
+		{ id: TimelineType.TOP, label: "Top", icon: ChartNoAxesCombined },
 	];
 
 	return (
 		<div>
-			{/* Sticky header */}
+			{/* Sticky tabs */}
 			<div className="bg-background/85 sticky top-0 z-10 backdrop-blur-lg">
-				<div className="px-4 py-3">
-					<h1 className="text-foreground text-lg font-bold">Home</h1>
+				<div className="border-border/50 flex min-h-15 border-b">
+					{tabs.map((tab) => (
+						<button
+							key={tab.id}
+							onClick={() => {
+								setActiveTimeline(tab.id);
+								setPage(1);
+							}}
+							className={`hover:bg-muted/60 relative flex-1 cursor-pointer text-center text-sm font-semibold transition-colors ${
+								activeTimeline === tab.id
+									? "text-foreground"
+									: "text-muted-foreground hover:text-foreground/80"
+							}`}
+						>
+							<span className="flex items-center justify-center gap-1.5">
+								<tab.icon className="h-4 w-4" fill={activeTimeline === tab.id ? "currentColor" : "none"} />
+								{tab.label}
+							</span>
+							{activeTimeline === tab.id && (
+								<div className="bg-primary absolute bottom-0 left-1/2 h-0.75 w-14 -translate-x-1/2 rounded-full"></div>
+							)}
+						</button>
+					))}
 				</div>
-				<div className="border-border/50 border-b" />
-			</div>
-
-			{/* Tabs — full-width border */}
-			<div className="flex border-b border-border/50">
-				{tabs.map((tab) => (
-					<button
-						key={tab.id}
-						onClick={() => {
-							setActiveTimeline(tab.id);
-							setPage(1);
-						}}
-						className={`relative flex-1 cursor-pointer py-3.5 text-center text-sm font-semibold transition-colors ${
-							activeTimeline === tab.id
-								? "text-foreground"
-								: "text-muted-foreground hover:text-foreground/80"
-						}`}
-					>
-						{tab.label}
-						{activeTimeline === tab.id && (
-							<div className="bg-primary absolute bottom-0 left-1/2 h-[3px] w-14 -translate-x-1/2 rounded-full"></div>
-						)}
-					</button>
-				))}
 			</div>
 
 			{/* Ideas List */}
