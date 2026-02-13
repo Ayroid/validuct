@@ -5,6 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { getPreferences, updatePreferences } from "@/lib/api/notifications";
 import { NotificationPreferences } from "@/types";
+import { HiEnvelope, HiDevicePhoneMobile } from "react-icons/hi2";
 
 interface PreferenceRowProps {
 	label: string;
@@ -102,13 +103,20 @@ export default function NotificationSettingsPage() {
 
 			{/* Email Notifications Section */}
 			<div className="mb-10">
-				<h3 className="text-foreground text-sm font-semibold mb-1">
-					Email Notifications
-				</h3>
-				<p className="text-muted-foreground text-xs mb-4">
-					Receive emails for important updates
-				</p>
-				<div className="divide-border divide-y border-border border rounded-lg px-4">
+				<div className="flex items-center gap-3 mb-4">
+					<div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10">
+						<HiEnvelope className="h-4.5 w-4.5 text-blue-600 dark:text-blue-400" />
+					</div>
+					<div>
+						<h3 className="text-foreground text-sm font-semibold">
+							Email Notifications
+						</h3>
+						<p className="text-muted-foreground text-xs">
+							Receive emails for important updates
+						</p>
+					</div>
+				</div>
+				<div className="divide-border divide-y border-border/60 border rounded-lg px-4 bg-card">
 					<PreferenceRow
 						label="First Feedback"
 						description="When you receive the first comment or signal on an idea"
@@ -162,13 +170,20 @@ export default function NotificationSettingsPage() {
 
 			{/* In-App Notifications Section */}
 			<div className="mb-10">
-				<h3 className="text-foreground text-sm font-semibold mb-1">
-					In-App Notifications
-				</h3>
-				<p className="text-muted-foreground text-xs mb-4">
-					Show notifications in your notification bell
-				</p>
-				<div className="divide-border divide-y border-border border rounded-lg px-4">
+				<div className="flex items-center gap-3 mb-4">
+					<div className="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-500/10">
+						<HiDevicePhoneMobile className="h-4.5 w-4.5 text-purple-600 dark:text-purple-400" />
+					</div>
+					<div>
+						<h3 className="text-foreground text-sm font-semibold">
+							In-App Notifications
+						</h3>
+						<p className="text-muted-foreground text-xs">
+							Show notifications in your notification bell.
+						</p>
+					</div>
+				</div>
+				<div className="divide-border divide-y border-border/60 border rounded-lg px-4 bg-card">
 					<PreferenceRow
 						label="Upvotes"
 						description="When someone upvotes your idea"

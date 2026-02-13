@@ -10,18 +10,27 @@ const themeOptions = [
 		label: "Light",
 		description: "Always use light mode",
 		icon: HiSun,
+		activeColor: "border-amber-500 bg-amber-500/5",
+		iconActiveColor: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+		textActiveColor: "text-amber-700 dark:text-amber-400",
 	},
 	{
 		value: "dark",
 		label: "Dark",
 		description: "Always use dark mode",
 		icon: HiMoon,
+		activeColor: "border-purple-500 bg-purple-500/5",
+		iconActiveColor: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+		textActiveColor: "text-purple-700 dark:text-purple-400",
 	},
 	{
 		value: "system",
 		label: "System",
 		description: "Match your device settings",
 		icon: HiComputerDesktop,
+		activeColor: "border-blue-500 bg-blue-500/5",
+		iconActiveColor: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+		textActiveColor: "text-blue-700 dark:text-blue-400",
 	},
 ];
 
@@ -30,6 +39,7 @@ export default function AppearanceSettingsPage() {
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setMounted(true);
 	}, []);
 

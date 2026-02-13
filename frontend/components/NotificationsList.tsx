@@ -37,6 +37,23 @@ const getNotificationIcon = (type: Notification["type"]) => {
 	}
 };
 
+const getNotificationAccent = (type: Notification["type"]) => {
+	switch (type) {
+		case "UPVOTE":
+			return "bg-emerald-500/10 ring-emerald-500/20";
+		case "SIGNAL":
+			return "bg-blue-500/10 ring-blue-500/20";
+		case "COMMENT":
+			return "bg-purple-500/10 ring-purple-500/20";
+		case "REPLY":
+			return "bg-sky-500/10 ring-sky-500/20";
+		case "MILESTONE":
+			return "bg-amber-500/10 ring-amber-500/20";
+		default:
+			return "bg-muted ring-border/50";
+	}
+};
+
 export default function NotificationsList() {
 	const router = useRouter();
 	const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -171,9 +188,12 @@ export default function NotificationsList() {
 						<div className="border-primary h-8 w-8 animate-spin rounded-full border-2 border-t-transparent" />
 					</div>
 				) : notifications.length === 0 ? (
-					<div className="text-muted-foreground py-16 text-center">
-						<p className="text-sm font-medium">Nothing here yet</p>
-						<p className="mt-1 text-xs">
+					<div className="py-16 text-center px-4">
+						<div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted">
+							<span className="text-2xl">🔔</span>
+						</div>
+						<p className="text-foreground text-sm font-medium">Nothing here yet</p>
+						<p className="text-muted-foreground mt-1 text-xs">
 							When someone interacts with your ideas, you&apos;ll see it here.
 						</p>
 					</div>
@@ -188,7 +208,7 @@ export default function NotificationsList() {
 								}
 							}}
 							className={`hover:bg-muted/50 border-border/50 flex gap-3.5 border-b px-4 py-4 transition-colors ${
-								!notification.read ? "bg-primary/3" : ""
+								!notification.read ? "bg-primary/4 dark:bg-primary/6" : ""
 							}`}
 						>
 							{/* Avatar */}
@@ -209,7 +229,7 @@ export default function NotificationsList() {
 									</span>
 								)}
 								{/* Type indicator */}
-								<span className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-background text-xs">
+								<span className={`absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full ring-1 text-xs ${getNotificationAccent(notification.type)}`}>
 									{getNotificationIcon(notification.type)}
 								</span>
 							</div>
