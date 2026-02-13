@@ -1,26 +1,28 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams, notFound } from "next/navigation";
+import { useParams, useSearchParams, notFound } from "next/navigation";
 import { userApi, UserProfile } from "@/lib/api/users";
 import {
 	ValidationSummary,
+	ValidationAnalytics,
 	IdeaWithSignals,
-	ProfileSortMode,
 	PaginationMeta,
 	Idea,
 } from "@/types";
 import ProfileIdeaCard from "@/components/ProfileIdeaCard";
 import IdeaCard from "@/components/IdeaCard";
 import BuilderSnapshotHeader from "@/components/BuilderSnapshotHeader";
-import ValidationSummaryCard from "@/components/ValidationSummaryCard";
+import ValidationAnalyticsDashboard from "@/components/analytics/ValidationAnalyticsDashboard";
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { Lightbulb, BarChart3, Pin } from "lucide-react";
 
 export default function ProfilePage() {
 	const params = useParams();
+	const searchParams = useSearchParams();
 	const username = params.username as string;
 	const { data: session } = useSession();
 
@@ -33,16 +35,28 @@ export default function ProfilePage() {
 	const [ideasLoading, setIdeasLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
-	// New state-based sorting
-	const [activeTab, setActiveTab] = useState<"all" | "pinned">("all");
-	const [sortBy, setSortBy] = useState<ProfileSortMode>("all");
+	// Analytics state
+	const [analytics, setAnalytics] = useState<ValidationAnalytics | null>(null);
+
+	// Tab & sort state
+	const initialTab =
+		searchParams.get("tab") === "analytics" ? "analytics" : "ideas";
+	const [activeTab, setActiveTab] = useState<"ideas" | "analytics">(initialTab);
 	const [page, setPage] = useState(1);
 	const [pagination, setPagination] = useState<PaginationMeta | null>(null);
 	const observerRef = useRef<HTMLDivElement>(null);
 
 	const isOwnProfile = session?.user?.username === username;
 
-	// Fetch profile and validation summary
+	// Sync tab from URL search params
+	useEffect(() => {
+		const tab = searchParams.get("tab");
+		if (tab === "analytics" && isOwnProfile) {
+			setActiveTab("analytics");
+		}
+	}, [searchParams, isOwnProfile]);
+
+	// Fetch profile, validation summary, and analytics (own profile)
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -53,8 +67,15 @@ export default function ProfilePage() {
 				]);
 				setProfile(profileData);
 				setValidationSummary(summaryData);
+
+				// Eagerly fetch analytics for own profile
+				if (session?.user?.username === username) {
+					userApi
+						.getValidationAnalytics(username)
+						.then(setAnalytics)
+						.catch(() => {});
+				}
 			} catch (err: unknown) {
-				// Handle 404
 				if (err instanceof Error && "response" in err) {
 					const errWithResponse = err as {
 						response?: { status?: number; data?: { error?: string } };
@@ -74,7 +95,7 @@ export default function ProfilePage() {
 		};
 
 		fetchData();
-	}, [username]);
+	}, [username, session?.user?.username]);
 
 	// Fetch ideas with signals
 	const fetchIdeas = useCallback(async () => {
@@ -82,21 +103,14 @@ export default function ProfilePage() {
 
 		try {
 			setIdeasLoading(true);
-			if (activeTab === "pinned") {
-				// For pinned tab, we show pinned ideas from profile
-				setIdeas([]);
-				setPagination(null);
-			} else if (isOwnProfile) {
-				// For own profile, fetch ideas with signals
+			if (isOwnProfile) {
 				const data = await userApi.getUserIdeasWithSignals(username, {
 					page,
 					limit: 20,
-					sort: sortBy,
 				});
 				setIdeas(data.ideas);
 				setPagination(data.pagination);
 			} else {
-				// For other profiles, fetch regular ideas
 				const data = await userApi.getUserIdeas(username, page, 20, "newest");
 				setIdeas(data.ideas || []);
 				setPagination(data.pagination || null);
@@ -106,7 +120,7 @@ export default function ProfilePage() {
 		} finally {
 			setIdeasLoading(false);
 		}
-	}, [username, profile, page, sortBy, activeTab, isOwnProfile]);
+	}, [username, profile, page, isOwnProfile]);
 
 	useEffect(() => {
 		if (profile) {
@@ -115,7 +129,6 @@ export default function ProfilePage() {
 	}, [profile, fetchIdeas]);
 
 	const handlePinChange = async () => {
-		// Refresh both profile and ideas
 		try {
 			const [profileData, summaryData] = await Promise.all([
 				userApi.getUserProfile(username),
@@ -176,181 +189,212 @@ export default function ProfilePage() {
 		);
 	}
 
+	const hasPinnedIdeas = profile.pinnedIdeas.length > 0;
+
 	return (
-		<div className="px-4 py-6 sm:px-6 flex flex-col gap-5">
-			{/* Builder Snapshot Header */}
+		<div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
+			{/* Profile Hero */}
 			<BuilderSnapshotHeader
 				profile={profile}
 				validationSummary={validationSummary}
 				isOwnProfile={isOwnProfile}
 			/>
 
-			{/* Validation Summary Card - Only show for own profile */}
-			{isOwnProfile &&
-				validationSummary &&
-				validationSummary.totalIdeas > 0 && (
-					<ValidationSummaryCard summary={validationSummary} />
-				)}
-
-			{/* Main Content */}
-			<div>
-				{/* Tabs and Sort Controls */}
-				<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-					<div className="bg-muted/50 flex gap-1 rounded-lg p-1">
+			{/* Tabbed Content */}
+			<div className="mt-5">
+				{/* Tab Bar */}
+				{isOwnProfile && (
+					<div className="border-border/50 flex min-h-12 border-b">
 						<button
-							onClick={() => {
-								setActiveTab("all");
-								setPage(1);
-							}}
-							className={`cursor-pointer rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-								activeTab === "all"
-									? "bg-card text-foreground shadow-sm"
-									: "text-muted-foreground hover:text-foreground"
+							onClick={() => setActiveTab("ideas")}
+							className={`hover:bg-muted/60 relative flex-1 cursor-pointer text-center text-sm font-semibold transition-colors ${
+								activeTab === "ideas"
+									? "text-foreground"
+									: "text-muted-foreground hover:text-foreground/80"
 							}`}
 						>
-							All Ideas
+							<span className="flex items-center justify-center gap-1.5">
+								<Lightbulb className="h-4 w-4" />
+								Ideas
+							</span>
+							{activeTab === "ideas" && (
+								<div className="bg-primary absolute bottom-0 left-1/2 h-0.75 w-14 -translate-x-1/2 rounded-full"></div>
+							)}
 						</button>
-						{profile.pinnedIdeas.length > 0 && (
-							<button
-								onClick={() => {
-									setActiveTab("pinned");
-									setPage(1);
-								}}
-								className={`cursor-pointer rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-									activeTab === "pinned"
-										? "bg-card text-foreground shadow-sm"
-										: "text-muted-foreground hover:text-foreground"
-								}`}
-							>
-								Pinned ({profile.pinnedIdeas.length})
-							</button>
-						)}
+						<button
+							onClick={() => setActiveTab("analytics")}
+							className={`hover:bg-muted/60 relative flex-1 cursor-pointer text-center text-sm font-semibold transition-colors ${
+								activeTab === "analytics"
+									? "text-foreground"
+									: "text-muted-foreground hover:text-foreground/80"
+							}`}
+						>
+							<span className="flex items-center justify-center gap-1.5">
+								<BarChart3 className="h-4 w-4" />
+								Analytics
+							</span>
+							{activeTab === "analytics" && (
+								<div className="bg-primary absolute bottom-0 left-1/2 h-0.75 w-14 -translate-x-1/2 rounded-full"></div>
+							)}
+						</button>
 					</div>
+				)}
 
-					{/* State-Based Sort Options - Only for own profile */}
-					{activeTab === "all" && isOwnProfile && (
-						<div className="bg-muted flex flex-wrap gap-2 rounded-lg p-1">
-							<Button
-								variant={sortBy === "all" ? "default" : "ghost"}
-								onClick={() => {
-									setSortBy("all");
-									setPage(1);
-								}}
-								size="sm"
-								className="cursor-pointer transition-colors"
-							>
-								All
-							</Button>
-							<Button
-								variant={sortBy === "needs_action" ? "default" : "ghost"}
-								onClick={() => {
-									setSortBy("needs_action");
-									setPage(1);
-								}}
-								size="sm"
-								className="cursor-pointer transition-colors"
-							>
-								Needs Action
-							</Button>
-							<Button
-								variant={sortBy === "ready_to_build" ? "default" : "ghost"}
-								onClick={() => {
-									setSortBy("ready_to_build");
-									setPage(1);
-								}}
-								size="sm"
-								className="cursor-pointer transition-colors"
-							>
-								Ready to Build
-							</Button>
-						</div>
+				{/* Tab Content */}
+				<div className="mt-6">
+					{activeTab === "ideas" ? (
+						<IdeasTabContent
+							ideas={ideas}
+							profile={profile}
+							isOwnProfile={isOwnProfile}
+							ideasLoading={ideasLoading}
+							hasPinnedIdeas={hasPinnedIdeas}
+							handlePinChange={handlePinChange}
+							hasMore={hasMore}
+							observerRef={observerRef}
+						/>
+					) : (
+						<AnalyticsTabContent analytics={analytics} />
 					)}
 				</div>
+			</div>
+		</div>
+	);
+}
 
-				{/* Ideas List */}
-				{ideasLoading ? (
-					<div className="py-12 text-center">
-						<div className="text-muted-foreground text-lg">
-							Loading ideas...
-						</div>
+/* ─── Ideas Tab ─────────────────────────────────────────────────────────────── */
+
+function IdeasTabContent({
+	ideas,
+	profile,
+	isOwnProfile,
+	ideasLoading,
+	hasPinnedIdeas,
+	handlePinChange,
+	hasMore,
+	observerRef,
+}: {
+	ideas: IdeaWithSignals[] | Idea[];
+	profile: UserProfile;
+	isOwnProfile: boolean;
+	ideasLoading: boolean;
+	hasPinnedIdeas: boolean;
+	handlePinChange: () => void;
+	hasMore: boolean;
+	observerRef: React.RefObject<HTMLDivElement | null>;
+}) {
+	return (
+		<>
+			{/* Pinned Ideas inline section */}
+			{hasPinnedIdeas && (
+				<div className="mb-8">
+					<div className="mb-3 flex items-center gap-1.5">
+						<Pin className="text-muted-foreground h-3.5 w-3.5" />
+						<span className="text-muted-foreground text-xs font-semibold tracking-widest uppercase">
+							Pinned
+						</span>
 					</div>
-				) : activeTab === "pinned" ? (
-					// Pinned ideas - use regular IdeaCard
-					profile.pinnedIdeas.length === 0 ? (
-						<div className="py-12 text-center">
-							<p className="text-muted-foreground">No pinned ideas yet</p>
-						</div>
-					) : (
-						<div className="space-y-4">
-							{profile.pinnedIdeas.map((idea: Idea) => (
-								<IdeaCard
-									key={idea.id}
-									idea={idea}
-									showPinButton={isOwnProfile}
-									onPinChange={handlePinChange}
-								/>
-							))}
-						</div>
-					)
-				) : ideas.length === 0 ? (
-					<div className="py-12 text-center">
-						<p className="text-muted-foreground">
-							{sortBy === "needs_action"
-								? "No ideas need action right now!"
-								: sortBy === "ready_to_build"
-									? "No ideas are ready to build yet"
-									: "No ideas yet"}
-						</p>
-						{isOwnProfile && sortBy === "all" && (
-							<Link href="/idea/new" className="mt-4 inline-block">
-								<Button className="cursor-pointer transition-colors">
-									Share Your First Idea
-								</Button>
-							</Link>
-						)}
-					</div>
-				) : isOwnProfile ? (
 					<div className="space-y-4">
-						{(ideas as IdeaWithSignals[]).map((idea) => (
-							<ProfileIdeaCard
+						{profile.pinnedIdeas.map((idea: Idea) => (
+							<IdeaCard
 								key={idea.id}
 								idea={idea}
 								showPinButton={isOwnProfile}
 								onPinChange={handlePinChange}
 							/>
 						))}
-
-						{/* Infinite Scroll Observer Target */}
-						{hasMore && (
-							<div ref={observerRef} className="flex justify-center pt-6">
-								{ideasLoading && (
-									<div className="border-primary h-8 w-8 animate-spin rounded-full border-2 border-t-transparent"></div>
-								)}
-							</div>
-						)}
 					</div>
-				) : (
-					<div className="space-y-4">
-						{(ideas as Idea[]).map((idea) => (
-							<IdeaCard
-								key={idea.id}
-								idea={idea}
-								showPinButton={false}
-								onPinChange={handlePinChange}
-							/>
-						))}
+				</div>
+			)}
 
-						{/* Infinite Scroll Observer Target */}
-						{hasMore && (
-							<div ref={observerRef} className="flex justify-center pt-6">
-								{ideasLoading && (
-									<div className="border-primary h-8 w-8 animate-spin rounded-full border-2 border-t-transparent"></div>
-								)}
-							</div>
-						)}
-					</div>
-				)}
-			</div>
-		</div>
+			{/* Ideas List */}
+			{ideasLoading ? (
+				<div className="py-12 text-center">
+					<div className="text-muted-foreground text-lg">Loading ideas...</div>
+				</div>
+			) : ideas.length === 0 ? (
+				<div className="py-12 text-center">
+					<p className="text-muted-foreground">
+						 No ideas yet
+					</p>
+					{isOwnProfile && (
+						<Link href="/idea/new" className="mt-4 inline-block">
+							<Button className="cursor-pointer transition-colors">
+								Share Your First Idea
+							</Button>
+						</Link>
+					)}
+				</div>
+			) : isOwnProfile ? (
+				<div className="space-y-4">
+					{(ideas as IdeaWithSignals[]).map((idea) => (
+						<ProfileIdeaCard
+							key={idea.id}
+							idea={idea}
+							showPinButton={isOwnProfile}
+							onPinChange={handlePinChange}
+						/>
+					))}
+
+					{hasMore && (
+						<div ref={observerRef} className="flex justify-center pt-6">
+							{ideasLoading && (
+								<div className="border-primary h-8 w-8 animate-spin rounded-full border-2 border-t-transparent"></div>
+							)}
+						</div>
+					)}
+				</div>
+			) : (
+				<div className="space-y-4">
+					{(ideas as Idea[]).map((idea) => (
+						<IdeaCard
+							key={idea.id}
+							idea={idea}
+							showPinButton={false}
+							onPinChange={handlePinChange}
+						/>
+					))}
+
+					{hasMore && (
+						<div ref={observerRef} className="flex justify-center pt-6">
+							{ideasLoading && (
+								<div className="border-primary h-8 w-8 animate-spin rounded-full border-2 border-t-transparent"></div>
+							)}
+						</div>
+					)}
+				</div>
+			)}
+		</>
 	);
+}
+
+/* ─── Analytics Tab ─────────────────────────────────────────────────────────── */
+
+function AnalyticsTabContent({
+	analytics,
+}: {
+	analytics: ValidationAnalytics | null;
+}) {
+	if (!analytics) {
+		return (
+			<div className="flex min-h-[30vh] items-center justify-center">
+				<div className="border-primary h-10 w-10 animate-spin rounded-full border-b-2"></div>
+			</div>
+		);
+	}
+
+	if (analytics.totals.totalIdeas === 0) {
+		return (
+			<div className="bg-card border-border/50 shadow-card rounded-xl border p-12 text-center">
+				<p className="text-muted-foreground mb-4">
+					Share some ideas to start seeing analytics
+				</p>
+				<Link href="/idea/new">
+					<Button className="cursor-pointer">Share Your First Idea</Button>
+				</Link>
+			</div>
+		);
+	}
+
+	return <ValidationAnalyticsDashboard analytics={analytics} />;
 }

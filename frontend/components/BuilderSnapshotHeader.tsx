@@ -4,112 +4,79 @@ import { BuilderSnapshotHeaderProps } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { HiChartBar, HiPencil } from "react-icons/hi2";
+import { Pencil } from "lucide-react";
 
 export default function BuilderSnapshotHeader({
 	profile,
 	validationSummary,
 	isOwnProfile,
 }: BuilderSnapshotHeaderProps) {
+	const totalIdeas = validationSummary?.totalIdeas || profile.ideasCount || 0;
+	const validated = validationSummary?.ideasByValidationState.validated || 0;
+	const readyToBuild =
+		validationSummary?.ideasByValidationState.readyToBuild || 0;
+
 	return (
-		<div>
-			{/* Profile Card */}
-			<div className="bg-card border-border/50 shadow-card rounded-xl border p-6 sm:p-8">
-				<div className="flex flex-col gap-6 sm:flex-row">
-					{/* Profile Picture */}
-					<div className="shrink-0">
-						{profile.user.profilePicture ? (
-							<Image
-								src={profile.user.profilePicture}
-								alt={profile.user.username}
-								width={96}
-								height={96}
-								className="ring-border h-20 w-20 rounded-full object-cover ring-4 sm:h-24 sm:w-24"
-							/>
-						) : (
-							<div className="from-primary to-accent ring-border flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br text-2xl font-bold text-white ring-4 sm:h-24 sm:w-24 sm:text-3xl">
-								{profile.user.username[0].toUpperCase()}
-							</div>
-						)}
-					</div>
-
-					{/* Profile Info */}
-					<div className="flex flex-1 flex-col justify-between gap-4 sm:flex-row sm:items-start">
-						<div className="min-w-0 flex-1">
-							<h1 className="text-foreground text-2xl font-bold sm:text-3xl">
-								{profile.user.username}
-							</h1>
-							{profile.user.bio && (
-								<p className="text-muted-foreground mt-2 max-w-2xl leading-relaxed">
-									{profile.user.bio}
-								</p>
-							)}
-
-							{/* Builder Stats */}
-							<div className="mt-4 flex flex-wrap items-center gap-4 text-sm">
-								<div>
-									<span className="text-foreground font-semibold">
-										{validationSummary?.totalIdeas || 0}
-									</span>
-									<span className="text-muted-foreground"> ideas</span>
-								</div>
-								{validationSummary &&
-									validationSummary.ideasByValidationState.readyToBuild >
-										0 && (
-										<div>
-											<span className="font-semibold text-emerald-600 dark:text-emerald-400">
-												{
-													validationSummary.ideasByValidationState
-														.readyToBuild
-												}
-											</span>
-											<span className="text-muted-foreground">
-												{" "}
-												ready to build
-											</span>
-										</div>
-									)}
-								{validationSummary &&
-									validationSummary.ideasByValidationState.validated > 0 && (
-										<div>
-											<span className="font-semibold text-sky-600 dark:text-sky-400">
-												{validationSummary.ideasByValidationState.validated}
-											</span>
-											<span className="text-muted-foreground">
-												{" "}
-												validated
-											</span>
-										</div>
-									)}
-							</div>
-						</div>
-
-						{/* CTA Section */}
-						{isOwnProfile && (
-							<div className="flex items-center gap-2">
-								<Link href={`/${profile.user.username}/analytics`}>
-									<Button
-										variant="default"
-										className="cursor-pointer transition-colors"
-									>
-										<HiChartBar className="mr-1.5 h-4 w-4" />
-										Analytics
-									</Button>
-								</Link>
-								<Link href={`/${profile.user.username}/edit`}>
-									<Button
-										variant="outline"
-										className="cursor-pointer transition-colors"
-									>
-										<HiPencil className="h-4 w-4" />
-										Edit Profile
-									</Button>
-								</Link>
-							</div>
-						)}
-					</div>
+		<div className="flex flex-col items-center text-center bg-white rounded-lg p-6 py-10 dark:bg-card shadow-sm">
+			{/* Avatar */}
+			{profile.user.profilePicture ? (
+				<Image
+					src={profile.user.profilePicture}
+					alt={profile.user.username}
+					width={120}
+					height={120}
+					className="h-24 w-24 rounded-full object-cover ring-4 ring-border sm:h-30 sm:w-30"
+				/>
+			) : (
+				<div className="flex h-24 w-24 items-center justify-center rounded-full bg-linear-to-br from-primary to-accent text-3xl font-bold text-white ring-4 ring-border sm:h-30 sm:w-30 sm:text-4xl">
+					{profile.user.username[0].toUpperCase()}
 				</div>
+			)}
+
+			{/* Username */}
+			<h1 className="mt-4 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+				{profile.user.username}
+			</h1>
+
+			{/* Bio */}
+			{profile.user.bio && (
+				<p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+					{profile.user.bio}
+				</p>
+			)}
+
+			{/* Stats Row */}
+			<div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
+				<span className="rounded-full bg-muted px-3 py-1 font-medium text-foreground">
+					{totalIdeas} idea{totalIdeas !== 1 ? "s" : ""}
+				</span>
+				{validated > 0 && (
+					<span className="rounded-full bg-sky-100 px-3 py-1 font-medium text-sky-700 dark:bg-sky-500/15 dark:text-sky-400">
+						{validated} validated
+					</span>
+				)}
+				{readyToBuild > 0 && (
+					<span className="rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400">
+						{readyToBuild} ready to build
+					</span>
+				)}
 			</div>
+
+			{/* Action Buttons */}
+			{isOwnProfile && (
+				<div className="mt-5">
+					<Link href={`/${profile.user.username}/edit`}>
+						<Button
+							variant="default"
+							size="sm"
+							className="cursor-pointer transition-colors"
+						>
+							<Pencil className="mr-1.5 h-3.5 w-3.5" />
+							Edit Profile
+						</Button>
+					</Link>
+				</div>
+			)}
 		</div>
 	);
 }

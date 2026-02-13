@@ -6,7 +6,7 @@ import { formatDistanceToNow } from "date-fns";
 import VoteButtons from "./VoteButtons";
 import PinButton from "./PinButton";
 import { HiUserCircle } from "react-icons/hi2";
-import { MessageSquareMore } from "lucide-react";
+import { MessageSquareMore, Clock } from "lucide-react";
 import ShareButton from "./ShareButton";
 
 export default function IdeaCard({
@@ -84,7 +84,8 @@ export default function IdeaCard({
 						</span>
 					</Link>
 					<span className="text-muted-foreground/50">·</span>
-					<span className="text-muted-foreground">
+					<span className="flex items-center gap-1 text-muted-foreground">
+						<Clock className="h-3 w-3" />
 						{formatDistanceToNow(new Date(idea.createdAt), {
 							addSuffix: false,
 						}).replace(/^(about|over|almost) /, "")}

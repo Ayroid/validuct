@@ -68,14 +68,14 @@ export default function PinButton({
 			<TooltipTrigger asChild>
 				<button
 					onClick={handlePin}
-					className={`flex items-center gap-1 rounded-md px-3 py-1 text-sm font-medium cursor-pointer transition-colors ${
+					className={`flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
 						isPinned
 							? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/40"
 							: "bg-muted text-muted-foreground hover:bg-muted/80"
 					}`}
 				>
 					<svg
-						className={`h-4 w-4 ${isPinned ? "fill-current" : "fill-none"}`}
+						className={`h-3 w-3 ${isPinned ? "fill-current" : "fill-none"}`}
 						stroke="currentColor"
 						viewBox="0 0 24 24"
 					>

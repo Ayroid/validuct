@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Idea } from "@/types";
 import {
+	ShareableIdea,
 	formatShareContent,
 	getTwitterShareUrl,
 	getLinkedInShareUrl,
@@ -22,7 +22,7 @@ import { Share } from "lucide-react";
 import { HiLink } from "react-icons/hi2";
 
 interface ShareButtonProps {
-	idea: Idea;
+	idea: ShareableIdea;
 	variant?: "default" | "ghost" | "outline";
 	size?: "default" | "sm" | "lg" | "icon" | null;
 	showLabel?: boolean;

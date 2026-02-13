@@ -1,10 +1,16 @@
 import { APP_URL } from "./constants";
-import { Idea } from "@/types";
+
+export interface ShareableIdea {
+	id: string;
+	heading: string;
+	description: string;
+	user: { username: string };
+}
 
 /**
  * Formats idea content for sharing
  */
-export const formatShareContent = (idea: Idea): ShareContent => {
+export const formatShareContent = (idea: ShareableIdea): ShareContent => {
 	const ideaUrl = `${APP_URL}/idea/${idea.id}`;
 	const authorHandle = `@${idea.user.username}`;
 
