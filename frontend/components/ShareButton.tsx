@@ -19,7 +19,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { FaXTwitter, FaLinkedinIn, FaRedditAlien } from "react-icons/fa6";
-import { IoShareSocial, IoCheckmarkCircle } from "react-icons/io5";
+import { IoCheckmarkCircle } from "react-icons/io5";
+import { Share } from "lucide-react";
 import { HiLink } from "react-icons/hi2";
 
 interface ShareButtonProps {
@@ -78,8 +79,8 @@ export default function ShareButton({
 		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
 			<DropdownMenuTrigger asChild>
 				<Button variant={variant} size={size ?? undefined} className={className}>
-					<IoShareSocial className="h-4 w-4" />
-					{showLabel && <span className="ml-2">Share</span>}
+					<Share className="h-3.5 w-3.5" />
+					{showLabel && <span>Share</span>}
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-56">
@@ -89,7 +90,7 @@ export default function ShareButton({
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					onClick={() => handleShare("twitter")}
-					className="cursor-pointer"
+					className="cursor-pointer mt-1"
 				>
 					<FaXTwitter className="mr-3 h-4 w-4" />
 					<span>Share on X</span>
@@ -108,7 +109,6 @@ export default function ShareButton({
 					<FaRedditAlien className="mr-3 h-4 w-4" />
 					<span>Share on Reddit</span>
 				</DropdownMenuItem>
-				<DropdownMenuSeparator />
 				<DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
 					{copied ? (
 						<IoCheckmarkCircle className="mr-3 h-4 w-4 text-green-500" />
