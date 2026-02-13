@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { votesApi } from "@/lib/api/votes";
 import { VoteButtonsProps } from "@/types";
+import { ArrowBigUp, ArrowBigDown } from "lucide-react";
 
 interface ExtendedVoteButtonsProps extends VoteButtonsProps {
 	orientation?: "vertical" | "horizontal";
@@ -23,6 +24,7 @@ function RollingNumber({
 
 	useEffect(() => {
 		if (value !== prevValue.current) {
+			// eslint-disable-next-line react-hooks/set-state-in-effect
 			setDirection(value > prevValue.current ? "up" : "down");
 			setKey((k) => k + 1);
 			prevValue.current = value;
@@ -135,7 +137,7 @@ export default function VoteButtons({
 
 	return (
 		<div
-			className={`group/vote flex items-center justify-center ${isHorizontal ? "bg-muted/60 flex-row gap-1.5 rounded-full px-2 py-1" : "flex-col gap-0"}`}
+			className={`group/vote flex items-center justify-center transition-colors duration-150 ${isHorizontal ? "bg-muted/60 hover:bg-muted/90 flex-row gap-1.5 rounded-full px-2 py-1" : "hover:bg-muted/80 rounded-full flex-col gap-0"}`}
 			data-no-navigate
 		>
 			{/* Upvote button */}
@@ -151,9 +153,10 @@ export default function VoteButtons({
 				}}
 				aria-label="Upvote"
 			>
-				<svg className={isHorizontal ? "h-4 w-4" : "h-5 w-5"} viewBox="0 0 24 24" fill="currentColor">
-					<path d="M3.8 17a2 2 0 01-1.7-3l7.5-12a2.5 2.5 0 014.3 0L21.4 14a2 2 0 01-1.7 3z" />
-				</svg>
+				<ArrowBigUp
+					className={isHorizontal ? "h-4 w-4" : "h-5 w-5"}
+					fill={userVote === "upvote" ? "currentColor" : "none"}
+				/>
 			</button>
 			{/* Vote count - center */}
 			<RollingNumber
@@ -179,9 +182,10 @@ export default function VoteButtons({
 				}}
 				aria-label="Downvote"
 			>
-				<svg className={isHorizontal ? "h-4 w-4" : "h-5 w-5"} viewBox="0 0 24 24" fill="currentColor">
-					<path d="M20.2 7a2 2 0 011.7 3l-7.5 12a2.5 2.5 0 01-4.3 0L2.6 10a2 2 0 011.7-3z" />
-				</svg>
+				<ArrowBigDown
+					className={isHorizontal ? "h-4 w-4" : "h-5 w-5"}
+					fill={userVote === "downvote" ? "currentColor" : "none"}
+				/>
 			</button>
 		</div>
 	);
