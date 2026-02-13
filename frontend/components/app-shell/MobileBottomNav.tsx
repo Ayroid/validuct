@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HiHome, HiBell, HiUser, HiPlus, HiCog6Tooth } from "react-icons/hi2";
+import { HiHome, HiBell, HiUser, HiCog6Tooth } from "react-icons/hi2";
+import { TbHexagonFilled } from "react-icons/tb";
 import { useAuth } from "@/context/AuthContext";
 import { useNotificationCount } from "@/hooks/useNotificationCount";
 
@@ -56,7 +57,7 @@ export default function MobileBottomNav() {
 				className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium text-muted-foreground transition-colors"
 			>
 				<div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-					<HiPlus className="h-5 w-5" />
+					<TbHexagonFilled className="h-5 w-5" />
 				</div>
 				Create
 			</Link>

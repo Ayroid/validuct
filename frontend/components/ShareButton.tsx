@@ -13,8 +13,6 @@ import {
 import {
 	DropdownMenu,
 	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -83,40 +81,37 @@ export default function ShareButton({
 					{showLabel && <span>Share</span>}
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end" className="w-56">
-				<div className="px-2 py-1.5">
-					<p className="text-sm font-semibold">Share this idea</p>
+			<DropdownMenuContent align="end" className="w-auto p-2">
+				<div className="flex items-center gap-1">
+					<button
+						onClick={() => handleShare("twitter")}
+						className="cursor-pointer rounded-lg p-2 transition-colors hover:bg-muted"
+					>
+						<FaXTwitter className="h-4 w-4" />
+					</button>
+					<button
+						onClick={() => handleShare("linkedin")}
+						className="cursor-pointer rounded-lg p-2 transition-colors hover:bg-muted"
+					>
+						<FaLinkedinIn className="h-4 w-4" />
+					</button>
+					<button
+						onClick={() => handleShare("reddit")}
+						className="cursor-pointer rounded-lg p-2 transition-colors hover:bg-muted"
+					>
+						<FaRedditAlien className="h-4 w-4" />
+					</button>
+					<button
+						onClick={handleCopyLink}
+						className="cursor-pointer rounded-lg p-2 transition-colors hover:bg-muted"
+					>
+						{copied ? (
+							<IoCheckmarkCircle className="h-4 w-4 text-green-500" />
+						) : (
+							<HiLink className="h-4 w-4" />
+						)}
+					</button>
 				</div>
-				<DropdownMenuSeparator />
-				<DropdownMenuItem
-					onClick={() => handleShare("twitter")}
-					className="cursor-pointer mt-1"
-				>
-					<FaXTwitter className="mr-3 h-4 w-4" />
-					<span>Share on X</span>
-				</DropdownMenuItem>
-				<DropdownMenuItem
-					onClick={() => handleShare("linkedin")}
-					className="cursor-pointer"
-				>
-					<FaLinkedinIn className="mr-3 h-4 w-4" />
-					<span>Share on LinkedIn</span>
-				</DropdownMenuItem>
-				<DropdownMenuItem
-					onClick={() => handleShare("reddit")}
-					className="cursor-pointer"
-				>
-					<FaRedditAlien className="mr-3 h-4 w-4" />
-					<span>Share on Reddit</span>
-				</DropdownMenuItem>
-				<DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
-					{copied ? (
-						<IoCheckmarkCircle className="mr-3 h-4 w-4 text-green-500" />
-					) : (
-						<HiLink className="mr-3 h-4 w-4" />
-					)}
-					<span>{copied ? "Link copied!" : "Copy link"}</span>
-				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);

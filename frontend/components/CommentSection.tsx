@@ -272,11 +272,8 @@ export default function CommentSection({
 
 	return (
 		<div>
-			<h2 className="text-foreground mb-6 text-xl font-bold">
-				Discussion{" "}
-				<span className="text-muted-foreground text-base font-normal">
-					({totalComments})
-				</span>
+			<h2 className="text-foreground mb-2 text-lg font-bold">
+				Discussion
 			</h2>
 
 			{error && (

@@ -79,7 +79,7 @@ export default function IdeaCard({
 						) : (
 							<HiUserCircle className="text-muted-foreground h-5.5 w-5.5" />
 						)}
-						<span className="font-medium hover:underline">
+						<span className="font-medium hover:text-primary transition-colors">
 							{idea.user.username}
 						</span>
 					</Link>
@@ -131,10 +131,16 @@ export default function IdeaCard({
 					initialUserVote={idea.userVote}
 					orientation="horizontal"
 				/>
-				<span className="text-muted-foreground bg-muted/60 hover:bg-muted flex flex-row items-center gap-1.5 rounded-full px-4 py-2 transition-colors duration-150">
+				<button
+					onClick={(e) => {
+						e.stopPropagation();
+						router.push(`/idea/${idea.id}#comments`);
+					}}
+					className="text-muted-foreground bg-muted/60 hover:bg-muted flex cursor-pointer flex-row items-center gap-1.5 rounded-full px-4 py-2 transition-colors duration-150"
+				>
 					<MessageSquareMore className="h-3.5 w-3.5" />
 					<span className="font-mono">{idea.commentsCount}</span>
-				</span>
+				</button>
 				<ShareButton
 					idea={idea}
 					size={null}

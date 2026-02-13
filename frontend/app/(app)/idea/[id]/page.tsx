@@ -13,7 +13,8 @@ import ShareButton from "@/components/ShareButton";
 import ValidationSignals from "@/components/ValidationSignals";
 import IdeaWaitlist from "@/components/IdeaWaitlist";
 import Image from "next/image";
-import { HiPencilSquare, HiArrowTopRightOnSquare, HiArrowLeft } from "react-icons/hi2";
+import { HiArrowTopRightOnSquare, HiArrowLeft } from "react-icons/hi2";
+import { MessageSquareMore, Pencil } from "lucide-react";
 
 export default function IdeaDetailPage() {
 	const params = useParams();
@@ -53,7 +54,7 @@ export default function IdeaDetailPage() {
 				return "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-400";
 			case "DRAFT":
 			default:
-				return "bg-muted text-muted-foreground";
+				return "bg-zinc-200 text-zinc-600 dark:bg-zinc-700/50 dark:text-zinc-400";
 		}
 	};
 
@@ -118,7 +119,7 @@ export default function IdeaDetailPage() {
 				<div className="border-border/50 border-b" />
 			</div>
 
-		<div className="px-4 py-6 sm:px-6">
+		<div className="px-4 py-6 sm:px-6 flex flex-col gap-5">
 			{/* Hero Card */}
 			<article className="bg-card border-border/50 shadow-card overflow-hidden rounded-xl border">
 				{/* Top Meta Row */}
@@ -141,15 +142,15 @@ export default function IdeaDetailPage() {
 									{idea.user.username.charAt(0).toUpperCase()}
 								</div>
 							)}
-							<span className="font-medium hover:underline">
+							<span className="font-medium hover:text-primary transition-colors">
 								{idea.user.username}
 							</span>
 						</Link>
 						<span className="text-muted-foreground/50">·</span>
 						<span className="text-muted-foreground">
 							{formatDistanceToNow(new Date(idea.createdAt), {
-								addSuffix: true,
-							})}
+								addSuffix: false,
+							}).replace(/^(about|over|almost) /, "")}
 						</span>
 					</div>
 					<div className="flex shrink-0 items-center gap-2">
@@ -169,22 +170,6 @@ export default function IdeaDetailPage() {
 								<HiArrowTopRightOnSquare className="h-3 w-3" />
 							</Link>
 						)}
-						<ShareButton
-							idea={idea}
-							size={null}
-							showLabel={false}
-							variant="ghost"
-							className="hover:bg-muted text-muted-foreground hover:text-foreground h-auto cursor-pointer rounded-lg p-1.5 transition-colors"
-						/>
-						{user && user.id === idea.userId && (
-							<Link
-								href={`/idea/${idea.id}/edit`}
-								className="hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg p-1.5 transition-colors"
-								title="Edit idea"
-							>
-								<HiPencilSquare className="h-4 w-4" />
-							</Link>
-						)}
 					</div>
 				</div>
 
@@ -193,19 +178,16 @@ export default function IdeaDetailPage() {
 
 				{/* Content */}
 				<div className="px-6 py-6">
-					<h1 className="text-foreground text-2xl leading-tight font-bold sm:text-3xl">
+					<h2 className="text-foreground text-xl leading-tight font-bold sm:text-xl">
 						{idea.heading}
-					</h1>
-					<p className="text-foreground mt-4 leading-relaxed whitespace-pre-wrap">
+					</h2>
+					<p className="text-foreground mt-2 leading-relaxed whitespace-pre-wrap">
 						{idea.description}
 					</p>
 				</div>
 
-				{/* Separator */}
-				<div className="border-border/40 border-t" />
-
 				{/* Bottom Action Bar */}
-				<div className="flex items-center gap-4 px-6 py-2.5 text-xs">
+				<div className="flex items-center gap-3 px-6 pb-2.5 text-xs">
 					<VoteButtons
 						ideaId={idea.id}
 						initialUpvotesCount={idea.upvotesCount}
@@ -214,27 +196,34 @@ export default function IdeaDetailPage() {
 						onVoteUpdate={handleVoteUpdate}
 						orientation="horizontal"
 					/>
-					<span className="text-border">·</span>
-					<span className="text-muted-foreground flex items-center gap-1.5">
-						<svg
-							className="h-4 w-4"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							strokeWidth={2}
-						>
-							<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-						</svg>
+					<span className="text-muted-foreground bg-muted/60 hover:bg-muted flex cursor-pointer flex-row items-center gap-1.5 rounded-full px-4 py-2 transition-colors duration-150">
+						<MessageSquareMore className="h-3.5 w-3.5" />
 						<span className="font-mono">{idea.commentsCount}</span>
 					</span>
+					<ShareButton
+						idea={idea}
+						size={null}
+						showLabel={true}
+						variant="ghost"
+						className="text-muted-foreground bg-muted/60 hover:bg-muted hover:text-foreground h-auto cursor-pointer gap-1.5 rounded-full px-4 py-2 text-xs transition-colors duration-150"
+					/>
+					{user && user.id === idea.userId && (
+						<Link
+							href={`/idea/${idea.id}/edit`}
+							className="text-muted-foreground bg-muted/60 hover:bg-muted hover:text-foreground ml-auto flex items-center gap-1.5 rounded-full px-4 py-2 transition-colors duration-150"
+						>
+							<Pencil className="h-3.5 w-3.5" />
+							<span>Edit</span>
+						</Link>
+					)}
 				</div>
 			</article>
 
 			{/* Community Validation Section */}
-			<section className="mt-10">
-				<h2 className="text-muted-foreground mb-5 text-xs font-semibold tracking-widest uppercase">
+			<section>
+				{/* <h2 className="text-muted-foreground mb-5 text-xs font-semibold tracking-widest uppercase">
 					Community Validation
-				</h2>
+				</h2> */}
 				<div className="bg-card border-border/50 shadow-card rounded-xl border">
 					<div className="p-5">
 						<ValidationSignals ideaId={idea.id} bare />
@@ -247,7 +236,7 @@ export default function IdeaDetailPage() {
 			</section>
 
 			{/* Comments Section */}
-			<section className="mt-10">
+			<section>
 				<div className="bg-card border-border/50 shadow-card rounded-xl border p-5 sm:p-6">
 					<CommentSection
 						ideaId={idea.id}

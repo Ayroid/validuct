@@ -3,13 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import {
-	HiHome,
-	HiBell,
-	HiUser,
-	HiCog6Tooth,
-	HiPlusCircle,
-} from "react-icons/hi2";
+import { HiHome, HiBell, HiUser, HiCog6Tooth } from "react-icons/hi2";
+import { TbHexagonFilled } from "react-icons/tb";
 import { useAuth } from "@/context/AuthContext";
 import { useNotificationCount } from "@/hooks/useNotificationCount";
 
@@ -38,12 +33,15 @@ export default function AppSidebar() {
 		if (href === "/notifications") return pathname === "/notifications";
 		if (href.startsWith("/settings")) return pathname.startsWith("/settings");
 		if (user && href === `/${user.username}`)
-			return pathname === `/${user.username}` || pathname.startsWith(`/${user.username}/`);
+			return (
+				pathname === `/${user.username}` ||
+				pathname.startsWith(`/${user.username}/`)
+			);
 		return pathname === href;
 	};
 
 	return (
-		<aside className="border-border/50 hidden md:flex sticky top-0 h-screen w-56 shrink-0 flex-col border-r bg-background z-40">
+		<aside className="border-border/50 bg-background sticky top-0 z-40 hidden h-screen w-56 shrink-0 flex-col border-r md:flex">
 			{/* Logo */}
 			<Link
 				href="/home"
@@ -82,7 +80,7 @@ export default function AppSidebar() {
 							<div className="relative">
 								<Icon className="h-5 w-5" />
 								{item.label === "Notifications" && unreadCount > 0 && (
-									<span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+									<span className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
 										{unreadCount > 99 ? "99+" : unreadCount}
 									</span>
 								)}
@@ -91,17 +89,18 @@ export default function AppSidebar() {
 						</Link>
 					);
 				})}
-			</nav>
 
-			{/* Bottom Section */}
-			<div className="space-y-3 px-3 pb-5">
-				<Link href="/idea/new">
-					<button className="bg-primary text-primary-foreground hover:bg-primary/90 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors">
-						<HiPlusCircle className="h-5 w-5" />
+				{/* New Idea */}
+				<div className="mt-4 pt-4 border-t border-border/50">
+					<Link
+						href="/idea/new"
+						className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow-md flex items-center justify-center gap-2.5 rounded-lg px-3 py-3 text-sm font-semibold tracking-wide transition-all"
+					>
+						<TbHexagonFilled className="h-5 w-5" />
 						New Idea
-					</button>
-				</Link>
-			</div>
+					</Link>
+				</div>
+			</nav>
 		</aside>
 	);
 }

@@ -4,7 +4,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import IdeaCard from "./IdeaCard";
 import { ideasApi } from "@/lib/api/ideas";
 import { Idea } from "@/types";
-import { Hexagon, Flame, ChartNoAxesCombined } from "lucide-react";
+import { TbHexagonFilled } from "react-icons/tb";
+import { BsFire } from "react-icons/bs";
+import { AiOutlineStock } from "react-icons/ai";
 
 const TimelineType = {
 	NEW: "new",
@@ -94,9 +96,9 @@ export default function Timeline() {
 	}, [loading, hasMore, handleLoadMore]);
 
 	const tabs = [
-		{ id: TimelineType.NEW, label: "Latest", icon: Hexagon },
-		{ id: TimelineType.TRENDING, label: "Trending", icon: Flame },
-		{ id: TimelineType.TOP, label: "Top", icon: ChartNoAxesCombined },
+		{ id: TimelineType.NEW, label: "Latest", icon: TbHexagonFilled },
+		{ id: TimelineType.TRENDING, label: "Trending", icon: BsFire },
+		{ id: TimelineType.TOP, label: "Top", icon: AiOutlineStock },
 	];
 
 	return (
@@ -118,7 +120,7 @@ export default function Timeline() {
 							}`}
 						>
 							<span className="flex items-center justify-center gap-1.5">
-								<tab.icon className="h-4 w-4" fill={activeTimeline === tab.id ? "currentColor" : "none"} />
+								<tab.icon className="h-4 w-4" />
 								{tab.label}
 							</span>
 							{activeTimeline === tab.id && (

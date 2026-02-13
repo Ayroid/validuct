@@ -177,7 +177,7 @@ export default function ProfilePage() {
 	}
 
 	return (
-		<div className="px-4 py-6 sm:px-6">
+		<div className="px-4 py-6 sm:px-6 flex flex-col gap-5">
 			{/* Builder Snapshot Header */}
 			<BuilderSnapshotHeader
 				profile={profile}
@@ -189,13 +189,11 @@ export default function ProfilePage() {
 			{isOwnProfile &&
 				validationSummary &&
 				validationSummary.totalIdeas > 0 && (
-					<div className="mt-8">
-						<ValidationSummaryCard summary={validationSummary} />
-					</div>
+					<ValidationSummaryCard summary={validationSummary} />
 				)}
 
 			{/* Main Content */}
-			<div className="mt-8">
+			<div>
 				{/* Tabs and Sort Controls */}
 				<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 					<div className="bg-muted/50 flex gap-1 rounded-lg p-1">
