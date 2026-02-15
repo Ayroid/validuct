@@ -70,11 +70,11 @@
 	--accent-glow: #eda83912;
 
 	/* Chart Colors */
-	--chart-1: #2563EB;
-	--chart-2: #2D8A4E;
-	--chart-3: #eda839;
-	--chart-4: #C5392F;
-	--chart-5: #7C3AED;
+	--chart-1: #10B981;
+	--chart-2: #eda839;
+	--chart-3: #2563EB;
+	--chart-4: #F59E0B;
+	--chart-5: #9CA3AF;
 
 	/* Sidebar */
 	--sidebar: #FEFBF6;
@@ -90,10 +90,10 @@
 	--radius: 12px;
 
 	/* Semantic Signal Colors */
-	--signal-problem: #2563EB;
-	--signal-pay: #2D8A4E;
-	--signal-build: #7C3AED;
-	--signal-clarity: #eda839;
+	--signal-problem: #10B981;
+	--signal-pay: #F59E0B;
+	--signal-build: #2563EB;
+	--signal-clarity: #9CA3AF;
 }
 
 .dark {
@@ -151,11 +151,11 @@
 	--accent-glow: #E8A23A33;
 
 	/* Chart Colors */
-	--chart-1: #60A5FA;
-	--chart-2: #4ADE80;
-	--chart-3: #E8A23A;
-	--chart-4: #F87171;
-	--chart-5: #A78BFA;
+	--chart-1: #34D399;
+	--chart-2: #E8A23A;
+	--chart-3: #60A5FA;
+	--chart-4: #FBBF24;
+	--chart-5: #6B7280;
 
 	/* Sidebar */
 	--sidebar: #16140F;
@@ -168,10 +168,10 @@
 	--sidebar-ring: #E8A23A;
 
 	/* Signal Colors - Brighter for dark */
-	--signal-problem: #60A5FA;
-	--signal-pay: #4ADE80;
-	--signal-build: #A78BFA;
-	--signal-clarity: #E8A23A;
+	--signal-problem: #34D399;
+	--signal-pay: #FBBF24;
+	--signal-build: #60A5FA;
+	--signal-clarity: #6B7280;
 }
 
 @theme inline {
