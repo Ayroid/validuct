@@ -99,49 +99,155 @@ export interface IdeaWithSignals {
 export type ProfileSortMode = 'needs_action' | 'ready_to_build' | 'newest' | 'oldest' | 'all';
 
 // ============================================================================
-// Validation Analytics Types
+// Idea Portfolio & Scorecard Types
 // ============================================================================
 
-export interface SignalDistribution {
-  type: SignalType;
-  count: number;
-  percentage: number;
+export type ValidationHealthLevel = 'green' | 'amber' | 'gray';
+
+export interface ValidationHealthDots {
+  problem: ValidationHealthLevel;
+  pay: ValidationHealthLevel;
+  buildable: ValidationHealthLevel;
 }
 
-export interface DailySignalTrend {
-  date: string;
-  problemReal: number;
-  wouldPay: number;
-  readyToBuild: number;
-  needsClarity: number;
+export type ScorecardNextStepType =
+  | 'CLARIFY'
+  | 'TEST_PRICING'
+  | 'GATHER_SIGNALS'
+  | 'BUILD_WAITLIST'
+  | 'ADDRESS_FEEDBACK'
+  | 'READY';
+
+export interface ScorecardNextStep {
+  message: string;
+  priority: 'HIGH' | 'MEDIUM' | 'LOW';
+  type: ScorecardNextStepType;
 }
 
-export interface TopIdea {
+export interface PortfolioIdea {
   id: string;
   heading: string;
-  totalSignals: number;
-}
-
-export interface IdeaAnalytics {
-  id: string;
-  heading: string;
-  signalDistribution: SignalDistribution[];
-  dailyTrends: DailySignalTrend[];
-  totals: {
-    totalSignals: number;
-  };
+  status: 'VALIDATED' | 'WIP' | 'LAUNCHED' | 'DRAFT';
   validationState: ValidationState;
+  signals: IdeaSignalCounts;
+  commentsCount: number;
+  waitlistCount: number;
+  healthDots: ValidationHealthDots;
+  primaryGap: string;
+  createdAt: string;
 }
 
-export interface ValidationAnalytics {
-  signalDistribution: SignalDistribution[];
-  validationStateBreakdown: { state: string; count: number }[];
-  dailyTrends: DailySignalTrend[];
-  topIdeas: TopIdea[];
-  totals: {
-    totalSignals: number;
-    totalIdeas: number;
-    avgSignalsPerIdea: number;
-  };
-  perIdeaAnalytics: IdeaAnalytics[];
+export interface IdeaPortfolio {
+  ideas: PortfolioIdea[];
+  totalIdeas: number;
 }
+
+export type CommentCategoryType =
+  | 'PROBLEM_CLARITY'
+  | 'TARGET_USERS'
+  | 'WILLINGNESS_TO_PAY'
+  | 'TECHNICAL_FEASIBILITY'
+  | 'FEATURE_SUGGESTION'
+  | 'GENERAL';
+
+export interface ScorecardComment {
+  id: string;
+  content: string;
+  category: CommentCategoryType;
+  helpfulCount: number;
+  createdAt: string;
+  user: {
+    username: string;
+    profilePicture: string | null;
+  };
+}
+
+export interface CommentCategoryGroup {
+  category: CommentCategoryType;
+  count: number;
+  comments: ScorecardComment[];
+}
+
+export interface IdeaScorecard {
+  id: string;
+  heading: string;
+  description: string;
+  status: 'VALIDATED' | 'WIP' | 'LAUNCHED' | 'DRAFT';
+  validationState: ValidationState;
+  signals: IdeaSignalCounts;
+  healthDots: ValidationHealthDots;
+  commentsByCategory: CommentCategoryGroup[];
+  topComments: ScorecardComment[];
+  nextSteps: ScorecardNextStep[];
+  waitlistCount: number;
+  commentsCount: number;
+  createdAt: string;
+}
+
+// ============================================================================
+// Analytics Dashboard Types
+// ============================================================================
+
+export type ActivityRange = '24h' | '7d' | '30d' | 'all';
+
+export interface DailyActivity {
+  date: string;
+  signals: number;
+  upvotes: number;
+  comments: number;
+  waitlist: number;
+}
+
+export interface TopIdeaAnalytics {
+  id: string;
+  heading: string;
+  status: 'VALIDATED' | 'WIP' | 'LAUNCHED' | 'DRAFT';
+  upvotesCount: number;
+  totalSignals: number;
+  signals: IdeaSignalCounts;
+  commentsCount: number;
+  waitlistCount: number;
+}
+
+export interface AnalyticsDashboardData {
+  totalIdeas: number;
+  totalSignals: number;
+  totalUpvotes: number;
+  totalComments: number;
+  totalWaitlistSignups: number;
+  ideasByStatus: {
+    DRAFT: number;
+    WIP: number;
+    VALIDATED: number;
+    LAUNCHED: number;
+  };
+  ideasByValidationState: {
+    NEEDS_ACTION: number;
+    READY_TO_BUILD: number;
+    VALIDATED: number;
+    NEUTRAL: number;
+  };
+  signalDistribution: IdeaSignalCounts;
+  dailyActivity: DailyActivity[];
+  topIdeas: TopIdeaAnalytics[];
+}
+
+export interface IdeaAnalyticsData {
+  id: string;
+  heading: string;
+  description: string;
+  status: 'VALIDATED' | 'WIP' | 'LAUNCHED' | 'DRAFT';
+  isPinned: boolean;
+  createdAt: string;
+  upvotesCount: number;
+  downvotesCount: number;
+  totalSignals: number;
+  signals: IdeaSignalCounts;
+  commentsCount: number;
+  waitlistCount: number;
+  validationState: ValidationState;
+  nextSteps: ScorecardNextStep[];
+  dailyActivity: DailyActivity[];
+  comments: ScorecardComment[];
+}
+
