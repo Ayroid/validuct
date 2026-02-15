@@ -39,7 +39,7 @@ export class UserService {
    * - Total count of ideas created by the user
    * - List of pinned ideas (up to 5) ordered by pin order
    */
-  static async getUserByUsername(username: string) {
+  static async getUserByUsername(username: string, viewerUserId?: string) {
     const user = await prisma.user.findUnique({
       where: { username },
       select: {
@@ -78,6 +78,29 @@ export class UserService {
       orderBy: { pinOrder: 'asc' },
     });
 
+    const ideas = pinnedIdeas.map((pin) => pin.idea);
+
+    // Look up viewer's votes for pinned ideas
+    let pinnedIdeasWithVotes;
+    if (viewerUserId && ideas.length > 0) {
+      const votes = await prisma.vote.findMany({
+        where: {
+          userId: viewerUserId,
+          ideaId: { in: ideas.map((idea) => idea.id) },
+        },
+      });
+      const voteMap = new Map(votes.map((vote) => [vote.ideaId, vote.voteType.toLowerCase()]));
+      pinnedIdeasWithVotes = ideas.map((idea) => ({
+        ...idea,
+        userVote: voteMap.get(idea.id) || null,
+      }));
+    } else {
+      pinnedIdeasWithVotes = ideas.map((idea) => ({
+        ...idea,
+        userVote: null,
+      }));
+    }
+
     return {
       user: {
         id: user.id,
@@ -87,7 +110,7 @@ export class UserService {
         createdAt: user.createdAt,
       },
       ideasCount: user._count.ideas,
-      pinnedIdeas: pinnedIdeas.map((pin) => pin.idea),
+      pinnedIdeas: pinnedIdeasWithVotes,
     };
   }
 

@@ -13,6 +13,7 @@ import IdeaDetailCard from "@/components/IdeaDetailCard";
 import { HiArrowLeft } from "react-icons/hi2";
 import { BarChart3 } from "lucide-react";
 import { useNavBack } from "@/hooks/useNavBack";
+import ValidationProcessFlow from "@/components/analytics/ValidationProcessFlow";
 
 export default function IdeaDetailPage() {
 	const params = useParams();
@@ -91,6 +92,12 @@ export default function IdeaDetailPage() {
 				<IdeaDetailCard
 					ideaId={ideaId}
 					commentsCount={commentsCount}
+				/>
+
+				{/* Validation Process Flow */}
+				<ValidationProcessFlow
+					currentStatus={idea.status}
+					onStatusChange={() => {}}
 				/>
 
 				{/* Community Validation Section */}

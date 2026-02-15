@@ -5,7 +5,9 @@ import { useParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { userApi } from "@/lib/api/users";
 import {
+	Idea,
 	IdeaAnalyticsData,
+	IdeaStatus,
 	ActivityRange,
 	ScorecardComment,
 	ScorecardNextStepType,
@@ -30,6 +32,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import IdeaDetailCard from "@/components/IdeaDetailCard";
+import ValidationProcessFlow from "@/components/analytics/ValidationProcessFlow";
 import ActivityChart from "@/components/analytics/ActivityChart";
 import { useNavBack } from "@/hooks/useNavBack";
 import {
@@ -116,6 +119,13 @@ export default function IdeaAnalyticsPage() {
 	const [categoryFilter, setCategoryFilter] = useState<
 		CommentCategory | "ALL"
 	>("ALL");
+	const [ideaStatus, setIdeaStatus] = useState<keyof IdeaStatus | null>(null);
+	const handleIdeaLoad = useCallback(
+		(idea: Idea) => {
+			setIdeaStatus(idea.status);
+		},
+		[]
+	);
 
 	const fetchData = useCallback(
 		async (r: ActivityRange) => {
@@ -221,10 +231,18 @@ export default function IdeaAnalyticsPage() {
 
 			<div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
 			{/* Hero Card — same component as idea detail page */}
-			<IdeaDetailCard ideaId={ideaId} className="mb-8" />
+			<IdeaDetailCard ideaId={ideaId} className="mb-6" onIdeaLoad={handleIdeaLoad} />
+
+			{/* Validation Process Flow */}
+			{ideaStatus && (
+				<ValidationProcessFlow
+					currentStatus={ideaStatus}
+					onStatusChange={() => {}}
+				/>
+			)}
 
 			{/* Metric Cards */}
-			<div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+			<div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
 				<div className="bg-card border-border/50 rounded-xl border p-5">
 					<div className="mb-2 flex items-center gap-1.5">
 						<Signal className="h-4 w-4 text-emerald-500" />
@@ -341,6 +359,17 @@ export default function IdeaAnalyticsPage() {
 								Signal Distribution
 							</h3>
 							<div className="relative h-64">
+								{/* Center total count — rendered first so chart tooltip sits on top */}
+								<div className="pointer-events-none absolute inset-0 flex items-center justify-center" style={{ paddingBottom: 36 }}>
+									<div className="text-center">
+										<p className="text-2xl font-bold tracking-tight">
+											{totalSignals}
+										</p>
+										<p className="text-muted-foreground text-xs">
+											Total
+										</p>
+									</div>
+								</div>
 								<ResponsiveContainer width="100%" height="100%">
 									<PieChart>
 										<Pie
@@ -371,16 +400,6 @@ export default function IdeaAnalyticsPage() {
 										/>
 									</PieChart>
 								</ResponsiveContainer>
-								<div className="pointer-events-none absolute inset-0 -z-0 flex items-center justify-center" style={{ paddingBottom: 36 }}>
-									<div className="text-center">
-										<p className="text-2xl font-bold tracking-tight">
-											{totalSignals}
-										</p>
-										<p className="text-muted-foreground text-xs">
-											Total
-										</p>
-									</div>
-								</div>
 							</div>
 						</div>
 					);

@@ -21,7 +21,7 @@ export class UserController {
     try {
       const { username } = req.params;
 
-      const result = await UserService.getUserByUsername(username);
+      const result = await UserService.getUserByUsername(username, req.userId);
 
       if (!result) {
         return res.status(404).json({

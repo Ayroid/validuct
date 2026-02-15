@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { ideasApi } from "@/lib/api/ideas";
-import { Idea } from "@/types";
+import { Idea, IdeaStatus } from "@/types";
 import { HiPencil, HiTrash, HiArrowLeft } from "react-icons/hi2";
 import { useNavBack } from "@/hooks/useNavBack";
+import ValidationProcessFlow from "@/components/analytics/ValidationProcessFlow";
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -23,42 +24,7 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-type IdeaStatus = "DRAFT" | "VALIDATED" | "WIP" | "LAUNCHED";
-
-const statusOptions: {
-	value: IdeaStatus;
-	label: string;
-	emoji: string;
-	color: string;
-}[] = [
-	{
-		value: "DRAFT",
-		label: "Draft",
-		emoji: "✏️",
-		color: "bg-muted text-foreground hover:bg-muted/80",
-	},
-	{
-		value: "VALIDATED",
-		label: "Validated",
-		emoji: "✅",
-		color:
-			"bg-yellow-100 text-yellow-900 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/40",
-	},
-	{
-		value: "WIP",
-		label: "In Progress",
-		emoji: "🚧",
-		color:
-			"bg-orange-100 text-orange-900 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:hover:bg-orange-900/40",
-	},
-	{
-		value: "LAUNCHED",
-		label: "Launched",
-		emoji: "🚀",
-		color:
-			"bg-red-100 text-red-900 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/40",
-	},
-];
+type Status = keyof IdeaStatus;
 
 export default function EditIdeaPage() {
 	const params = useParams();
@@ -72,7 +38,7 @@ export default function EditIdeaPage() {
 	const [formData, setFormData] = useState({
 		heading: "",
 		description: "",
-		status: "DRAFT" as IdeaStatus,
+		status: "DRAFT" as Status,
 		launchedLink: "",
 	});
 
@@ -186,165 +152,165 @@ export default function EditIdeaPage() {
 				<div className="border-border/50 border-b" />
 			</div>
 
-		<div className="px-4 py-6 sm:px-6">
-
-			{/* Form */}
-			<div className="bg-card rounded-lg border p-8 md:p-10">
-				<form onSubmit={handleSubmit} className="space-y-8">
-					{/* Heading */}
-					<div className="space-y-2">
-						<Label htmlFor="heading">
-							Idea title <span className="text-red-500">*</span>
-						</Label>
-						<Input
-							type="text"
-							id="heading"
-							name="heading"
-							value={formData.heading}
-							onChange={handleChange}
-							required
-							maxLength={100}
-							placeholder="A tool that helps..."
-						/>
-						<div className="text-muted-foreground text-right text-xs">
-							{formData.heading.length}/100
-						</div>
-					</div>
-
-					{/* Description */}
-					<div className="space-y-2">
-						<Label htmlFor="description">
-							Description <span className="text-red-500">*</span>
-						</Label>
-						<Textarea
-							id="description"
-							name="description"
-							value={formData.description}
-							onChange={handleChange}
-							required
-							rows={8}
-							maxLength={500}
-							placeholder="Describe your idea, the problem it solves, and who it's for..."
-							className="resize-none"
-						/>
-						<div className="text-muted-foreground text-right text-xs">
-							{formData.description.length}/500
-						</div>
-					</div>
-
-					{/* Status */}
-					<div className="space-y-3">
-						<Label>Current status</Label>
-						<div className="grid grid-cols-2 gap-3">
-							{statusOptions.map((option) => (
-								<Button
-									key={option.value}
-									type="button"
-									onClick={() =>
-										setFormData({ ...formData, status: option.value })
-									}
-									variant={
-										formData.status === option.value ? "default" : "outline"
-									}
-									className="justify-start cursor-pointer transition-colors"
-								>
-									<span className="mr-2">{option.emoji}</span>
-									{option.label}
-								</Button>
-							))}
-						</div>
-					</div>
-
-					{/* Launched Link */}
-					{(formData.status === "LAUNCHED" || formData.status === "WIP") && (
+			<div className="px-4 py-6 sm:px-6">
+				{/* Form */}
+				<div className="bg-card rounded-xl border p-8 md:p-10">
+					<form onSubmit={handleSubmit} className="space-y-5">
+						{/* Heading */}
 						<div className="space-y-2">
-							<Label htmlFor="launchedLink">
-								Project Link
-								<span className="text-muted-foreground ml-1">(Optional)</span>
+							<Label htmlFor="heading" className="text-sm font-semibold">
+								Idea title <span className="text-red-500">*</span>
 							</Label>
+							<p className="text-muted-foreground text-xs">
+								Give your idea a clear, catchy name.
+							</p>
 							<Input
-								type="url"
-								id="launchedLink"
-								name="launchedLink"
-								value={formData.launchedLink}
+								type="text"
+								id="heading"
+								name="heading"
+								value={formData.heading}
 								onChange={handleChange}
-								placeholder="https://your-project.com"
+								required
+								maxLength={100}
+								placeholder="A tool that helps..."
+							/>
+							<div className="text-muted-foreground text-right text-xs">
+								{formData.heading.length}/100
+							</div>
+						</div>
+
+						{/* Description */}
+						<div className="space-y-2">
+							<Label htmlFor="description" className="text-sm font-semibold">
+								Description <span className="text-red-500">*</span>
+							</Label>
+							<p className="text-muted-foreground text-xs">
+								What problem does it solve and who is it for?
+							</p>
+							<Textarea
+								id="description"
+								name="description"
+								value={formData.description}
+								onChange={handleChange}
+								required
+								rows={8}
+								maxLength={500}
+								placeholder="Describe your idea, the problem it solves, and who it's for..."
+								className="resize-none"
+							/>
+							<div className="text-muted-foreground text-right text-xs">
+								{formData.description.length}/500
+							</div>
+						</div>
+
+						{/* Status */}
+						<div className="space-y-3">
+							<Label className="text-sm font-semibold">Current status</Label>
+							<p className="text-muted-foreground text-xs">
+								Where is this idea in your journey?
+							</p>
+							<ValidationProcessFlow
+								editable
+								currentStatus={formData.status}
+								onStatusChange={(s) =>
+									setFormData({ ...formData, status: s })
+								}
 							/>
 						</div>
-					)}
 
-					{/* Action Buttons */}
-					<div className="space-y-4">
-						<div className="flex gap-3">
+						{/* Launched Link */}
+						{(formData.status === "LAUNCHED" || formData.status === "WIP") && (
+							<div className="animate-in fade-in slide-in-from-top-2 space-y-2 duration-200">
+								<Label htmlFor="launchedLink" className="text-sm font-semibold">
+									Project Link
+									<span className="text-muted-foreground ml-1 font-normal">(Optional)</span>
+								</Label>
+								<p className="text-muted-foreground text-xs">
+									Share a link to your live project or repo.
+								</p>
+								<Input
+									type="url"
+									id="launchedLink"
+									name="launchedLink"
+									value={formData.launchedLink}
+									onChange={handleChange}
+									placeholder="https://your-project.com"
+								/>
+							</div>
+						)}
+
+						{/* Action Buttons */}
+						<div className="space-y-4 pt-3">
+							<div className="flex gap-3">
+								<Button
+									type="button"
+									variant="outline"
+									className="flex-1 cursor-pointer transition-colors"
+									size="lg"
+									onClick={() => back(`/idea/${params.id}`)}
+								>
+									Cancel
+								</Button>
+								<Button
+									type="submit"
+									disabled={
+										submitting || !formData.heading || !formData.description
+									}
+									className="flex-1 cursor-pointer transition-colors"
+									size="lg"
+								>
+									{submitting ? (
+										<>
+											<div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+											<span>Updating...</span>
+										</>
+									) : (
+										<>
+											<HiPencil className="h-4 w-4" />
+											<span>Update idea</span>
+										</>
+									)}
+								</Button>
+							</div>
+
+							{/* Delete Button */}
 							<Button
 								type="button"
-								variant="outline"
-								className="flex-1 cursor-pointer transition-colors"
-								size="lg"
-								onClick={() => back(`/idea/${params.id}`)}
+								variant="destructive"
+								onClick={() => setDeleteDialogOpen(true)}
+								className="w-full cursor-pointer justify-center transition-colors"
 							>
-								Cancel
-							</Button>
-							<Button
-								type="submit"
-								disabled={
-									submitting || !formData.heading || !formData.description
-								}
-								className="flex-1 cursor-pointer transition-colors"
-								size="lg"
-							>
-								{submitting ? (
-									<>
-										<div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-										<span>Updating...</span>
-									</>
-								) : (
-									<>
-										<HiPencil className="h-4 w-4" />
-										<span>Update idea</span>
-									</>
-								)}
+								<HiTrash className="h-4 w-4" />
+								<span>Delete idea</span>
 							</Button>
 						</div>
+					</form>
+				</div>
 
-						{/* Delete Button */}
-						<Button
-							type="button"
-							variant="destructive"
-							onClick={() => setDeleteDialogOpen(true)}
-							className="w-full cursor-pointer justify-center transition-colors"
-						>
-							<HiTrash className="h-4 w-4" />
-							<span>Delete idea</span>
-						</Button>
-					</div>
-				</form>
+				{/* Delete Confirmation Dialog */}
+				<AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+					<AlertDialogContent>
+						<AlertDialogHeader>
+							<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+							<AlertDialogDescription>
+								This action cannot be undone. This will permanently delete your
+								idea.
+							</AlertDialogDescription>
+						</AlertDialogHeader>
+						<AlertDialogFooter>
+							<AlertDialogCancel className="cursor-pointer">
+								Cancel
+							</AlertDialogCancel>
+							<AlertDialogAction
+								onClick={handleDelete}
+								className="bg-destructive text-destructive-foreground hover:bg-destructive/90 cursor-pointer"
+							>
+								Delete
+							</AlertDialogAction>
+						</AlertDialogFooter>
+					</AlertDialogContent>
+				</AlertDialog>
 			</div>
-
-			{/* Delete Confirmation Dialog */}
-			<AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-				<AlertDialogContent>
-					<AlertDialogHeader>
-						<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-						<AlertDialogDescription>
-							This action cannot be undone. This will permanently delete your
-							idea.
-						</AlertDialogDescription>
-					</AlertDialogHeader>
-					<AlertDialogFooter>
-						<AlertDialogCancel className="cursor-pointer">
-							Cancel
-						</AlertDialogCancel>
-						<AlertDialogAction
-							onClick={handleDelete}
-							className="bg-destructive text-destructive-foreground hover:bg-destructive/90 cursor-pointer"
-						>
-							Delete
-						</AlertDialogAction>
-					</AlertDialogFooter>
-				</AlertDialogContent>
-			</AlertDialog>
-		</div>
 		</div>
 	);
 }
