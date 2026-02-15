@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams, useSearchParams, notFound } from "next/navigation";
+import { useParams, useRouter, notFound } from "next/navigation";
 import { userApi, UserProfile } from "@/lib/api/users";
 import {
 	ValidationSummary,
-	ValidationAnalytics,
 	IdeaWithSignals,
 	PaginationMeta,
 	Idea,
@@ -13,16 +12,18 @@ import {
 import ProfileIdeaCard from "@/components/ProfileIdeaCard";
 import IdeaCard from "@/components/IdeaCard";
 import BuilderSnapshotHeader from "@/components/BuilderSnapshotHeader";
-import ValidationAnalyticsDashboard from "@/components/analytics/ValidationAnalyticsDashboard";
+import AnalyticsDashboard from "@/components/analytics/AnalyticsDashboard";
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { Lightbulb, BarChart3, Pin } from "lucide-react";
+import { Lightbulb, BarChart3, Pin, ArrowLeft } from "lucide-react";
+import { useNavBack } from "@/hooks/useNavBack";
 
 export default function ProfilePage() {
 	const params = useParams();
-	const searchParams = useSearchParams();
+	const router = useRouter();
+	const back = useNavBack();
 	const username = params.username as string;
 	const { data: session } = useSession();
 
@@ -35,13 +36,8 @@ export default function ProfilePage() {
 	const [ideasLoading, setIdeasLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
-	// Analytics state
-	const [analytics, setAnalytics] = useState<ValidationAnalytics | null>(null);
-
 	// Tab & sort state
-	const initialTab =
-		searchParams.get("tab") === "analytics" ? "analytics" : "ideas";
-	const [activeTab, setActiveTab] = useState<"ideas" | "analytics">(initialTab);
+	const [activeTab, setActiveTab] = useState<"ideas" | "analytics">("ideas");
 	const [page, setPage] = useState(1);
 	const [pagination, setPagination] = useState<PaginationMeta | null>(null);
 	const observerRef = useRef<HTMLDivElement>(null);
@@ -50,11 +46,12 @@ export default function ProfilePage() {
 
 	// Sync tab from URL search params
 	useEffect(() => {
-		const tab = searchParams.get("tab");
+		const urlParams = new URLSearchParams(window.location.search);
+		const tab = urlParams.get("tab");
 		if (tab === "analytics" && isOwnProfile) {
 			setActiveTab("analytics");
 		}
-	}, [searchParams, isOwnProfile]);
+	}, [isOwnProfile]);
 
 	// Fetch profile, validation summary, and analytics (own profile)
 	useEffect(() => {
@@ -68,13 +65,6 @@ export default function ProfilePage() {
 				setProfile(profileData);
 				setValidationSummary(summaryData);
 
-				// Eagerly fetch analytics for own profile
-				if (session?.user?.username === username) {
-					userApi
-						.getValidationAnalytics(username)
-						.then(setAnalytics)
-						.catch(() => {});
-				}
 			} catch (err: unknown) {
 				if (err instanceof Error && "response" in err) {
 					const errWithResponse = err as {
@@ -192,7 +182,24 @@ export default function ProfilePage() {
 	const hasPinnedIdeas = profile.pinnedIdeas.length > 0;
 
 	return (
-		<div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
+		<div>
+			{/* Sticky header */}
+			<div className="bg-background/85 sticky top-0 z-10 backdrop-blur-lg">
+				<div className="flex items-center gap-3 px-4 py-3">
+					<button
+						onClick={() => back()}
+						className="text-foreground hover:bg-muted/60 cursor-pointer rounded-full p-1 transition-colors"
+					>
+						<ArrowLeft className="h-5 w-5" />
+					</button>
+					<h1 className="text-foreground text-lg font-bold">
+						{profile.user.username}
+					</h1>
+				</div>
+				<div className="border-border/50 border-b" />
+			</div>
+
+			<div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
 			{/* Profile Hero */}
 			<BuilderSnapshotHeader
 				profile={profile}
@@ -206,7 +213,10 @@ export default function ProfilePage() {
 				{isOwnProfile && (
 					<div className="border-border/50 flex min-h-12 border-b">
 						<button
-							onClick={() => setActiveTab("ideas")}
+							onClick={() => {
+								setActiveTab("ideas");
+								router.replace(`/${username}`, { scroll: false });
+							}}
 							className={`hover:bg-muted/60 relative flex-1 cursor-pointer text-center text-sm font-semibold transition-colors ${
 								activeTab === "ideas"
 									? "text-foreground"
@@ -222,7 +232,10 @@ export default function ProfilePage() {
 							)}
 						</button>
 						<button
-							onClick={() => setActiveTab("analytics")}
+							onClick={() => {
+								setActiveTab("analytics");
+								router.replace(`/${username}?tab=analytics`, { scroll: false });
+							}}
 							className={`hover:bg-muted/60 relative flex-1 cursor-pointer text-center text-sm font-semibold transition-colors ${
 								activeTab === "analytics"
 									? "text-foreground"
@@ -254,10 +267,11 @@ export default function ProfilePage() {
 							observerRef={observerRef}
 						/>
 					) : (
-						<AnalyticsTabContent analytics={analytics} />
+						<AnalyticsTabContent username={username} />
 					)}
 				</div>
 			</div>
+		</div>
 		</div>
 	);
 }
@@ -370,31 +384,6 @@ function IdeasTabContent({
 
 /* ─── Analytics Tab ─────────────────────────────────────────────────────────── */
 
-function AnalyticsTabContent({
-	analytics,
-}: {
-	analytics: ValidationAnalytics | null;
-}) {
-	if (!analytics) {
-		return (
-			<div className="flex min-h-[30vh] items-center justify-center">
-				<div className="border-primary h-10 w-10 animate-spin rounded-full border-b-2"></div>
-			</div>
-		);
-	}
-
-	if (analytics.totals.totalIdeas === 0) {
-		return (
-			<div className="bg-card border-border/50 shadow-card rounded-xl border p-12 text-center">
-				<p className="text-muted-foreground mb-4">
-					Share some ideas to start seeing analytics
-				</p>
-				<Link href="/idea/new">
-					<Button className="cursor-pointer">Share Your First Idea</Button>
-				</Link>
-			</div>
-		);
-	}
-
-	return <ValidationAnalyticsDashboard analytics={analytics} />;
+function AnalyticsTabContent({ username }: { username: string }) {
+	return <AnalyticsDashboard username={username} />;
 }
