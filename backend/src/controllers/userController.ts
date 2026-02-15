@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { AuthRequest, ProfileSortMode } from '../types/index.js';
+import { AuthRequest, ProfileSortMode, ActivityRange } from '../types/index.js';
 import { UserService } from '../services/userService.js';
 
 /**
@@ -308,21 +308,17 @@ export class UserController {
   }
 
   /**
-   * Handle retrieving validation analytics for a user
-   *
-   * @param req - Express request object
-   * @param res - Express response object
+   * Handle retrieving idea portfolio for a user
    *
    * @remarks
-   * Route: GET /api/users/:username/validation-analytics
+   * Route: GET /api/users/:username/idea-portfolio
    * Requires authentication (owner only)
-   * Returns analytics data for charts and dashboards
    */
-  static async getValidationAnalytics(req: AuthRequest, res: Response) {
+  static async getIdeaPortfolio(req: AuthRequest, res: Response) {
     try {
       const { username } = req.params;
 
-      const result = await UserService.getValidationAnalytics(username);
+      const result = await UserService.getIdeaPortfolio(username);
 
       if (!result) {
         return res.status(404).json({
@@ -338,8 +334,107 @@ export class UserController {
     } catch (error: any) {
       return res.status(500).json({
         success: false,
-        error: error.message || 'Failed to fetch validation analytics',
+        error: error.message || 'Failed to fetch idea portfolio',
       });
     }
   }
+
+  /**
+   * Handle retrieving idea scorecard for a specific idea
+   *
+   * @remarks
+   * Route: GET /api/users/:username/idea-scorecard/:ideaId
+   * Requires authentication (owner only)
+   */
+  static async getIdeaScorecard(req: AuthRequest, res: Response) {
+    try {
+      const { username, ideaId } = req.params;
+
+      const result = await UserService.getIdeaScorecard(username, ideaId);
+
+      if (!result) {
+        return res.status(404).json({
+          success: false,
+          error: 'Idea not found',
+        });
+      }
+
+      return res.json({
+        success: true,
+        data: result,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to fetch idea scorecard',
+      });
+    }
+  }
+
+  /**
+   * Handle retrieving analytics dashboard for a user
+   *
+   * @remarks
+   * Route: GET /api/users/:username/analytics-dashboard
+   * Requires authentication
+   */
+  static async getAnalyticsDashboard(req: AuthRequest, res: Response) {
+    try {
+      const { username } = req.params;
+      const range = (req.query.range as ActivityRange) || '30d';
+
+      const result = await UserService.getAnalyticsDashboard(username, range);
+
+      if (!result) {
+        return res.status(404).json({
+          success: false,
+          error: 'User not found',
+        });
+      }
+
+      return res.json({
+        success: true,
+        data: result,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to fetch analytics dashboard',
+      });
+    }
+  }
+
+  /**
+   * Handle retrieving analytics for a specific idea
+   *
+   * @remarks
+   * Route: GET /api/users/:username/idea-analytics/:ideaId
+   * Requires authentication
+   */
+  static async getIdeaAnalytics(req: AuthRequest, res: Response) {
+    try {
+      const { username, ideaId } = req.params;
+      const range = (req.query.range as ActivityRange) || '30d';
+
+      const result = await UserService.getIdeaAnalytics(username, ideaId, range);
+
+      if (!result) {
+        return res.status(404).json({
+          success: false,
+          error: 'Idea not found',
+        });
+      }
+
+      return res.json({
+        success: true,
+        data: result,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to fetch idea analytics',
+      });
+    }
+  }
+
 }

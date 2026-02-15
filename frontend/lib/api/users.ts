@@ -2,10 +2,14 @@ import apiClient from "./client";
 import {
 	Idea,
 	ValidationSummary,
-	ValidationAnalytics,
 	IdeaWithSignals,
 	PaginationMeta,
 	ProfileSortMode,
+	IdeaPortfolio,
+	IdeaScorecard,
+	AnalyticsDashboardData,
+	IdeaAnalyticsData,
+	ActivityRange,
 } from "@/types";
 
 export interface User {
@@ -90,13 +94,48 @@ export const userApi = {
 		return response.data.data;
 	},
 
-	// Get user's validation analytics
-	getValidationAnalytics: async (
-		username: string
-	): Promise<ValidationAnalytics> => {
+	// Get user's idea portfolio
+	getIdeaPortfolio: async (username: string): Promise<IdeaPortfolio> => {
 		const response = await apiClient.get(
-			`/users/${username}/validation-analytics`
+			`/users/${username}/idea-portfolio`
 		);
 		return response.data.data;
 	},
+
+	// Get idea scorecard
+	getIdeaScorecard: async (
+		username: string,
+		ideaId: string
+	): Promise<IdeaScorecard> => {
+		const response = await apiClient.get(
+			`/users/${username}/idea-scorecard/${ideaId}`
+		);
+		return response.data.data;
+	},
+
+	// Get analytics dashboard
+	getAnalyticsDashboard: async (
+		username: string,
+		range: ActivityRange = "30d"
+	): Promise<AnalyticsDashboardData> => {
+		const response = await apiClient.get(
+			`/users/${username}/analytics-dashboard`,
+			{ params: { range } }
+		);
+		return response.data.data;
+	},
+
+	// Get idea analytics
+	getIdeaAnalytics: async (
+		username: string,
+		ideaId: string,
+		range: ActivityRange = "30d"
+	): Promise<IdeaAnalyticsData> => {
+		const response = await apiClient.get(
+			`/users/${username}/idea-analytics/${ideaId}`,
+			{ params: { range } }
+		);
+		return response.data.data;
+	},
+
 };
