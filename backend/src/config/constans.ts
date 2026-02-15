@@ -1,0 +1,1 @@
+export const timelines: string[] = ['latest', 'trending', 'top'];

@@ -9,7 +9,7 @@ import { BsFire } from "react-icons/bs";
 import { AiOutlineStock } from "react-icons/ai";
 
 const TimelineType = {
-	NEW: "new",
+	LATEST: "latest",
 	TRENDING: "trending",
 	TOP: "top",
 } as const;
@@ -18,7 +18,7 @@ type TimelineType = (typeof TimelineType)[keyof typeof TimelineType];
 
 export default function Timeline() {
 	const [activeTimeline, setActiveTimeline] = useState<TimelineType>(
-		TimelineType.NEW
+		TimelineType.LATEST
 	);
 	const [ideas, setIdeas] = useState<Idea[]>([]);
 	const [loading, setLoading] = useState(false);
@@ -96,7 +96,7 @@ export default function Timeline() {
 	}, [loading, hasMore, handleLoadMore]);
 
 	const tabs = [
-		{ id: TimelineType.NEW, label: "Latest", icon: TbHexagonFilled },
+		{ id: TimelineType.LATEST , label: "Latest", icon: TbHexagonFilled },
 		{ id: TimelineType.TRENDING, label: "Trending", icon: BsFire },
 		{ id: TimelineType.TOP, label: "Top", icon: AiOutlineStock },
 	];

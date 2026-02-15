@@ -2,7 +2,7 @@ import apiClient from "./client";
 import { ApiResponse, Idea, PaginationMeta } from "@/types";
 
 export interface GetIdeasParams {
-	timeline: "new" | "trending" | "top";
+	timeline: "latest" | "trending" | "top";
 	page?: number;
 	limit?: number;
 }

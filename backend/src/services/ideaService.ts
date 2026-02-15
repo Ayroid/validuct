@@ -26,7 +26,7 @@ interface UpdateIdeaData {
  * Parameters for retrieving ideas by timeline
  */
 interface GetIdeasParams {
-  timeline: 'new' | 'trending' | 'top';
+  timeline: 'latest' | 'trending' | 'top';
   page?: number;
   limit?: number;
   userId?: string;
@@ -135,7 +135,8 @@ export class IdeaService {
    *
    * @remarks
    * Timeline options:
-   * - 'new': Most recently created ideas
+   * - 'latest
+   * ': Most recently created ideas
    * - 'trending': Ideas that received the most upvotes in the last 24 hours (regardless of creation date)
    * - 'top': Ideas with most upvotes (all time)
    *
@@ -235,12 +236,12 @@ export class IdeaService {
       };
     }
 
-    // Regular handling for 'new' and 'top' timelines
+    // Regular handling for 'latest' and 'top' timelines
     let orderBy: any = {};
     let where: any = {};
 
     switch (timeline) {
-      case 'new':
+      case 'latest':
         orderBy = [{ createdAt: 'desc' }, { id: 'desc' }];
         break;
       case 'top':

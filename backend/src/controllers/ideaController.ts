@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { IdeaService } from '../services/ideaService.js';
 import { AuthRequest } from '../types/index.js';
 import { IdeaStatus } from '../../prisma/client/client.js';
+import { timelines } from '../config/constans.js';
 
 /**
  * Controller for handling idea-related HTTP requests
@@ -90,16 +91,16 @@ export class IdeaController {
       const { timeline, page, limit } = req.query;
       const userId = (req as AuthRequest).userId;
 
-      if (!timeline || !['new', 'trending', 'top'].includes(timeline as string)) {
+      if (!timeline || !timelines.includes(timeline as string)) {
         res.status(400).json({
           success: false,
-          error: 'Invalid or missing timeline parameter. Must be one of: new, trending, top',
+          error: 'Invalid or missing timeline parameter. Must be one of: latest, trending, top',
         });
         return;
       }
 
       const result = await IdeaService.getIdeas({
-        timeline: timeline as 'new' | 'trending' | 'top',
+        timeline: timeline as 'latest' | 'trending' | 'top',
         page: page ? parseInt(page as string) : undefined,
         limit: limit ? parseInt(limit as string) : undefined,
         userId,
