@@ -14,6 +14,7 @@ import {
 	HiArrowDownTray,
 	HiCheckCircle,
 } from "react-icons/hi2";
+import { useNavBack } from "@/hooks/useNavBack";
 import {
 	Tooltip,
 	TooltipContent,
@@ -24,6 +25,7 @@ import {
 export default function WaitlistPage() {
 	const params = useParams();
 	const router = useRouter();
+	const back = useNavBack();
 	const { status } = useSession();
 
 	const [entries, setEntries] = useState<IdeaWaitlistEntry[]>([]);
@@ -200,7 +202,7 @@ export default function WaitlistPage() {
 			<div className="bg-background/85 sticky top-0 z-10 backdrop-blur-lg">
 				<div className="flex items-center gap-3 px-4 py-3">
 					<button
-						onClick={() => router.back()}
+						onClick={() => back(`/idea/${params.id}`)}
 						className="text-foreground hover:bg-muted -ml-1 cursor-pointer rounded-full p-1 transition-colors"
 					>
 						<HiArrowLeft className="h-5 w-5" />

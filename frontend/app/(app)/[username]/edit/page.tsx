@@ -9,12 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
+import { useNavBack } from "@/hooks/useNavBack";
 
 
 
 export default function ProfileSettingsPage() {
 	const { data: session, update } = useSession();
 	const router = useRouter();
+	const back = useNavBack();
 	const [formData, setFormData] = useState<UpdateProfileData>({
 		username: "",
 		bio: "",
@@ -157,9 +159,9 @@ export default function ProfileSettingsPage() {
 						<Button
 							type="button"
 							variant="outline"
-							onClick={() => router.back()}
 							disabled={isLoading}
 							className="cursor-pointer"
+							onClick={() => back()}
 						>
 							Cancel
 						</Button>

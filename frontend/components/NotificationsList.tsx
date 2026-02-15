@@ -10,7 +10,7 @@ import {
 	HiArrowLeft,
 	HiCog6Tooth,
 } from "react-icons/hi2";
-import { useRouter } from "next/navigation";
+import { useNavBack } from "@/hooks/useNavBack";
 import {
 	getNotifications,
 	markAsRead,
@@ -55,7 +55,7 @@ const getNotificationAccent = (type: Notification["type"]) => {
 };
 
 export default function NotificationsList() {
-	const router = useRouter();
+	const back = useNavBack();
 	const [notifications, setNotifications] = useState<Notification[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [page, setPage] = useState(1);
@@ -152,7 +152,7 @@ export default function NotificationsList() {
 				<div className="flex items-center justify-between px-4 py-3">
 					<div className="flex items-center gap-3">
 						<button
-							onClick={() => router.back()}
+							onClick={() => back()}
 							className="text-foreground hover:bg-muted -ml-1 cursor-pointer rounded-full p-1 transition-colors"
 						>
 							<HiArrowLeft className="h-5 w-5" />

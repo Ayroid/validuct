@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { ideasApi } from "@/lib/api/ideas";
 import { HiSparkles, HiArrowLeft } from "react-icons/hi2";
+import { useNavBack } from "@/hooks/useNavBack";
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -51,6 +51,7 @@ const statusOptions: {
 
 export default function NewIdeaPage() {
 	const router = useRouter();
+	const back = useNavBack();
 	const { status } = useSession();
 	const [submitting, setSubmitting] = useState(false);
 	const [formData, setFormData] = useState({
@@ -106,7 +107,7 @@ export default function NewIdeaPage() {
 			<div className="bg-background/85 sticky top-0 z-10 backdrop-blur-lg">
 				<div className="flex items-center gap-3 px-4 py-3">
 					<button
-						onClick={() => router.back()}
+						onClick={() => back()}
 						className="text-foreground hover:bg-muted -ml-1 cursor-pointer rounded-full p-1 transition-colors"
 					>
 						<HiArrowLeft className="h-5 w-5" />
@@ -213,11 +214,9 @@ export default function NewIdeaPage() {
 								variant="outline"
 								className="flex-1 cursor-pointer transition-colors"
 								size="lg"
-								asChild
+								onClick={() => back()}
 							>
-								<Link href="/home" className="block text-center text-sm">
-									Cancel
-								</Link>
+								Cancel
 							</Button>
 							<Button
 								type="submit"
