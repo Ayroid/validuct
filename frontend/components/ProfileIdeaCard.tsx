@@ -131,10 +131,10 @@ export default function ProfileIdeaCard({
 				<div className="flex w-28 shrink-0 flex-col border-r border-border/40 bg-muted/30 sm:w-32">
 					{/* Total Signals — ~70% */}
 					<div className="flex flex-1 flex-col items-center justify-center p-3 min-h-6/12">
-						<div className="font-mono text-3xl font-bold tracking-tight text-foreground">
+						<div className="font-mono text-2xl font-bold tracking-tight text-foreground">
 							{totalSignals}
 						</div>
-						<div className="text-[10px] font-semibold tracking-wider uppercase text-muted-foreground">
+						<div className="text-xs font-semibold tracking-widest uppercase text-muted-foreground">
 							Signal{totalSignals !== 1 ? "s" : ""}
 						</div>
 					</div>
@@ -152,7 +152,7 @@ export default function ProfileIdeaCard({
 												className={`h-3.5 w-3.5 ${active ? color : "text-muted-foreground/30"}`}
 											/>
 											<span
-												className={`font-mono text-[11px] font-bold ${active ? "text-foreground" : "text-muted-foreground/30"}`}
+												className={`font-mono text-xs font-bold ${active ? "text-foreground" : "text-muted-foreground/30"}`}
 											>
 												{count}
 											</span>

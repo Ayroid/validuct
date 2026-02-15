@@ -37,7 +37,7 @@ export default function ValidationHealthDots({
 					<div
 						className={`h-2.5 w-2.5 rounded-full ${DOT_COLORS[entry.level]}`}
 					/>
-					<span className="pointer-events-none absolute bottom-full left-1/2 mb-1.5 -translate-x-1/2 rounded bg-foreground/90 px-2 py-0.5 text-[10px] font-medium whitespace-nowrap text-background opacity-0 transition-opacity group-hover:opacity-100">
+					<span className="pointer-events-none absolute bottom-full left-1/2 mb-1.5 -translate-x-1/2 rounded bg-foreground/90 px-2 py-0.5 text-xs font-medium whitespace-nowrap text-background opacity-0 transition-opacity group-hover:opacity-100">
 						{DOT_LABELS[entry.key]}
 					</span>
 				</div>

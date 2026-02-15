@@ -80,7 +80,7 @@ function PieTooltip({
 	if (!active || !payload || payload.length === 0) return null;
 	const data = payload[0].payload;
 	return (
-		<div className="bg-popover border-border rounded-lg border px-3 py-2 shadow-lg">
+		<div className="bg-popover border-border rounded-lg border px-3 py-2 shadow-lg z-10">
 			<p className="text-foreground text-sm font-medium">{data.name}</p>
 			<p className="text-muted-foreground text-xs">
 				{data.value} signals ({data.percentage.toFixed(1)}%)
@@ -352,6 +352,17 @@ export default function BreakdownCharts({
 				</h3>
 
 				<div className="relative h-64">
+					{/* Center total count — rendered first so chart tooltip sits on top */}
+					<div className="pointer-events-none absolute inset-0 flex items-center justify-center" style={{ paddingBottom: 36 }}>
+						<div className="text-center">
+							<p className="text-2xl font-bold tracking-tight">
+								{totalSignals}
+							</p>
+							<p className="text-muted-foreground text-xs">
+								Total
+							</p>
+						</div>
+					</div>
 					<ResponsiveContainer width="100%" height="100%">
 						<PieChart>
 							<Pie
@@ -382,18 +393,6 @@ export default function BreakdownCharts({
 							/>
 						</PieChart>
 					</ResponsiveContainer>
-
-					{/* Center total count */}
-					<div className="pointer-events-none absolute inset-0 -z-0 flex items-center justify-center" style={{ paddingBottom: 36 }}>
-						<div className="text-center">
-							<p className="text-2xl font-bold tracking-tight">
-								{totalSignals}
-							</p>
-							<p className="text-muted-foreground text-xs">
-								Total
-							</p>
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>
