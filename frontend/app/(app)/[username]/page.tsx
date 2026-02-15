@@ -17,7 +17,7 @@ import AnalyticsDashboard from "@/components/analytics/AnalyticsDashboard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { Lightbulb, BarChart3, Pin, ArrowLeft } from "lucide-react";
+import { Lightbulb, BarChart3, Pin, ArrowLeft, LayoutList } from "lucide-react";
 import { useNavBack } from "@/hooks/useNavBack";
 
 export default function ProfilePage() {
@@ -318,6 +318,16 @@ function IdeasTabContent({
 							/>
 						))}
 					</div>
+				</div>
+			)}
+
+			{/* All Ideas label */}
+			{hasPinnedIdeas && ideas.length > 0 && (
+				<div className="mb-3 flex items-center gap-1.5">
+					<LayoutList className="text-muted-foreground h-3.5 w-3.5" />
+					<span className="text-muted-foreground text-xs font-semibold tracking-widest uppercase">
+						All Ideas
+					</span>
 				</div>
 			)}
 
