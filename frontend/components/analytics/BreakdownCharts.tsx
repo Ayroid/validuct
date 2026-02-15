@@ -117,9 +117,9 @@ export default function BreakdownCharts({
 }: BreakdownChartsProps) {
 	const [statusView, setStatusView] = useState<ViewMode>(() => {
 		if (typeof window !== "undefined") {
-			return (localStorage.getItem("analytics:statusView") as ViewMode) || "cards";
+			return (localStorage.getItem("analytics:statusView") as ViewMode) || "bars";
 		}
-		return "cards";
+		return "bars";
 	});
 	const [validationView, setValidationView] = useState<ViewMode>(() => {
 		if (typeof window !== "undefined") {
