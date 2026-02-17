@@ -35,6 +35,7 @@ export default function ProfilePage() {
 	const [loading, setLoading] = useState(true);
 	const [ideasLoading, setIdeasLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [is404, setIs404] = useState(false);
 
 	// Tab & sort state
 	const [activeTab, setActiveTab] = useState<"ideas" | "analytics">("ideas");
@@ -66,19 +67,12 @@ export default function ProfilePage() {
 				setValidationSummary(summaryData);
 
 			} catch (err: unknown) {
-				if (err instanceof Error && "response" in err) {
-					const errWithResponse = err as {
-						response?: { status?: number; data?: { error?: string } };
-					};
-					if (errWithResponse.response?.status === 404) {
-						notFound();
-					}
-					setError(
-						errWithResponse.response?.data?.error || "Failed to load profile"
-					);
-				} else {
-					setError("Failed to load profile");
+				const apiErr = err as Error & { status?: number };
+				if (apiErr.status === 404) {
+					setIs404(true);
+					return;
 				}
+				setError(apiErr.message || "An unexpected error occurred");
 			} finally {
 				setLoading(false);
 			}
@@ -169,6 +163,10 @@ export default function ProfilePage() {
 				<div className="border-primary h-12 w-12 animate-spin rounded-full border-b-2"></div>
 			</div>
 		);
+	}
+
+	if (is404) {
+		notFound();
 	}
 
 	if (error || !profile) {
