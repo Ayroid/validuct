@@ -1,5 +1,6 @@
 import AppSidebar from "@/components/app-shell/AppSidebar";
 import MobileBottomNav from "@/components/app-shell/MobileBottomNav";
+import RightSidebar from "@/components/app-shell/RightSidebar";
 import WalkthroughProvider from "@/components/WalkthroughProvider";
 import NavigationEvents from "@/components/NavigationEvents";
 
@@ -19,8 +20,8 @@ export default function AppLayout({
 					{children}
 				</main>
 
-				{/* Right spacer for visual balance */}
-				<div className="hidden lg:block w-56 shrink-0" aria-hidden="true" />
+				{/* Right sidebar */}
+				<RightSidebar />
 			</div>
 			<MobileBottomNav />
 			<NavigationEvents />

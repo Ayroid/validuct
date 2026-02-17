@@ -17,6 +17,7 @@ model User {
   passwordHash   String   @map("password_hash") @db.VarChar(255)
   profilePicture String?  @map("profile_picture") @db.VarChar(500)
   bio            String?  @db.Text
+  isAdmin        Boolean  @default(false) @map("is_admin")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
@@ -31,6 +32,7 @@ model User {
   triggeredNotifications  Notification[]           @relation("TriggeredNotifications")
   emailQueue              EmailQueue[]
   notificationPreferences NotificationPreferences?
+  suggestions             Suggestion[]
 
   @@index([username])
   @@index([email])
@@ -335,4 +337,42 @@ model IdeaWaitlist {
   @@unique([ideaId, email])
   @@index([ideaId])
   @@map("idea_waitlist")
+}
+
+// ============================================
+// SUGGESTION / FEEDBACK SYSTEM
+// ============================================
+
+enum SuggestionType {
+  FEATURE_REQUEST
+  BUG_REPORT
+  IMPROVEMENT
+  OTHER
+
+  @@map("suggestion_type")
+}
+
+enum SuggestionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+
+  @@map("suggestion_status")
+}
+
+model Suggestion {
+  id          String           @id @default(uuid())
+  userId      String           @map("user_id")
+  type        SuggestionType
+  title       String           @db.VarChar(200)
+  description String           @db.Text
+  status      SuggestionStatus @default(PENDING)
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status, createdAt])
+  @@map("suggestions")
 }

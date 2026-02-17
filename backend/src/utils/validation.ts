@@ -81,6 +81,16 @@ export const ideaWaitlistSchema = z.object({
   email: z.string().email('Invalid email address'),
 });
 
+// Suggestion validation schemas
+export const createSuggestionSchema = z.object({
+  type: z.enum(['FEATURE_REQUEST', 'BUG_REPORT', 'IMPROVEMENT', 'OTHER']),
+  suggestion: z.string().min(1).max(2000),
+});
+
+export const updateSuggestionStatusSchema = z.object({
+  status: z.enum(['APPROVED', 'REJECTED']),
+});
+
 // Notification preferences validation schema
 export const updatePreferencesSchema = z.object({
   emailFirstFeedback: z.boolean().optional(),

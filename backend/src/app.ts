@@ -13,6 +13,7 @@ import signalRoutes from './routes/signalRoutes.js';
 import ideaWaitlistRoutes from './routes/ideaWaitlistRoutes.js';
 import waitlistRoutes from './routes/waitlistRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import suggestionRoutes from './routes/suggestionRoutes.js';
 
 const app: Application = express();
 
@@ -52,6 +53,7 @@ app.use('/api/v1', signalRoutes);
 app.use('/api/v1', ideaWaitlistRoutes);
 app.use('/api/v1/waitlist', waitlistRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
+app.use('/api/v1/suggestions', suggestionRoutes);
 
 // Error handlers
 app.use(notFound);

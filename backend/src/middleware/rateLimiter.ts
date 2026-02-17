@@ -144,6 +144,21 @@ export const ideaWaitlistLimiter = rateLimit({
 });
 
 /**
+ * Suggestion limiter - For suggestion submission endpoint
+ * 10 requests per hour per user
+ */
+export const suggestionLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  limit: 10,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  store: createRedisStore('suggestion'),
+  keyGenerator: userKeyGenerator,
+  message: 'Too many suggestions submitted, please try again later',
+  handler: rateLimitResponse,
+});
+
+/**
  * General API limiter - For all GET requests
  * 100 requests per minute per IP
  */
