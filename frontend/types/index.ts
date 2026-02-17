@@ -10,6 +10,7 @@ export interface User {
 	email: string;
 	profilePicture: string | null;
 	bio?: string | null;
+	isAdmin?: boolean;
 	createdAt: string;
 }
 
@@ -540,6 +541,28 @@ export interface IdeaAnalyticsData {
 	nextSteps: ScorecardNextStep[];
 	dailyActivity: DailyActivity[];
 	comments: ScorecardComment[];
+}
+
+// ============================================================================
+// Suggestion / Feedback Types
+// ============================================================================
+
+export type SuggestionType = "FEATURE_REQUEST" | "BUG_REPORT" | "IMPROVEMENT" | "OTHER";
+export type SuggestionStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export interface Suggestion {
+	id: string;
+	userId: string;
+	type: SuggestionType;
+	title: string;
+	description: string;
+	status: SuggestionStatus;
+	createdAt: string;
+	updatedAt: string;
+	user: {
+		username: string;
+		profilePicture: string | null;
+	};
 }
 
 // ============================================================================

@@ -18,6 +18,7 @@ declare module "next-auth" {
 			email: string;
 			profilePicture: string | null;
 			bio: string | null;
+			isAdmin: boolean;
 			createdAt: string;
 		};
 		backendToken: string;
@@ -41,6 +42,7 @@ interface ExtendedJWT extends JWT {
 	email: string;
 	profilePicture: string | null;
 	bio: string | null;
+	isAdmin: boolean;
 	createdAt: string;
 	backendToken: string;
 	provider: string;
@@ -162,6 +164,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 						extendedToken.profilePicture = backendAuth.user.profilePicture;
 						extendedToken.bio = backendAuth.user.bio ?? null;
 						extendedToken.createdAt = backendAuth.user.createdAt;
+						extendedToken.isAdmin = backendAuth.user.isAdmin ?? false;
 						extendedToken.backendToken = backendAuth.token;
 						extendedToken.provider = "google";
 					} catch (error) {
@@ -198,6 +201,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 						extendedToken.profilePicture = backendAuth.user.profilePicture;
 						extendedToken.bio = backendAuth.user.bio ?? null;
 						extendedToken.createdAt = backendAuth.user.createdAt;
+						extendedToken.isAdmin = backendAuth.user.isAdmin ?? false;
 						extendedToken.backendToken = backendAuth.token;
 						extendedToken.provider = "twitter";
 					} catch (error) {
@@ -239,6 +243,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 						extendedToken.profilePicture = backendAuth.user.profilePicture;
 						extendedToken.bio = backendAuth.user.bio ?? null;
 						extendedToken.createdAt = backendAuth.user.createdAt;
+						extendedToken.isAdmin = backendAuth.user.isAdmin ?? false;
 						extendedToken.backendToken = backendAuth.token;
 						extendedToken.provider = "github";
 					} catch (error) {
@@ -265,6 +270,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				session.user.username = extendedToken.username;
 				session.user.profilePicture = extendedToken.profilePicture;
 				session.user.bio = extendedToken.bio;
+				session.user.isAdmin = extendedToken.isAdmin ?? false;
 				session.user.createdAt = extendedToken.createdAt;
 				session.backendToken = extendedToken.backendToken;
 			}

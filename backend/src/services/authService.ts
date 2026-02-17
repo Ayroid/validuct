@@ -22,6 +22,7 @@ interface AuthResponse {
     username: string;
     email: string;
     profilePicture: string | null;
+    isAdmin: boolean;
     createdAt: Date;
   };
   token: string;
@@ -47,6 +48,7 @@ export class AuthService {
         email: true,
         profilePicture: true,
         bio: true,
+        isAdmin: true,
         createdAt: true,
       },
     });
@@ -88,6 +90,7 @@ export class AuthService {
         email: true,
         profilePicture: true,
         bio: true,
+        isAdmin: true,
         createdAt: true,
       },
     });
@@ -135,6 +138,7 @@ export class AuthService {
           email: true,
           profilePicture: true,
           bio: true,
+          isAdmin: true,
           createdAt: true,
         },
       });
@@ -149,6 +153,7 @@ export class AuthService {
         username: user.username,
         email: user.email,
         profilePicture: user.profilePicture,
+        isAdmin: user.isAdmin,
         createdAt: user.createdAt,
       },
       token,

@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 				email: session.user.email,
 				profilePicture: session.user.profilePicture,
 				bio: session.user.bio,
+				isAdmin: session.user.isAdmin ?? false,
 				createdAt: session.user.createdAt,
 			}
 		: null;
