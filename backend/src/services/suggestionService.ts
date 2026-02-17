@@ -1,5 +1,6 @@
 import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { paginate, buildPaginationMeta } from '../utils/pagination.js';
 
 type SuggestionType = 'FEATURE_REQUEST' | 'BUG_REPORT' | 'IMPROVEMENT' | 'OTHER';
 type SuggestionStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
@@ -35,14 +36,14 @@ export class SuggestionService {
   }
 
   static async getApprovedSuggestions(page: number = 1, limit: number = 10) {
-    const skip = (page - 1) * limit;
+    const { skip, take } = paginate(page, limit);
 
     const [suggestions, total] = await Promise.all([
       prisma.suggestion.findMany({
         where: { status: 'APPROVED' },
         orderBy: { createdAt: 'desc' },
         skip,
-        take: limit,
+        take,
         include: {
           user: {
             select: {
@@ -59,24 +60,19 @@ export class SuggestionService {
 
     return {
       suggestions,
-      pagination: {
-        page,
-        limit,
-        total,
-        total_pages: Math.ceil(total / limit),
-      },
+      pagination: buildPaginationMeta(page, limit, total),
     };
   }
 
   static async getUserSuggestions(userId: string, page: number = 1, limit: number = 10) {
-    const skip = (page - 1) * limit;
+    const { skip, take } = paginate(page, limit);
 
     const [suggestions, total] = await Promise.all([
       prisma.suggestion.findMany({
         where: { userId },
         orderBy: { createdAt: 'desc' },
         skip,
-        take: limit,
+        take,
         include: {
           user: {
             select: {
@@ -93,17 +89,12 @@ export class SuggestionService {
 
     return {
       suggestions,
-      pagination: {
-        page,
-        limit,
-        total,
-        total_pages: Math.ceil(total / limit),
-      },
+      pagination: buildPaginationMeta(page, limit, total),
     };
   }
 
   static async getAllSuggestions(page: number = 1, limit: number = 10, status?: SuggestionStatus) {
-    const skip = (page - 1) * limit;
+    const { skip, take } = paginate(page, limit);
     const where = status ? { status } : {};
 
     const [suggestions, total] = await Promise.all([
@@ -111,7 +102,7 @@ export class SuggestionService {
         where,
         orderBy: { createdAt: 'desc' },
         skip,
-        take: limit,
+        take,
         include: {
           user: {
             select: {
@@ -126,12 +117,7 @@ export class SuggestionService {
 
     return {
       suggestions,
-      pagination: {
-        page,
-        limit,
-        total,
-        total_pages: Math.ceil(total / limit),
-      },
+      pagination: buildPaginationMeta(page, limit, total),
     };
   }
 

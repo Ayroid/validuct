@@ -8,6 +8,7 @@ import PinButton from "./PinButton";
 import { HiUserCircle } from "react-icons/hi2";
 import { MessageSquareMore, Clock } from "lucide-react";
 import ShareButton from "./ShareButton";
+import { STATUS_BADGE_CONFIG } from "@/lib/config";
 
 export default function IdeaCard({
 	idea,
@@ -16,33 +17,8 @@ export default function IdeaCard({
 }: IdeaCardProps) {
 	const router = useRouter();
 
-	const getStatusBadgeStyles = (status: string) => {
-		switch (status) {
-			case "VALIDATED":
-				return "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400";
-			case "WIP":
-				return "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400";
-			case "LAUNCHED":
-				return "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-400";
-			case "DRAFT":
-			default:
-				return "bg-zinc-200 text-zinc-600 dark:bg-zinc-700/50 dark:text-zinc-400";
-		}
-	};
-
-	const formatStatus = (status: string) => {
-		switch (status) {
-			case "WIP":
-				return "In Progress";
-			case "VALIDATED":
-				return "Validated";
-			case "LAUNCHED":
-				return "Launched";
-			case "DRAFT":
-			default:
-				return "Draft";
-		}
-	};
+	const getStatusBadgeStyles = (status: string) => STATUS_BADGE_CONFIG[status]?.className || STATUS_BADGE_CONFIG.DRAFT.className;
+	const formatStatus = (status: string) => STATUS_BADGE_CONFIG[status]?.label || "Draft";
 
 	const handleCardClick = (e: React.MouseEvent) => {
 		const target = e.target as HTMLElement;

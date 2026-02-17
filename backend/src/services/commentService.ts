@@ -1,6 +1,7 @@
 import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { NotificationTriggers } from './notificationTriggers.js';
+import { paginate } from '../utils/pagination.js';
 
 /**
  * Comment category types for structured feedback
@@ -185,7 +186,7 @@ export class CommentService {
    */
   static async getIdeaComments(params: GetCommentsParams) {
     const { ideaId, userId, page = 1, limit = 50 } = params;
-    const skip = (page - 1) * limit;
+    const { skip } = paginate(page, limit);
 
     // Verify idea exists
     const idea = await prisma.idea.findUnique({

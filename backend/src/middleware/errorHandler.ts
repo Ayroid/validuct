@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { ZodError } from 'zod';
 
 /**
@@ -48,7 +48,6 @@ export const errorHandler = (
   err: Error | AppError | ZodError,
   _req: Request,
   res: Response,
-  _next: NextFunction
 ): void => {
   let statusCode = 500;
   let message = 'Internal Server Error';
@@ -73,14 +72,24 @@ export const errorHandler = (
 
   // Handle Prisma errors
   if (err.name === 'PrismaClientKnownRequestError') {
-    statusCode = 400;
-    message = 'Database Error';
+    const prismaError = err as Error & { code?: string };
+    switch (prismaError.code) {
+      case 'P2002':
+        statusCode = 409;
+        message = 'A record with this value already exists';
+        break;
+      case 'P2025':
+        statusCode = 404;
+        message = 'Record not found';
+        break;
+      default:
+        statusCode = 400;
+        message = 'Database Error';
+    }
   }
 
-  // Log error in development
-  if (process.env.NODE_ENV === 'development') {
-    console.error('Error:', err);
-  }
+  // Always log errors for production visibility
+  console.error('Error:', err);
 
   res.status(statusCode).json({
     success: false,

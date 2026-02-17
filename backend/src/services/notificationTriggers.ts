@@ -2,6 +2,13 @@ import { prisma } from '../config/database.js';
 import { NotificationService } from './notificationService.js';
 import { notificationEmailTemplate } from '../templates/notificationEmailTemplate.js';
 
+interface MilestoneIdea {
+  id: string;
+  userId: string;
+  heading: string;
+  user: { email: string };
+}
+
 export class NotificationTriggers {
   // Check if this is the first feedback (comment or signal) on an idea
   private static async checkAndSendFirstFeedback(
@@ -237,7 +244,7 @@ export class NotificationTriggers {
   }
 
   // When idea reaches a milestone
-  private static async onMilestoneReached(idea: any, count: number) {
+  private static async onMilestoneReached(idea: MilestoneIdea, count: number) {
     await NotificationService.createNotification({
       userId: idea.userId,
       type: 'MILESTONE',

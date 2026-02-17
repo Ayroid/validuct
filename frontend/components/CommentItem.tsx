@@ -1,58 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { commentsApi } from "@/lib/api/comments";
+import { useReply } from "./ReplyContext";
 import { Button } from "./ui/button";
 import Image from "next/image";
-import { CommentItemProps, CommentCategory } from "@/types";
+import { CommentItemProps } from "@/types";
 import Link from "next/dist/client/link";
+import { COMMENT_CATEGORY_LABELS } from "@/lib/config";
 
-const CATEGORY_LABELS: Record<
-	CommentCategory,
-	{ label: string; color: string }
-> = {
-	PROBLEM_CLARITY: {
-		label: "Problem",
-		color: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
-	},
-	TARGET_USERS: {
-		label: "Users",
-		color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
-	},
-	WILLINGNESS_TO_PAY: {
-		label: "Pricing",
-		color: "bg-green-500/10 text-green-600 dark:text-green-400",
-	},
-	TECHNICAL_FEASIBILITY: {
-		label: "Tech",
-		color: "bg-orange-500/10 text-orange-600 dark:text-orange-400",
-	},
-	FEATURE_SUGGESTION: {
-		label: "Feature",
-		color: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400",
-	},
-	GENERAL: { label: "General", color: "bg-muted text-muted-foreground" },
-};
-
-export default function CommentItem({
+const CommentItem = memo(function CommentItem({
 	comment,
-	onReply,
 	onEdit,
 	onDelete,
 	depth = 0,
-	replyToCommentId,
-	replyContent,
-	setReplyContent,
-	handleSubmitReply,
-	isSubmitting,
-	setReplyToCommentId,
 	ideaOwnerId,
-}: CommentItemProps & { ideaOwnerId?: string }) {
+}: CommentItemProps) {
 	const { data: session } = useSession();
 	const router = useRouter();
+	const {
+		replyToCommentId,
+		replyContent,
+		isSubmitting,
+		setReplyContent,
+		startReply,
+		cancelReply,
+		submitReply,
+	} = useReply();
 	const [isEditing, setIsEditing] = useState(false);
 	const [editedContent, setEditedContent] = useState(comment.content);
 	const [showReplies, setShowReplies] = useState(true);
@@ -61,7 +38,7 @@ export default function CommentItem({
 
 	const isOwner = session?.user?.id === comment.userId;
 	const isIdeaOwner = comment.userId === ideaOwnerId;
-	const maxDepth = 5; // Limit nesting depth
+	const maxDepth = 5;
 
 	const handleToggleHelpful = async () => {
 		if (!session) {
@@ -69,11 +46,9 @@ export default function CommentItem({
 			return;
 		}
 
-		// Save previous state for rollback
 		const prevIsHelpful = isHelpful;
 		const prevHelpfulCount = helpfulCount;
 
-		// Optimistically update UI
 		const newIsHelpful = !isHelpful;
 		const newHelpfulCount = newIsHelpful ? helpfulCount + 1 : helpfulCount - 1;
 
@@ -85,7 +60,6 @@ export default function CommentItem({
 			setIsHelpful(result.isHelpful);
 			setHelpfulCount(result.helpfulCount);
 		} catch {
-			// Revert on error
 			setIsHelpful(prevIsHelpful);
 			setHelpfulCount(prevHelpfulCount);
 		}
@@ -150,9 +124,9 @@ export default function CommentItem({
 						)}
 						{comment.category && comment.category !== "GENERAL" && (
 							<span
-								className={`rounded-full px-2 py-0.5 text-xs font-medium ${CATEGORY_LABELS[comment.category]?.color || ""}`}
+								className={`rounded-full px-2 py-0.5 text-xs font-medium ${COMMENT_CATEGORY_LABELS[comment.category]?.color || ""}`}
 							>
-								{CATEGORY_LABELS[comment.category]?.label || comment.category}
+								{COMMENT_CATEGORY_LABELS[comment.category]?.label || comment.category}
 							</span>
 						)}
 						<span className="text-muted-foreground text-xs">
@@ -231,7 +205,7 @@ export default function CommentItem({
 
 							{session && depth < maxDepth && (
 								<button
-									onClick={() => onReply?.(comment.id)}
+									onClick={() => startReply(comment.id)}
 									className="text-muted-foreground hover:text-foreground cursor-pointer text-xs font-medium transition-colors"
 								>
 									Reply
@@ -275,16 +249,9 @@ export default function CommentItem({
 									<CommentItem
 										key={reply.id}
 										comment={reply}
-										onReply={onReply}
 										onEdit={onEdit}
 										onDelete={onDelete}
 										depth={depth + 1}
-										replyToCommentId={replyToCommentId}
-										replyContent={replyContent}
-										setReplyContent={setReplyContent}
-										handleSubmitReply={handleSubmitReply}
-										isSubmitting={isSubmitting}
-										setReplyToCommentId={setReplyToCommentId}
 										ideaOwnerId={ideaOwnerId}
 									/>
 								))}
@@ -296,7 +263,7 @@ export default function CommentItem({
 						<div className="mt-3">
 							<textarea
 								value={replyContent}
-								onChange={(e) => setReplyContent?.(e.target.value)}
+								onChange={(e) => setReplyContent(e.target.value)}
 								placeholder="Write a reply..."
 								className="bg-background text-foreground placeholder:text-muted-foreground focus:ring-primary border-border w-full resize-none rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
 								rows={2}
@@ -304,7 +271,7 @@ export default function CommentItem({
 							/>
 							<div className="mt-2 flex gap-2">
 								<Button
-									onClick={() => handleSubmitReply?.(comment.id)}
+									onClick={() => submitReply(comment.id)}
 									size="sm"
 									disabled={isSubmitting || !replyContent?.trim()}
 									className="cursor-pointer transition-colors"
@@ -312,10 +279,7 @@ export default function CommentItem({
 									{isSubmitting ? "Posting..." : "Reply"}
 								</Button>
 								<Button
-									onClick={() => {
-										setReplyToCommentId?.(null);
-										setReplyContent?.("");
-									}}
+									onClick={cancelReply}
 									variant="outline"
 									size="sm"
 									className="cursor-pointer transition-colors"
@@ -329,4 +293,6 @@ export default function CommentItem({
 			</div>
 		</div>
 	);
-}
+});
+
+export default CommentItem;

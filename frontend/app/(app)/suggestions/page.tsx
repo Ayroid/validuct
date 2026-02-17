@@ -19,6 +19,7 @@ import { ArrowLeft, Check, Loader2, Pin } from "lucide-react";
 import { HiUserCircle } from "react-icons/hi2";
 import { formatDistanceToNow } from "date-fns";
 import { useNavBack } from "@/hooks/useNavBack";
+import { getErrorMessage } from "@/lib/errors";
 
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -169,12 +170,8 @@ export default function SuggestionsPage() {
 			loadMine();
 			// Reset success message after 4s
 			setTimeout(() => setSubmitted(false), 4000);
-		} catch (err: any) {
-			setError(
-				err?.response?.data?.error?.message ||
-					err?.response?.data?.error ||
-					"Failed to submit. Please try again."
-			);
+		} catch (err) {
+			setError(getErrorMessage(err, "Failed to submit. Please try again."));
 		} finally {
 			setSubmitting(false);
 		}

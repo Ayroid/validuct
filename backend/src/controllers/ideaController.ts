@@ -23,13 +23,9 @@ export class IdeaController {
    */
   static async createIdea(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.userId) {
-        throw new Error('User ID not found');
-      }
-
       const { heading, description, status, launchedLink } = req.body;
 
-      const idea = await IdeaService.createIdea(req.userId, {
+      const idea = await IdeaService.createIdea(req.userId!, {
         heading,
         description,
         status: status as IdeaStatus,
@@ -164,14 +160,10 @@ export class IdeaController {
    */
   static async updateIdea(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.userId) {
-        throw new Error('User ID not found');
-      }
-
       const { id } = req.params;
       const { heading, description, status, launchedLink } = req.body;
 
-      const idea = await IdeaService.updateIdea(id, req.userId, {
+      const idea = await IdeaService.updateIdea(id, req.userId!, {
         heading,
         description,
         status: status as IdeaStatus,
@@ -201,13 +193,9 @@ export class IdeaController {
    */
   static async deleteIdea(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.userId) {
-        throw new Error('User ID not found');
-      }
-
       const { id } = req.params;
 
-      await IdeaService.deleteIdea(id, req.userId);
+      await IdeaService.deleteIdea(id, req.userId!);
 
       res.status(204).send();
     } catch (error) {

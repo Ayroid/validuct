@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { useParams, useRouter, notFound } from "next/navigation";
 import { userApi, UserProfile } from "@/lib/api/users";
 import {
@@ -19,6 +20,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Lightbulb, BarChart3, Pin, ArrowLeft, LayoutList } from "lucide-react";
 import { useNavBack } from "@/hooks/useNavBack";
+import { getErrorMessage } from "@/lib/errors";
 
 export default function ProfilePage() {
 	const params = useParams();
@@ -41,8 +43,6 @@ export default function ProfilePage() {
 	const [activeTab, setActiveTab] = useState<"ideas" | "analytics">("ideas");
 	const [page, setPage] = useState(1);
 	const [pagination, setPagination] = useState<PaginationMeta | null>(null);
-	const observerRef = useRef<HTMLDivElement>(null);
-
 	const isOwnProfile = session?.user?.username === username;
 
 	// Sync tab from URL search params
@@ -72,7 +72,7 @@ export default function ProfilePage() {
 					setIs404(true);
 					return;
 				}
-				setError(apiErr.message || "An unexpected error occurred");
+				setError(getErrorMessage(err, "An unexpected error occurred"));
 			} finally {
 				setLoading(false);
 			}
@@ -134,28 +134,7 @@ export default function ProfilePage() {
 		}
 	}, [ideasLoading, hasMore]);
 
-	// Infinite scroll observer
-	useEffect(() => {
-		const observer = new IntersectionObserver(
-			(entries) => {
-				if (entries[0].isIntersecting && !ideasLoading && hasMore) {
-					handleLoadMore();
-				}
-			},
-			{ threshold: 0.1 }
-		);
-
-		const currentObserverRef = observerRef.current;
-		if (currentObserverRef) {
-			observer.observe(currentObserverRef);
-		}
-
-		return () => {
-			if (currentObserverRef) {
-				observer.unobserve(currentObserverRef);
-			}
-		};
-	}, [ideasLoading, hasMore, handleLoadMore]);
+	const sentinelRef = useInfiniteScroll(handleLoadMore, !ideasLoading && hasMore);
 
 	if (loading) {
 		return (
@@ -262,7 +241,7 @@ export default function ProfilePage() {
 							hasPinnedIdeas={hasPinnedIdeas}
 							handlePinChange={handlePinChange}
 							hasMore={hasMore}
-							observerRef={observerRef}
+							sentinelRef={sentinelRef}
 						/>
 					) : (
 						<AnalyticsTabContent username={username} />
@@ -284,7 +263,7 @@ function IdeasTabContent({
 	hasPinnedIdeas,
 	handlePinChange,
 	hasMore,
-	observerRef,
+	sentinelRef,
 }: {
 	ideas: IdeaWithSignals[] | Idea[];
 	profile: UserProfile;
@@ -293,7 +272,7 @@ function IdeasTabContent({
 	hasPinnedIdeas: boolean;
 	handlePinChange: () => void;
 	hasMore: boolean;
-	observerRef: React.RefObject<HTMLDivElement | null>;
+	sentinelRef: React.RefObject<HTMLDivElement | null>;
 }) {
 	return (
 		<>
@@ -359,7 +338,7 @@ function IdeasTabContent({
 					))}
 
 					{hasMore && (
-						<div ref={observerRef} className="flex justify-center pt-6">
+						<div ref={sentinelRef} className="flex justify-center pt-6">
 							{ideasLoading && (
 								<div className="border-primary h-8 w-8 animate-spin rounded-full border-2 border-t-transparent"></div>
 							)}
@@ -378,7 +357,7 @@ function IdeasTabContent({
 					))}
 
 					{hasMore && (
-						<div ref={observerRef} className="flex justify-center pt-6">
+						<div ref={sentinelRef} className="flex justify-center pt-6">
 							{ideasLoading && (
 								<div className="border-primary h-8 w-8 animate-spin rounded-full border-2 border-t-transparent"></div>
 							)}

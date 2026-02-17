@@ -21,10 +21,7 @@ export class SignalController {
    */
   static async toggleSignal(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.userId) {
-        throw new Error('User ID not found');
-      }
-      const userId = req.userId;
+      const userId = req.userId!;
       const { id: ideaId } = req.params;
       const { signalType } = req.body;
 

@@ -21,10 +21,7 @@ export class CommentController {
    */
   static async createComment(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.userId) {
-        throw new Error('User ID not found');
-      }
-      const userId = req.userId;
+      const userId = req.userId!;
       const { id: ideaId } = req.params;
       const { content, parentCommentId, category } = req.body;
 
@@ -124,10 +121,7 @@ export class CommentController {
    */
   static async updateComment(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.userId) {
-        throw new Error('User ID not found');
-      }
-      const userId = req.userId;
+      const userId = req.userId!;
       const { id: commentId } = req.params;
       const { content } = req.body;
 
@@ -161,10 +155,7 @@ export class CommentController {
    */
   static async deleteComment(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.userId) {
-        throw new Error('User ID not found');
-      }
-      const userId = req.userId;
+      const userId = req.userId!;
       const { id: commentId } = req.params;
 
       await CommentService.deleteComment(commentId, userId);
@@ -189,10 +180,7 @@ export class CommentController {
    */
   static async toggleHelpful(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.userId) {
-        throw new Error('User ID not found');
-      }
-      const userId = req.userId;
+      const userId = req.userId!;
       const { id: commentId } = req.params;
 
       const result = await CommentService.toggleHelpful(commentId, userId);

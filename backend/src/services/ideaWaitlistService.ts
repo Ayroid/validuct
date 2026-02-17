@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { paginate, buildPaginationMeta } from '../utils/pagination.js';
 
 /**
  * Service class for managing idea waitlists
@@ -151,11 +152,13 @@ export class IdeaWaitlistService {
       where: { ideaId },
     });
 
+    const { skip, take } = paginate(page, limit);
+
     const entries = await prisma.ideaWaitlist.findMany({
       where: { ideaId },
       orderBy: { createdAt: 'desc' },
-      skip: (page - 1) * limit,
-      take: limit,
+      skip,
+      take,
       select: {
         id: true,
         email: true,
@@ -168,12 +171,7 @@ export class IdeaWaitlistService {
       ideaHeading: idea.heading,
       totalCount: total,
       entries,
-      pagination: {
-        page,
-        limit,
-        total,
-        total_pages: Math.ceil(total / limit),
-      },
+      pagination: buildPaginationMeta(page, limit, total),
     };
   }
 
@@ -224,11 +222,13 @@ export class IdeaWaitlistService {
 
     const total = await prisma.ideaWaitlist.count({ where: { ideaId } });
 
+    const { skip, take } = paginate(page, limit);
+
     const entries = await prisma.ideaWaitlist.findMany({
       where: { ideaId },
       orderBy: { createdAt: 'desc' },
-      skip: (page - 1) * limit,
-      take: limit,
+      skip,
+      take,
       select: { id: true, email: true, createdAt: true },
     });
 
@@ -237,7 +237,7 @@ export class IdeaWaitlistService {
       ideaHeading: idea.heading,
       totalCount: total,
       entries,
-      pagination: { page, limit, total, total_pages: Math.ceil(total / limit) },
+      pagination: buildPaginationMeta(page, limit, total),
     };
   }
 

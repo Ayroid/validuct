@@ -21,7 +21,7 @@ interface JwtPayload {
 export const generateToken = (userId: string): string => {
   return jwt.sign({ userId }, config.JWT_SECRET, {
     expiresIn: config.JWT_EXPIRE,
-  } as any);
+  } as jwt.SignOptions);
 };
 
 /**

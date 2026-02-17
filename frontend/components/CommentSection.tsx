@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { commentsApi, Comment } from "@/lib/api/comments";
+import { useRouter } from "next/navigation";
+import { useComments } from "@/hooks/useComments";
+import { ReplyProvider } from "./ReplyContext";
 import CommentItem from "./CommentItem";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { CommentSectionProps, ErrorResponse, CommentCategory } from "@/types";
+import { CommentSectionProps, CommentCategory } from "@/types";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -17,42 +18,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
-const CATEGORY_CONFIG: Record<
-	CommentCategory,
-	{ label: string; placeholder: string; shortLabel: string }
-> = {
-	PROBLEM_CLARITY: {
-		label: "Problem clarity",
-		shortLabel: "Problem",
-		placeholder: "Is the problem well-defined? Any gaps in understanding?",
-	},
-	TARGET_USERS: {
-		label: "Target users",
-		shortLabel: "Users",
-		placeholder: "Who would use this? Are the target users clear?",
-	},
-	WILLINGNESS_TO_PAY: {
-		label: "Willingness to pay",
-		shortLabel: "Pricing",
-		placeholder: "Would people pay for this? At what price point?",
-	},
-	TECHNICAL_FEASIBILITY: {
-		label: "Technical feasibility",
-		shortLabel: "Tech",
-		placeholder: "Is this technically achievable? Any blockers?",
-	},
-	FEATURE_SUGGESTION: {
-		label: "Feature suggestion",
-		shortLabel: "Feature",
-		placeholder: "What features would make this better?",
-	},
-	GENERAL: {
-		label: "General feedback",
-		shortLabel: "General",
-		placeholder: "Share your thoughts on this idea...",
-	},
-};
+import { COMMENT_CATEGORY_CONFIG } from "@/lib/config";
 
 export default function CommentSection({
 	ideaId,
@@ -62,91 +28,31 @@ export default function CommentSection({
 }: CommentSectionProps) {
 	const { data: session } = useSession();
 	const router = useRouter();
-	const [comments, setComments] = useState<Comment[]>([]);
 	const [newCommentContent, setNewCommentContent] = useState("");
 	const [selectedCategory, setSelectedCategory] =
 		useState<CommentCategory>("GENERAL");
-	const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
-	const [replyContent, setReplyContent] = useState("");
-	const [isLoading, setIsLoading] = useState(false);
-	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [totalComments, setTotalComments] = useState(initialCommentsCount);
-	const [page, setPage] = useState(1);
-	const [hasMore, setHasMore] = useState(true);
-	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-	const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
-	const observerRef = useRef<HTMLDivElement>(null);
+
+	const {
+		comments,
+		isLoading,
+		isSubmitting,
+		error,
+		totalComments,
+		page,
+		hasMore,
+		deleteDialogOpen,
+		setDeleteDialogOpen,
+		sentinelRef,
+		createComment,
+		submitReply,
+		editComment,
+		handleDeleteClick,
+		confirmDelete,
+	} = useComments(ideaId, initialCommentsCount);
 
 	useEffect(() => {
 		onCommentsCountChange?.(totalComments);
 	}, [totalComments, onCommentsCountChange]);
-
-	const updateTotalComments = useCallback(
-		(updater: (prev: number) => number) => {
-			setTotalComments(updater);
-		},
-		[]
-	);
-
-	// Fetch comments
-	const fetchComments = useCallback(async () => {
-		try {
-			setIsLoading(true);
-			setError(null);
-			const response = await commentsApi.getIdeaComments({
-				ideaId,
-				page,
-				limit: 20,
-			});
-
-			if (page === 1) {
-				setComments(response.comments);
-			} else {
-				setComments((prev) => [...prev, ...response.comments]);
-			}
-
-			setHasMore(page < response.pagination.total_pages);
-		} catch (error: unknown) {
-			const err = error as ErrorResponse;
-			setError(err.response?.data?.message || "Failed to load comments");
-		} finally {
-			setIsLoading(false);
-		}
-	}, [ideaId, page]);
-
-	const handleLoadMore = useCallback(() => {
-		if (!isLoading && hasMore) {
-			setPage((prev) => prev + 1);
-		}
-	}, [isLoading, hasMore]);
-
-	useEffect(() => {
-		fetchComments();
-	}, [fetchComments]);
-
-	// Infinite scroll observer
-	useEffect(() => {
-		const observer = new IntersectionObserver(
-			(entries) => {
-				if (entries[0].isIntersecting && !isLoading && hasMore) {
-					handleLoadMore();
-				}
-			},
-			{ threshold: 0.1 }
-		);
-
-		const currentObserverRef = observerRef.current;
-		if (currentObserverRef) {
-			observer.observe(currentObserverRef);
-		}
-
-		return () => {
-			if (currentObserverRef) {
-				observer.unobserve(currentObserverRef);
-			}
-		};
-	}, [isLoading, hasMore, handleLoadMore]);
 
 	const handleCreateComment = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -158,117 +64,31 @@ export default function CommentSection({
 
 		if (!newCommentContent.trim()) return;
 
-		try {
-			setIsSubmitting(true);
-			setError(null);
-
-			const newComment = await commentsApi.createComment(ideaId, {
-				content: newCommentContent,
-				category: selectedCategory,
-			});
-
-			setComments([newComment, ...comments]);
+		const success = await createComment(newCommentContent, selectedCategory);
+		if (success) {
 			setNewCommentContent("");
 			setSelectedCategory("GENERAL");
-			updateTotalComments((prev) => prev + 1);
-		} catch (error: unknown) {
-			const err = error as ErrorResponse;
-			setError(err.response?.data?.message || "Failed to post comment");
-		} finally {
-			setIsSubmitting(false);
 		}
 	};
 
-	const handleReply = (parentCommentId: string) => {
-		if (!session) {
-			router.push("/signin");
-			return;
-		}
-		setReplyToCommentId(parentCommentId);
-		setReplyContent("");
-	};
+	const handleStartReply = useCallback(
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		(_commentId: string): boolean => {
+			if (!session) {
+				router.push("/signin");
+				return false;
+			}
+			return true;
+		},
+		[session, router]
+	);
 
-	const handleSubmitReply = async (parentCommentId: string) => {
-		if (!replyContent.trim()) return;
-
-		try {
-			setIsSubmitting(true);
-			setError(null);
-
-			await commentsApi.createComment(ideaId, {
-				content: replyContent,
-				parentCommentId,
-			});
-
-			// Refresh comments to show new reply
-			setPage(1);
-			await fetchComments();
-
-			setReplyToCommentId(null);
-			setReplyContent("");
-			updateTotalComments((prev) => prev + 1);
-		} catch (error: unknown) {
-			const err = error as ErrorResponse;
-			setError(err.response?.data?.message || "Failed to post reply");
-		} finally {
-			setIsSubmitting(false);
-		}
-	};
-
-	const handleEdit = async (commentId: string, content: string) => {
-		try {
-			setError(null);
-			const updatedComment = await commentsApi.updateComment(commentId, {
-				content,
-			});
-
-			// Update comment in the list
-			const updateCommentInList = (commentsList: Comment[]): Comment[] => {
-				return commentsList.map((comment) => {
-					if (comment.id === commentId) {
-						return updatedComment;
-					}
-					if (comment.replies) {
-						return {
-							...comment,
-							replies: updateCommentInList(comment.replies),
-						};
-					}
-					return comment;
-				});
-			};
-
-			setComments(updateCommentInList(comments));
-		} catch (error: unknown) {
-			const err = error as ErrorResponse;
-			setError(err.response?.data?.message || "Failed to update comment");
-		}
-	};
-
-	const handleDeleteClick = (commentId: string) => {
-		setCommentToDelete(commentId);
-		setDeleteDialogOpen(true);
-	};
-
-	const handleDelete = async () => {
-		if (!commentToDelete) return;
-
-		try {
-			setError(null);
-			await commentsApi.deleteComment(commentToDelete);
-
-			// Refresh comments
-			setPage(1);
-			await fetchComments();
-			updateTotalComments((prev) => Math.max(0, prev - 1));
-			setDeleteDialogOpen(false);
-			setCommentToDelete(null);
-		} catch (error: unknown) {
-			const err = error as ErrorResponse;
-			setError(err.response?.data?.message || "Failed to delete comment");
-			setDeleteDialogOpen(false);
-		}
-	};
+	const handleSubmitReply = useCallback(
+		async (parentCommentId: string, content: string): Promise<boolean> => {
+			return await submitReply(parentCommentId, content);
+		},
+		[submitReply]
+	);
 
 	return (
 		<div>
@@ -291,7 +111,7 @@ export default function CommentSection({
 							What kind of feedback are you giving?
 						</p>
 						<div className="flex flex-wrap gap-2">
-							{(Object.keys(CATEGORY_CONFIG) as CommentCategory[]).map(
+							{(Object.keys(COMMENT_CATEGORY_CONFIG) as CommentCategory[]).map(
 								(category) => (
 									<button
 										key={category}
@@ -304,10 +124,10 @@ export default function CommentSection({
 										}`}
 									>
 										<span className="hidden sm:inline">
-											{CATEGORY_CONFIG[category].label}
+											{COMMENT_CATEGORY_CONFIG[category].label}
 										</span>
 										<span className="sm:hidden">
-											{CATEGORY_CONFIG[category].shortLabel}
+											{COMMENT_CATEGORY_CONFIG[category].shortLabel}
 										</span>
 									</button>
 								)
@@ -318,7 +138,7 @@ export default function CommentSection({
 					<textarea
 						value={newCommentContent}
 						onChange={(e) => setNewCommentContent(e.target.value)}
-						placeholder={CATEGORY_CONFIG[selectedCategory].placeholder}
+						placeholder={COMMENT_CATEGORY_CONFIG[selectedCategory].placeholder}
 						className="bg-background text-foreground placeholder:text-muted-foreground focus:ring-primary border-border w-full resize-none rounded-lg border px-4 py-3 focus:ring-2 focus:outline-none"
 						rows={3}
 						disabled={isSubmitting}
@@ -327,7 +147,7 @@ export default function CommentSection({
 						<span className="text-muted-foreground text-xs">
 							Category:{" "}
 							<span className="text-foreground font-medium">
-								{CATEGORY_CONFIG[selectedCategory].label}
+								{COMMENT_CATEGORY_CONFIG[selectedCategory].label}
 							</span>
 						</span>
 						<Button
@@ -361,33 +181,32 @@ export default function CommentSection({
 					<p>No comments yet. Be the first to share your validation!</p>
 				</div>
 			) : (
-				<div className="space-y-2">
-					{comments.map((comment) => (
-						<CommentItem
-							key={comment.id}
-							comment={comment}
-							onReply={handleReply}
-							onEdit={handleEdit}
-							onDelete={handleDeleteClick}
-							replyToCommentId={replyToCommentId}
-							replyContent={replyContent}
-							setReplyContent={setReplyContent}
-							handleSubmitReply={handleSubmitReply}
-							isSubmitting={isSubmitting}
-							setReplyToCommentId={setReplyToCommentId}
-							ideaOwnerId={ideaOwnerId}
-						/>
-					))}
+				<ReplyProvider
+					isSubmitting={isSubmitting}
+					onSubmitReply={handleSubmitReply}
+					onStartReply={handleStartReply}
+				>
+					<div className="space-y-2">
+						{comments.map((comment) => (
+							<CommentItem
+								key={comment.id}
+								comment={comment}
+								onEdit={editComment}
+								onDelete={handleDeleteClick}
+								ideaOwnerId={ideaOwnerId}
+							/>
+						))}
 
-					{/* Infinite Scroll Observer Target */}
-					{hasMore && (
-						<div ref={observerRef} className="flex justify-center pt-6">
-							{isLoading && (
-								<div className="border-primary inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-r-transparent"></div>
-							)}
-						</div>
-					)}
-				</div>
+						{/* Infinite Scroll Observer Target */}
+						{hasMore && (
+							<div ref={sentinelRef} className="flex justify-center pt-6">
+								{isLoading && (
+									<div className="border-primary inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-r-transparent"></div>
+								)}
+							</div>
+						)}
+					</div>
+				</ReplyProvider>
 			)}
 			{/* Delete Confirmation Dialog */}
 			<AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
@@ -404,7 +223,7 @@ export default function CommentSection({
 							Cancel
 						</AlertDialogCancel>
 						<AlertDialogAction
-							onClick={handleDelete}
+							onClick={confirmDelete}
 							className="bg-destructive text-destructive-foreground hover:bg-destructive/90 cursor-pointer"
 						>
 							Delete

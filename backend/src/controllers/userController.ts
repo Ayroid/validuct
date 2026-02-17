@@ -1,6 +1,8 @@
-import { Response } from 'express';
+import { Response, NextFunction } from 'express';
 import { AuthRequest, ProfileSortMode, ActivityRange } from '../types/index.js';
 import { UserService } from '../services/userService.js';
+import { ValidationService } from '../services/validationService.js';
+import { AnalyticsService } from '../services/analyticsService.js';
 
 /**
  * Controller for handling user-related HTTP requests
@@ -11,13 +13,14 @@ export class UserController {
    *
    * @param req - Express request object
    * @param res - Express response object
+   * @param next - Express next function
    *
    * @remarks
    * Route: GET /api/users/:username
    * No authentication required
    * Returns user profile with ideas count and pinned ideas
    */
-  static async getUserProfile(req: AuthRequest, res: Response) {
+  static async getUserProfile(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { username } = req.params;
 
@@ -34,11 +37,8 @@ export class UserController {
         success: true,
         data: result,
       });
-    } catch (error: any) {
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Failed to fetch user profile',
-      });
+    } catch (error) {
+      return next(error);
     }
   }
 
@@ -47,6 +47,7 @@ export class UserController {
    *
    * @param req - Express request object with authenticated user ID
    * @param res - Express response object
+   * @param next - Express next function
    *
    * @remarks
    * Route: PUT /api/users/profile
@@ -54,7 +55,7 @@ export class UserController {
    * Request body: { username?, bio?, profilePicture? }
    * Returns updated user profile
    */
-  static async updateProfile(req: AuthRequest, res: Response) {
+  static async updateProfile(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const userId = req.userId!;
       const { username, bio, profilePicture } = req.body;
@@ -69,18 +70,8 @@ export class UserController {
         success: true,
         data: { user },
       });
-    } catch (error: any) {
-      if (error.message === 'Username already taken') {
-        return res.status(400).json({
-          success: false,
-          error: error.message,
-        });
-      }
-
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Failed to update profile',
-      });
+    } catch (error) {
+      return next(error);
     }
   }
 
@@ -89,6 +80,7 @@ export class UserController {
    *
    * @param req - Express request object
    * @param res - Express response object
+   * @param next - Express next function
    *
    * @remarks
    * Route: GET /api/users/:username/ideas?page=1&limit=20&sort=newest
@@ -96,7 +88,7 @@ export class UserController {
    * Query parameters: page, limit, sort
    * Returns user's paginated ideas with metadata
    */
-  static async getUserIdeas(req: AuthRequest, res: Response) {
+  static async getUserIdeas(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { username } = req.params;
       const page = parseInt(req.query.page as string) || 1;
@@ -116,11 +108,8 @@ export class UserController {
         success: true,
         data: result,
       });
-    } catch (error: any) {
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Failed to fetch user ideas',
-      });
+    } catch (error) {
+      return next(error);
     }
   }
 
@@ -129,6 +118,7 @@ export class UserController {
    *
    * @param req - Express request object with authenticated user ID
    * @param res - Express response object
+   * @param next - Express next function
    *
    * @remarks
    * Route: POST /api/users/pinned-ideas/:id
@@ -136,7 +126,7 @@ export class UserController {
    * Maximum 5 pinned ideas per user
    * Returns pinned status
    */
-  static async pinIdea(req: AuthRequest, res: Response) {
+  static async pinIdea(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const userId = req.userId!;
       const { id } = req.params;
@@ -147,22 +137,8 @@ export class UserController {
         success: true,
         data: result,
       });
-    } catch (error: any) {
-      if (
-        error.message === 'Idea not found' ||
-        error.message === 'Maximum 5 ideas can be pinned' ||
-        error.message === 'Idea already pinned'
-      ) {
-        return res.status(400).json({
-          success: false,
-          error: error.message,
-        });
-      }
-
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Failed to pin idea',
-      });
+    } catch (error) {
+      return next(error);
     }
   }
 
@@ -171,13 +147,14 @@ export class UserController {
    *
    * @param req - Express request object with authenticated user ID
    * @param res - Express response object
+   * @param next - Express next function
    *
    * @remarks
    * Route: DELETE /api/users/pinned-ideas/:id
    * Requires authentication
    * Returns 204 No Content on success
    */
-  static async unpinIdea(req: AuthRequest, res: Response) {
+  static async unpinIdea(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const userId = req.userId!;
       const { id } = req.params;
@@ -185,18 +162,8 @@ export class UserController {
       await UserService.unpinIdea(userId, id);
 
       return res.status(204).send();
-    } catch (error: any) {
-      if (error.message === 'Idea is not pinned') {
-        return res.status(400).json({
-          success: false,
-          error: error.message,
-        });
-      }
-
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Failed to unpin idea',
-      });
+    } catch (error) {
+      return next(error);
     }
   }
 
@@ -205,13 +172,14 @@ export class UserController {
    *
    * @param req - Express request object with authenticated user ID
    * @param res - Express response object
+   * @param next - Express next function
    *
    * @remarks
    * Route: GET /api/users/pinned-ideas
    * Requires authentication
    * Returns array of pinned ideas ordered by pin order
    */
-  static async getPinnedIdeas(req: AuthRequest, res: Response) {
+  static async getPinnedIdeas(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const userId = req.userId!;
 
@@ -223,11 +191,8 @@ export class UserController {
           pinned_ideas: pinnedIdeas,
         },
       });
-    } catch (error: any) {
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Failed to fetch pinned ideas',
-      });
+    } catch (error) {
+      return next(error);
     }
   }
 
@@ -236,17 +201,18 @@ export class UserController {
    *
    * @param req - Express request object
    * @param res - Express response object
+   * @param next - Express next function
    *
    * @remarks
    * Route: GET /api/users/:username/validation-summary
    * No authentication required
    * Returns aggregated validation signals and next action recommendation
    */
-  static async getValidationSummary(req: AuthRequest, res: Response) {
+  static async getValidationSummary(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { username } = req.params;
 
-      const result = await UserService.getValidationSummary(username);
+      const result = await ValidationService.getValidationSummary(username);
 
       if (!result) {
         return res.status(404).json({
@@ -259,11 +225,8 @@ export class UserController {
         success: true,
         data: result,
       });
-    } catch (error: any) {
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Failed to fetch validation summary',
-      });
+    } catch (error) {
+      return next(error);
     }
   }
 
@@ -272,6 +235,7 @@ export class UserController {
    *
    * @param req - Express request object
    * @param res - Express response object
+   * @param next - Express next function
    *
    * @remarks
    * Route: GET /api/users/:username/ideas-with-signals
@@ -279,14 +243,14 @@ export class UserController {
    * No authentication required
    * Returns ideas with embedded signal counts and validation state
    */
-  static async getUserIdeasWithSignals(req: AuthRequest, res: Response) {
+  static async getUserIdeasWithSignals(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { username } = req.params;
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 20;
       const sort = (req.query.sort as ProfileSortMode) || 'newest';
 
-      const result = await UserService.getUserIdeasWithSignals(username, page, limit, sort);
+      const result = await ValidationService.getUserIdeasWithSignals(username, page, limit, sort);
 
       if (!result) {
         return res.status(404).json({
@@ -299,11 +263,8 @@ export class UserController {
         success: true,
         data: result,
       });
-    } catch (error: any) {
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Failed to fetch user ideas with signals',
-      });
+    } catch (error) {
+      return next(error);
     }
   }
 
@@ -314,11 +275,11 @@ export class UserController {
    * Route: GET /api/users/:username/idea-portfolio
    * Requires authentication (owner only)
    */
-  static async getIdeaPortfolio(req: AuthRequest, res: Response) {
+  static async getIdeaPortfolio(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { username } = req.params;
 
-      const result = await UserService.getIdeaPortfolio(username);
+      const result = await AnalyticsService.getIdeaPortfolio(username);
 
       if (!result) {
         return res.status(404).json({
@@ -331,11 +292,8 @@ export class UserController {
         success: true,
         data: result,
       });
-    } catch (error: any) {
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Failed to fetch idea portfolio',
-      });
+    } catch (error) {
+      return next(error);
     }
   }
 
@@ -346,11 +304,11 @@ export class UserController {
    * Route: GET /api/users/:username/idea-scorecard/:ideaId
    * Requires authentication (owner only)
    */
-  static async getIdeaScorecard(req: AuthRequest, res: Response) {
+  static async getIdeaScorecard(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { username, ideaId } = req.params;
 
-      const result = await UserService.getIdeaScorecard(username, ideaId);
+      const result = await AnalyticsService.getIdeaScorecard(username, ideaId);
 
       if (!result) {
         return res.status(404).json({
@@ -363,11 +321,8 @@ export class UserController {
         success: true,
         data: result,
       });
-    } catch (error: any) {
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Failed to fetch idea scorecard',
-      });
+    } catch (error) {
+      return next(error);
     }
   }
 
@@ -378,12 +333,12 @@ export class UserController {
    * Route: GET /api/users/:username/analytics-dashboard
    * Requires authentication
    */
-  static async getAnalyticsDashboard(req: AuthRequest, res: Response) {
+  static async getAnalyticsDashboard(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { username } = req.params;
       const range = (req.query.range as ActivityRange) || '30d';
 
-      const result = await UserService.getAnalyticsDashboard(username, range);
+      const result = await AnalyticsService.getAnalyticsDashboard(username, range);
 
       if (!result) {
         return res.status(404).json({
@@ -396,11 +351,8 @@ export class UserController {
         success: true,
         data: result,
       });
-    } catch (error: any) {
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Failed to fetch analytics dashboard',
-      });
+    } catch (error) {
+      return next(error);
     }
   }
 
@@ -411,12 +363,12 @@ export class UserController {
    * Route: GET /api/users/:username/idea-analytics/:ideaId
    * Requires authentication
    */
-  static async getIdeaAnalytics(req: AuthRequest, res: Response) {
+  static async getIdeaAnalytics(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { username, ideaId } = req.params;
       const range = (req.query.range as ActivityRange) || '30d';
 
-      const result = await UserService.getIdeaAnalytics(username, ideaId, range);
+      const result = await AnalyticsService.getIdeaAnalytics(username, ideaId, range);
 
       if (!result) {
         return res.status(404).json({
@@ -429,11 +381,8 @@ export class UserController {
         success: true,
         data: result,
       });
-    } catch (error: any) {
-      return res.status(500).json({
-        success: false,
-        error: error.message || 'Failed to fetch idea analytics',
-      });
+    } catch (error) {
+      return next(error);
     }
   }
 

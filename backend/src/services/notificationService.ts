@@ -1,6 +1,7 @@
 import { prisma } from '../config/database.js';
-import { NotificationType, NotificationPriority } from '../../prisma/client/client.js';
+import { NotificationType, NotificationPriority, NotificationPreferences } from '../../prisma/client/client.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { paginate } from '../utils/pagination.js';
 
 interface CreateNotificationParams {
   userId: string;
@@ -75,7 +76,7 @@ export class NotificationService {
 
   // Get user's notifications with pagination
   static async getUserNotifications(userId: string, page = 1, limit = 20) {
-    const skip = (page - 1) * limit;
+    const { skip } = paginate(page, limit);
 
     const [notifications, total] = await Promise.all([
       prisma.notification.findMany({
@@ -194,7 +195,7 @@ export class NotificationService {
   }
 
   // Check if user wants in-app notification for this type
-  private static shouldSendInApp(type: NotificationType, prefs: any): boolean {
+  private static shouldSendInApp(type: NotificationType, prefs: NotificationPreferences): boolean {
     switch (type) {
       case 'UPVOTE': return prefs.inAppUpVotes;
       case 'SIGNAL': return prefs.inAppUpSignals;
@@ -206,7 +207,7 @@ export class NotificationService {
   }
 
   // Check if user wants email for this type
-  static shouldSendEmail(type: NotificationType, prefs: any): boolean {
+  static shouldSendEmail(type: NotificationType, prefs: NotificationPreferences): boolean {
     switch (type) {
       case 'UPVOTE': return false; // Don't email for upvotes (too spammy)
       case 'SIGNAL': return prefs.emailSignals;

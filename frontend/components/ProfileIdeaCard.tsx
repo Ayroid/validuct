@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ProfileIdeaCardProps, ValidationState } from "@/types";
+import { ProfileIdeaCardProps } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import PinButton from "./PinButton";
 import ShareButton from "./ShareButton";
@@ -18,32 +18,7 @@ import {
 	MessageSquareMore,
 	Clock,
 } from "lucide-react";
-
-const VALIDATION_STATE_CONFIG: Record<
-	ValidationState,
-	{ label: string; bgColor: string; textColor: string }
-> = {
-	NEEDS_ACTION: {
-		label: "Needs Action",
-		bgColor: "bg-amber-100 dark:bg-amber-500/20",
-		textColor: "text-amber-700 dark:text-amber-400",
-	},
-	READY_TO_BUILD: {
-		label: "Ready to Build",
-		bgColor: "bg-emerald-100 dark:bg-emerald-500/20",
-		textColor: "text-emerald-700 dark:text-emerald-400",
-	},
-	VALIDATED: {
-		label: "Validated",
-		bgColor: "bg-sky-100 dark:bg-sky-500/20",
-		textColor: "text-sky-700 dark:text-sky-400",
-	},
-	NEUTRAL: {
-		label: "Gathering Signals",
-		bgColor: "bg-muted",
-		textColor: "text-muted-foreground",
-	},
-};
+import { VALIDATION_STATE_CONFIG, STATUS_BADGE_CONFIG } from "@/lib/config";
 
 const SIGNAL_TYPES = [
 	{
@@ -72,29 +47,6 @@ const SIGNAL_TYPES = [
 	},
 ];
 
-const STATUS_BADGE: Record<string, { label: string; className: string }> = {
-	DRAFT: {
-		label: "Draft",
-		className:
-			"bg-zinc-200 text-zinc-600 dark:bg-zinc-700/50 dark:text-zinc-400",
-	},
-	WIP: {
-		label: "In Progress",
-		className:
-			"bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
-	},
-	LAUNCHED: {
-		label: "Launched",
-		className:
-			"bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-400",
-	},
-	VALIDATED: {
-		label: "Validated",
-		className:
-			"bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400",
-	},
-};
-
 export default function ProfileIdeaCard({
 	idea,
 	showPinButton = false,
@@ -102,7 +54,7 @@ export default function ProfileIdeaCard({
 }: ProfileIdeaCardProps) {
 	const router = useRouter();
 	const stateConfig = VALIDATION_STATE_CONFIG[idea.validationState];
-	const statusConfig = STATUS_BADGE[idea.status];
+	const statusConfig = STATUS_BADGE_CONFIG[idea.status];
 
 	const handleCardClick = (e: React.MouseEvent) => {
 		const target = e.target as HTMLElement;

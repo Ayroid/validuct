@@ -85,8 +85,9 @@ export class EmailWorkerService {
 
           console.log(`✅ Email sent: ${email.id}`);
 
-        } catch (error: any) {
+        } catch (error) {
           // Handle failure with retry logic
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
           const shouldRetry = email.retryCount < email.maxRetries;
 
           if (shouldRetry) {
@@ -99,7 +100,7 @@ export class EmailWorkerService {
               data: {
                 retryCount: email.retryCount + 1,
                 nextRetryAt: nextRetry,
-                errorMessage: error.message || 'Unknown error',
+                errorMessage,
               },
             });
 
@@ -111,7 +112,7 @@ export class EmailWorkerService {
               data: {
                 status: 'FAILED',
                 failedAt: new Date(),
-                errorMessage: error.message || 'Unknown error',
+                errorMessage,
               },
             });
 

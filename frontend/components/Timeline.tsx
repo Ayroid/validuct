@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import IdeaCard from "./IdeaCard";
 import { ideasApi } from "@/lib/api/ideas";
 import { Idea } from "@/types";
@@ -24,39 +25,39 @@ export default function Timeline() {
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
-	const observerRef = useRef<HTMLDivElement>(null);
-
-	const loadIdeas = async (reset = false, pageOverride?: number) => {
-		try {
-			setLoading(true);
-			const currentPage = reset ? 1 : (pageOverride ?? page);
-			const response = await ideasApi.getIdeas({
-				timeline: activeTimeline,
-				page: currentPage,
-				limit: 10,
-			});
-
-			if (reset) {
-				setIdeas(response.ideas);
-				setPage(1);
-			} else {
-				// Deduplicate ideas to prevent duplicate key errors
-				setIdeas((prev) => {
-					const existingIds = new Set(prev.map((idea) => idea.id));
-					const newIdeas = response.ideas.filter(
-						(idea) => !existingIds.has(idea.id)
-					);
-					return [...prev, ...newIdeas];
+	const loadIdeas = useCallback(
+		async (reset = false, pageOverride?: number) => {
+			try {
+				setLoading(true);
+				const currentPage = reset ? 1 : pageOverride ?? 1;
+				const response = await ideasApi.getIdeas({
+					timeline: activeTimeline,
+					page: currentPage,
+					limit: 10,
 				});
-			}
 
-			setHasMore(currentPage < response.pagination.total_pages);
-		} catch (error) {
-			console.error("Failed to load ideas:", error);
-		} finally {
-			setLoading(false);
-		}
-	};
+				if (reset) {
+					setIdeas(response.ideas);
+					setPage(1);
+				} else {
+					setIdeas((prev) => {
+						const existingIds = new Set(prev.map((idea) => idea.id));
+						const newIdeas = response.ideas.filter(
+							(idea) => !existingIds.has(idea.id)
+						);
+						return [...prev, ...newIdeas];
+					});
+				}
+
+				setHasMore(currentPage < response.pagination.total_pages);
+			} catch (error) {
+				console.error("Failed to load ideas:", error);
+			} finally {
+				setLoading(false);
+			}
+		},
+		[activeTimeline]
+	);
 
 	const handleLoadMore = useCallback(() => {
 		if (!loading && hasMore) {
@@ -64,36 +65,13 @@ export default function Timeline() {
 			setPage(nextPage);
 			loadIdeas(false, nextPage);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loading, hasMore, page]);
+	}, [loading, hasMore, page, loadIdeas]);
+
+	const sentinelRef = useInfiniteScroll(handleLoadMore, !loading && hasMore);
 
 	useEffect(() => {
 		loadIdeas(true);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [activeTimeline]);
-
-	// Infinite scroll observer
-	useEffect(() => {
-		const observer = new IntersectionObserver(
-			(entries) => {
-				if (entries[0].isIntersecting && !loading && hasMore) {
-					handleLoadMore();
-				}
-			},
-			{ threshold: 0.1 }
-		);
-
-		const currentObserverRef = observerRef.current;
-		if (currentObserverRef) {
-			observer.observe(currentObserverRef);
-		}
-
-		return () => {
-			if (currentObserverRef) {
-				observer.unobserve(currentObserverRef);
-			}
-		};
-	}, [loading, hasMore, handleLoadMore]);
+	}, [loadIdeas]);
 
 	const tabs = [
 		{ id: TimelineType.LATEST , label: "Latest", icon: TbHexagonFilled },
@@ -151,7 +129,7 @@ export default function Timeline() {
 
 							{/* Infinite Scroll Observer Target */}
 							{hasMore && (
-								<div ref={observerRef} className="flex justify-center py-8">
+								<div ref={sentinelRef} className="flex justify-center py-8">
 									{loading && (
 										<div className="border-primary h-12 w-12 animate-spin rounded-full border-b-2"></div>
 									)}

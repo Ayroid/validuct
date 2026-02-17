@@ -75,19 +75,14 @@ export class IdeaWaitlistController {
     next: NextFunction
   ): Promise<void> {
     try {
-      if (!req.userId) {
-        throw new Error('User ID not found');
-      }
-
       const { ideaId, accessToken } = req.params;
-      const userId = req.userId;
       const page = parseInt(req.query.page as string) || 1;
       const limit = Math.min(parseInt(req.query.limit as string) || 20, 50);
 
       const result = await IdeaWaitlistService.getWaitlistByToken(
         ideaId,
         accessToken,
-        userId,
+        req.userId!,
         page,
         limit
       );
@@ -115,14 +110,9 @@ export class IdeaWaitlistController {
     next: NextFunction
   ): Promise<void> {
     try {
-      if (!req.userId) {
-        throw new Error('User ID not found');
-      }
-
       const { ideaId, accessToken } = req.params;
-      const userId = req.userId;
 
-      const result = await IdeaWaitlistService.getAllWaitlistEmails(ideaId, accessToken, userId);
+      const result = await IdeaWaitlistService.getAllWaitlistEmails(ideaId, accessToken, req.userId!);
 
       res.status(200).json({
         success: true,
@@ -135,13 +125,11 @@ export class IdeaWaitlistController {
 
   static async getWaitlistEntries(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.userId) throw new Error('User ID not found');
-
       const { ideaId } = req.params;
       const page = parseInt(req.query.page as string) || 1;
       const limit = Math.min(parseInt(req.query.limit as string) || 20, 50);
 
-      const result = await IdeaWaitlistService.getWaitlistEntries(ideaId, req.userId, page, limit);
+      const result = await IdeaWaitlistService.getWaitlistEntries(ideaId, req.userId!, page, limit);
 
       res.status(200).json({ success: true, data: result });
     } catch (error) {
@@ -151,11 +139,9 @@ export class IdeaWaitlistController {
 
   static async exportWaitlistEmails(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.userId) throw new Error('User ID not found');
-
       const { ideaId } = req.params;
 
-      const result = await IdeaWaitlistService.exportWaitlistEmails(ideaId, req.userId);
+      const result = await IdeaWaitlistService.exportWaitlistEmails(ideaId, req.userId!);
 
       res.status(200).json({ success: true, data: result });
     } catch (error) {

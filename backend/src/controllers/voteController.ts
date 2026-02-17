@@ -22,17 +22,13 @@ export class VoteController {
    */
   static async voteOnIdea(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.userId) {
-        throw new Error('User ID not found');
-      }
-
       const { id } = req.params;
       const { vote_type } = req.body;
 
       // Convert vote_type string to VoteType enum
       const voteType = vote_type === 'upvote' ? VoteType.UPVOTE : VoteType.DOWNVOTE;
 
-      const result = await VoteService.voteOnIdea(req.userId, id, voteType);
+      const result = await VoteService.voteOnIdea(req.userId!, id, voteType);
 
       res.status(200).json({
         success: true,

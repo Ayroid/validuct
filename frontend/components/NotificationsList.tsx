@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -19,40 +20,7 @@ import {
 } from "@/lib/api/notifications";
 import { Notification } from "@/types";
 import { formatDistanceToNow } from "date-fns";
-
-const getNotificationIcon = (type: Notification["type"]) => {
-	switch (type) {
-		case "UPVOTE":
-			return "👍";
-		case "SIGNAL":
-			return "🎯";
-		case "COMMENT":
-			return "💬";
-		case "REPLY":
-			return "↩️";
-		case "MILESTONE":
-			return "🎉";
-		default:
-			return "🔔";
-	}
-};
-
-const getNotificationAccent = (type: Notification["type"]) => {
-	switch (type) {
-		case "UPVOTE":
-			return "bg-emerald-500/10 ring-emerald-500/20";
-		case "SIGNAL":
-			return "bg-blue-500/10 ring-blue-500/20";
-		case "COMMENT":
-			return "bg-purple-500/10 ring-purple-500/20";
-		case "REPLY":
-			return "bg-sky-500/10 ring-sky-500/20";
-		case "MILESTONE":
-			return "bg-amber-500/10 ring-amber-500/20";
-		default:
-			return "bg-muted ring-border/50";
-	}
-};
+import { NOTIFICATION_ICON_MAP, NOTIFICATION_ACCENT_MAP } from "@/lib/config";
 
 export default function NotificationsList() {
 	const back = useNavBack();
@@ -60,8 +28,6 @@ export default function NotificationsList() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
-	const observerRef = useRef<HTMLDivElement>(null);
-
 	const fetchNotifications = async (pageNum: number, append = false) => {
 		try {
 			setIsLoading(true);
@@ -87,32 +53,11 @@ export default function NotificationsList() {
 		}
 	}, [isLoading, hasMore, page]);
 
+	const sentinelRef = useInfiniteScroll(handleLoadMore, !isLoading && hasMore);
+
 	useEffect(() => {
 		fetchNotifications(1);
 	}, []);
-
-	// Infinite scroll observer
-	useEffect(() => {
-		const observer = new IntersectionObserver(
-			(entries) => {
-				if (entries[0].isIntersecting && !isLoading && hasMore) {
-					handleLoadMore();
-				}
-			},
-			{ threshold: 0.1 }
-		);
-
-		const currentObserverRef = observerRef.current;
-		if (currentObserverRef) {
-			observer.observe(currentObserverRef);
-		}
-
-		return () => {
-			if (currentObserverRef) {
-				observer.unobserve(currentObserverRef);
-			}
-		};
-	}, [isLoading, hasMore, handleLoadMore]);
 
 	const handleMarkAsRead = async (notificationId: string) => {
 		try {
@@ -225,12 +170,12 @@ export default function NotificationsList() {
 									<HiUserCircle className="text-muted-foreground h-11 w-11" />
 								) : (
 									<span className="flex h-11 w-11 items-center justify-center rounded-full text-xl">
-										{getNotificationIcon(notification.type)}
+										{(NOTIFICATION_ICON_MAP[notification.type] || "🔔")}
 									</span>
 								)}
 								{/* Type indicator */}
-								<span className={`absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full ring-1 text-xs ${getNotificationAccent(notification.type)}`}>
-									{getNotificationIcon(notification.type)}
+								<span className={`absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full ring-1 text-xs ${(NOTIFICATION_ACCENT_MAP[notification.type] || "bg-muted ring-border/50")}`}>
+									{(NOTIFICATION_ICON_MAP[notification.type] || "🔔")}
 								</span>
 							</div>
 
@@ -280,7 +225,7 @@ export default function NotificationsList() {
 
 			{/* Infinite Scroll Observer Target */}
 			{hasMore && notifications.length > 0 && (
-				<div ref={observerRef} className="py-6">
+				<div ref={sentinelRef} className="py-6">
 					{isLoading && (
 						<div className="flex justify-center">
 							<div className="border-primary h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" />

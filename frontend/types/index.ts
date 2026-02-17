@@ -290,16 +290,9 @@ export interface CommentSectionProps {
 
 export interface CommentItemProps {
 	comment: Comment;
-	onReply?: (parentCommentId: string) => void;
 	onEdit?: (commentId: string, content: string) => void;
 	onDelete?: (commentId: string) => void;
 	depth?: number;
-	replyToCommentId?: string | null;
-	replyContent?: string;
-	setReplyContent?: (content: string) => void;
-	handleSubmitReply?: (parentCommentId: string) => Promise<void>;
-	isSubmitting?: boolean;
-	setReplyToCommentId?: (commentId: string | null) => void;
 	ideaOwnerId?: string;
 }
 

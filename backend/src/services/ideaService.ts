@@ -1,6 +1,7 @@
 import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
-import { IdeaStatus } from '../../prisma/client/client.js';
+import { IdeaStatus, Prisma } from '../../prisma/client/client.js';
+import { paginate, buildPaginationMeta } from '../utils/pagination.js';
 
 /**
  * Data required to create a new idea
@@ -145,7 +146,7 @@ export class IdeaService {
    */
   static async getIdeas(params: GetIdeasParams) {
     const { timeline, page = 1, limit = 20, userId } = params;
-    const skip = (page - 1) * limit;
+    const { skip, take } = paginate(page, limit);
 
     // Special handling for trending - count votes received in last 24 hours
     if (timeline === 'trending') {
@@ -167,19 +168,14 @@ export class IdeaService {
       const total = recentVotes.length;
 
       // Apply pagination to the vote counts
-      const paginatedVotes = recentVotes.slice(skip, skip + limit);
+      const paginatedVotes = recentVotes.slice(skip, skip + take);
       const trendingIdeaIds = paginatedVotes.map((v) => v.ideaId);
 
       // If no trending ideas, return early
       if (trendingIdeaIds.length === 0) {
         return {
           ideas: [],
-          pagination: {
-            page,
-            limit,
-            total: 0,
-            total_pages: 0,
-          },
+          pagination: buildPaginationMeta(page, limit, 0),
         };
       }
 
@@ -227,18 +223,13 @@ export class IdeaService {
 
       return {
         ideas: ideasWithVotes,
-        pagination: {
-          page,
-          limit,
-          total,
-          total_pages: Math.ceil(total / limit),
-        },
+        pagination: buildPaginationMeta(page, limit, total),
       };
     }
 
     // Regular handling for 'latest' and 'top' timelines
-    let orderBy: any = {};
-    let where: any = {};
+    let orderBy: Prisma.IdeaOrderByWithRelationInput | Prisma.IdeaOrderByWithRelationInput[] = {};
+    let where: Prisma.IdeaWhereInput = {};
 
     switch (timeline) {
       case 'latest':
@@ -257,7 +248,7 @@ export class IdeaService {
         where,
         orderBy,
         skip,
-        take: limit,
+        take,
         include: {
           user: {
             select: {
@@ -296,12 +287,7 @@ export class IdeaService {
 
     return {
       ideas: ideasWithVotes,
-      pagination: {
-        page,
-        limit,
-        total,
-        total_pages: Math.ceil(total / limit),
-      },
+      pagination: buildPaginationMeta(page, limit, total),
     };
   }
 
@@ -333,9 +319,9 @@ export class IdeaService {
       throw new AppError('User not found', 404);
     }
 
-    const skip = (page - 1) * limit;
+    const { skip, take } = paginate(page, limit);
 
-    let orderBy: any = {};
+    let orderBy: Prisma.IdeaOrderByWithRelationInput = {};
     switch (sort) {
       case 'newest':
         orderBy = { createdAt: 'desc' };
@@ -355,7 +341,7 @@ export class IdeaService {
         where: { userId: user.id },
         orderBy,
         skip,
-        take: limit,
+        take,
         include: {
           user: {
             select: {
@@ -370,12 +356,7 @@ export class IdeaService {
 
     return {
       ideas,
-      pagination: {
-        page,
-        limit,
-        total,
-        total_pages: Math.ceil(total / limit),
-      },
+      pagination: buildPaginationMeta(page, limit, total),
     };
   }
 
