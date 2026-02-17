@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
@@ -24,7 +22,7 @@ export default function NotFound() {
 					<div className="relative">
 						<div className="text-brand-yellow text-9xl font-bold">0</div>
 						<svg
-							className="animate-spin-slow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+							className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-[spin_8s_linear_infinite]"
 							width="120"
 							height="120"
 							viewBox="0 0 120 120"
@@ -44,7 +42,7 @@ export default function NotFound() {
 
 					{/* Second 4 */}
 					<div className="relative">
-						<div className="text-brand-red animation-delay-300 animate-pulse text-9xl font-bold opacity-80">
+						<div className="text-brand-red animate-pulse text-9xl font-bold opacity-80 [animation-delay:300ms]">
 							4
 						</div>
 					</div>
@@ -68,7 +66,7 @@ export default function NotFound() {
 						</Link>
 					</Button>
 					<Button asChild size="lg" variant="outline" className="gap-2">
-						<Link href="javascript:history.back()">
+						<Link href="/">
 							<HiArrowLeft className="h-5 w-5" />
 							<span>Go Back</span>
 						</Link>
@@ -97,23 +95,6 @@ export default function NotFound() {
 					</div>
 				</div>
 			</div>
-
-			<style jsx>{`
-				@keyframes spin-slow {
-					from {
-						transform: translate(-50%, -50%) rotate(0deg);
-					}
-					to {
-						transform: translate(-50%, -50%) rotate(360deg);
-					}
-				}
-				.animate-spin-slow {
-					animation: spin-slow 8s linear infinite;
-				}
-				.animation-delay-300 {
-					animation-delay: 300ms;
-				}
-			`}</style>
 		</div>
 	);
 }
