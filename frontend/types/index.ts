@@ -4,6 +4,8 @@ import { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
 // Core Domain Types
 // ============================================================================
 
+export type UserType = "REAL" | "DUMMY";
+
 export interface User {
 	id: string;
 	username: string;
@@ -11,6 +13,7 @@ export interface User {
 	profilePicture: string | null;
 	bio?: string | null;
 	isAdmin?: boolean;
+	ideasCount?: number;
 	createdAt: string;
 }
 
@@ -345,7 +348,12 @@ export interface BuilderSnapshotHeaderProps {
 // Notification Types
 // ============================================================================
 
-export type NotificationType = "UPVOTE" | "SIGNAL" | "COMMENT" | "REPLY" | "MILESTONE";
+export type NotificationType =
+	| "UPVOTE"
+	| "SIGNAL"
+	| "COMMENT"
+	| "REPLY"
+	| "MILESTONE";
 export type NotificationPriority = "LOW" | "MEDIUM" | "HIGH";
 
 export interface Notification {
@@ -468,7 +476,6 @@ export interface IdeaScorecard {
 	createdAt: string;
 }
 
-
 // ============================================================================
 // Analytics Dashboard Types
 // ============================================================================
@@ -537,10 +544,82 @@ export interface IdeaAnalyticsData {
 }
 
 // ============================================================================
+// Admin Types
+// ============================================================================
+
+export type EmailStatus = "PENDING" | "SENT" | "FAILED";
+
+export interface AdminIdea {
+	id: string;
+	heading: string;
+	description: string;
+	status: keyof IdeaStatus;
+	launchedLink: string | null;
+	upvotesCount: number;
+	downvotesCount: number;
+	commentsCount: number;
+	signalsCount: number;
+	waitlistCount: number;
+	createdAt: string;
+	user: {
+		id: string;
+		username: string;
+		profilePicture: string | null;
+	};
+}
+
+export interface EmailQueueEntry {
+	id: string;
+	userId: string;
+	type: NotificationType;
+	priority: NotificationPriority;
+	recipientEmail: string;
+	subject: string;
+	status: EmailStatus;
+	sentAt: string | null;
+	failedAt: string | null;
+	errorMessage: string | null;
+	retryCount: number;
+	maxRetries: number;
+	nextRetryAt: string | null;
+	createdAt: string;
+	user: { username: string; email: string };
+}
+
+export interface EmailQueueStats {
+	pending: number;
+	sent: number;
+	failed: number;
+	total: number;
+}
+
+export interface MainWaitlistEntry {
+	id: string;
+	email: string;
+	createdAt: string;
+}
+
+export interface AdminIdeaWaitlistEntry {
+	id: string;
+	ideaId: string;
+	email: string;
+	createdAt: string;
+	idea: {
+		id: string;
+		heading: string;
+		user: { username: string };
+	};
+}
+
+// ============================================================================
 // Suggestion / Feedback Types
 // ============================================================================
 
-export type SuggestionType = "FEATURE_REQUEST" | "BUG_REPORT" | "IMPROVEMENT" | "OTHER";
+export type SuggestionType =
+	| "FEATURE_REQUEST"
+	| "BUG_REPORT"
+	| "IMPROVEMENT"
+	| "OTHER";
 export type SuggestionStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 export interface Suggestion {
@@ -556,6 +635,50 @@ export interface Suggestion {
 		username: string;
 		profilePicture: string | null;
 	};
+}
+
+// ============================================================================
+// Admin Dashboard Types
+// ============================================================================
+
+export type AdminDashboardRange = "7d" | "30d" | "90d";
+
+export interface DailyAdminActivity {
+	date: string;
+	signals: number;
+	upvotes: number;
+	comments: number;
+	waitlist: number;
+	newUsers: number;
+}
+
+export interface TopAdminIdea {
+	id: string;
+	heading: string;
+	status: string;
+	upvotesCount: number;
+	commentsCount: number;
+	signalsCount: number;
+	waitlistCount: number;
+	username: string;
+}
+
+export interface AdminDashboardStats {
+	totalUsers: number;
+	realUsers: number;
+	dummyUsers: number;
+	newUsersInRange: number;
+	totalIdeas: number;
+	ideasByStatus: { DRAFT: number; WIP: number; VALIDATED: number; LAUNCHED: number };
+	newIdeasInRange: number;
+	totalSignals: number;
+	totalUpvotes: number;
+	totalComments: number;
+	totalMainWaitlist: number;
+	totalIdeaWaitlist: number;
+	emailStats: { pending: number; sent: number; failed: number; total: number };
+	dailyActivity: DailyAdminActivity[];
+	topIdeas: TopAdminIdea[];
 }
 
 // ============================================================================

@@ -4,9 +4,15 @@ import { UserController } from '../controllers/userController.js';
 import { validate } from '../middleware/validator.js';
 import { createIdeaSchema, updateIdeaSchema } from '../utils/validation.js';
 import { protect, optionalProtect } from '../middleware/auth.js';
+import { requireAdmin } from '../middleware/adminAuth.js';
 import { createIdeaLimiter } from '../middleware/rateLimiter.js';
 
 const router = Router();
+
+// Admin routes (must come before parameterized routes)
+router.get('/admin/all', protect, requireAdmin, IdeaController.getAllIdeasAdmin);
+router.delete('/:id/admin', protect, requireAdmin, IdeaController.adminDeleteIdea);
+router.patch('/:id/admin/status', protect, requireAdmin, IdeaController.adminUpdateIdeaStatus);
 
 // Public routes (with optional authentication for userVote)
 router.get('/', optionalProtect, IdeaController.getIdeas);

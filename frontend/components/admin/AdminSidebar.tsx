@@ -29,25 +29,25 @@ const navItems = [
 		label: "Users",
 		href: "/admin/users",
 		icon: HiUsers,
-		enabled: false,
+		enabled: true,
 	},
 	{
 		label: "Ideas",
 		href: "/admin/ideas",
 		icon: HiLightBulb,
-		enabled: false,
+		enabled: true,
 	},
 	{
 		label: "Email Queue",
 		href: "/admin/emails",
 		icon: HiEnvelope,
-		enabled: false,
+		enabled: true,
 	},
 	{
 		label: "Waitlist",
 		href: "/admin/waitlist",
 		icon: HiClipboardDocumentList,
-		enabled: false,
+		enabled: true,
 	},
 ];
 

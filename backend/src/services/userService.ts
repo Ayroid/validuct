@@ -3,6 +3,9 @@ import { Prisma } from '../../prisma/client/client.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { paginate, buildPaginationMeta } from '../utils/pagination.js';
 
+type UserType = 'REAL' | 'DUMMY';
+type UserSort = 'newest' | 'oldest' | 'most_ideas' | 'least_ideas';
+
 /**
  * Service class for managing user profile operations.
  */
@@ -82,6 +85,75 @@ export class UserService {
       },
       ideasCount: user._count.ideas,
       pinnedIdeas: pinnedIdeasWithVotes,
+    };
+  }
+
+  /**
+   * Retrieve paginated list of all users (admin only)
+   */
+  static async getAllUsers(page: number = 1, limit: number = 10, userType?: UserType, sort: UserSort = 'newest') {
+    const { skip, take } = paginate(page, limit);
+    const where = userType
+      ? userType === 'DUMMY'
+        ? {
+            OR: [
+              { email: { endsWith: '@example.com' } },
+              { email: { endsWith: '@validuct.com' } },
+            ],
+          }
+        : {
+            AND: [
+              { email: { not: { endsWith: '@example.com' } } },
+              { email: { not: { endsWith: '@validuct.com' } } },
+            ],
+          }
+      : {};
+
+    let orderBy: Prisma.UserOrderByWithRelationInput;
+    switch (sort) {
+      case 'oldest':
+        orderBy = { createdAt: 'asc' };
+        break;
+      case 'most_ideas':
+        orderBy = { ideas: { _count: 'desc' } };
+        break;
+      case 'least_ideas':
+        orderBy = { ideas: { _count: 'asc' } };
+        break;
+      default:
+        orderBy = { createdAt: 'desc' };
+    }
+
+    const [users, total] = await Promise.all([
+      prisma.user.findMany({
+        where,
+        orderBy,
+        skip,
+        take,
+        include: {
+          ideas: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      }),
+      prisma.user.count({ where }),
+    ]);
+
+    const usersWithIdeaCounts = users.map((user) => ({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      profilePicture: user.profilePicture,
+      bio: user.bio,
+      createdAt: user.createdAt,
+      ideasCount: user.ideas.length,
+    }));
+
+    return {
+      users: usersWithIdeaCounts,
+      pagination: buildPaginationMeta(page, limit, total),
     };
   }
 

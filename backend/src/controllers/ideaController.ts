@@ -202,4 +202,53 @@ export class IdeaController {
       next(error);
     }
   }
+
+  // ── Admin-only ──────────────────────────────────────────────────────────────
+
+  static async getAllIdeasAdmin(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const page   = parseInt(req.query.page   as string) || 1;
+      const limit  = parseInt(req.query.limit  as string) || 20;
+      const status = req.query.status as string | undefined;
+      const sort   = (req.query.sort as string) || 'newest';
+
+      const validStatuses = ['DRAFT', 'WIP', 'VALIDATED', 'LAUNCHED'];
+      const statusFilter = status && validStatuses.includes(status)
+        ? status as IdeaStatus
+        : undefined;
+
+      const result = await IdeaService.getAllIdeasAdmin(page, limit, statusFilter, sort);
+
+      res.status(200).json({ success: true, data: result });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async adminDeleteIdea(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      await IdeaService.adminDeleteIdea(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async adminUpdateIdeaStatus(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+
+      const validStatuses = ['DRAFT', 'WIP', 'VALIDATED', 'LAUNCHED'];
+      if (!validStatuses.includes(status)) {
+        res.status(400).json({ success: false, error: 'Invalid status' });
+        return;
+      }
+
+      const idea = await IdeaService.adminUpdateIdeaStatus(id, status as IdeaStatus);
+      res.status(200).json({ success: true, data: { idea } });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

@@ -440,4 +440,72 @@ export class IdeaService {
       where: { id: ideaId },
     });
   }
+
+  // ── Admin-only ──────────────────────────────────────────────────────────────
+
+  static async getAllIdeasAdmin(
+    page: number = 1,
+    limit: number = 20,
+    status?: IdeaStatus,
+    sort: string = 'newest',
+  ) {
+    const { skip, take } = paginate(page, limit);
+    const where: Prisma.IdeaWhereInput = status ? { status } : {};
+
+    let orderBy: Prisma.IdeaOrderByWithRelationInput;
+    switch (sort) {
+      case 'oldest':        orderBy = { createdAt: 'asc' };  break;
+      case 'most_upvotes':  orderBy = { upvotesCount: 'desc' }; break;
+      case 'most_comments': orderBy = { commentsCount: 'desc' }; break;
+      default:              orderBy = { createdAt: 'desc' };
+    }
+
+    const [ideas, total] = await Promise.all([
+      prisma.idea.findMany({
+        where,
+        orderBy,
+        skip,
+        take,
+        include: {
+          user: { select: { id: true, username: true, profilePicture: true } },
+          _count: { select: { signals: true, waitlist: true } },
+        },
+      }),
+      prisma.idea.count({ where }),
+    ]);
+
+    return {
+      ideas: ideas.map((idea) => ({
+        id: idea.id,
+        heading: idea.heading,
+        description: idea.description,
+        status: idea.status,
+        launchedLink: idea.launchedLink,
+        upvotesCount: idea.upvotesCount,
+        downvotesCount: idea.downvotesCount,
+        commentsCount: idea.commentsCount,
+        signalsCount: idea._count.signals,
+        waitlistCount: idea._count.waitlist,
+        createdAt: idea.createdAt,
+        user: idea.user,
+      })),
+      pagination: buildPaginationMeta(page, limit, total),
+    };
+  }
+
+  static async adminDeleteIdea(ideaId: string) {
+    const idea = await prisma.idea.findUnique({ where: { id: ideaId } });
+    if (!idea) throw new AppError('Idea not found', 404);
+    await prisma.idea.delete({ where: { id: ideaId } });
+  }
+
+  static async adminUpdateIdeaStatus(ideaId: string, status: IdeaStatus) {
+    const idea = await prisma.idea.findUnique({ where: { id: ideaId } });
+    if (!idea) throw new AppError('Idea not found', 404);
+    return prisma.idea.update({
+      where: { id: ideaId },
+      data: { status },
+      include: { user: { select: { id: true, username: true, profilePicture: true } } },
+    });
+  }
 }

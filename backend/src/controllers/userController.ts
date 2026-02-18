@@ -9,6 +9,44 @@ import { AnalyticsService } from '../services/analyticsService.js';
  */
 export class UserController {
   /**
+   * Handle retrieving all users (admin only)
+   *
+   * @param req - Express request object with authenticated user ID
+   * @param res - Express response object
+   * @param next - Express next function
+   *
+   * @remarks
+   * Route: GET /api/users/all?page=1&limit=20
+   * Requires authentication and admin role
+   * Query parameters: page, limit
+   * Returns paginated list of users with metadata
+   */
+
+  static async getAllUsers(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const userType = req.query.userType as string;
+      const sort = req.query.sort as string;
+
+      const userTypes = ['REAL', 'DUMMY'];
+      const filterUsers = userType && userTypes.includes(userType) ? userType as 'REAL' | 'DUMMY' : undefined;
+
+      const validSorts = ['newest', 'oldest', 'most_ideas', 'least_ideas'];
+      const sortParam = sort && validSorts.includes(sort) ? sort as 'newest' | 'oldest' | 'most_ideas' | 'least_ideas' : 'newest';
+
+      const result = await UserService.getAllUsers(page, limit, filterUsers, sortParam);
+
+      return res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  /**
    * Handle retrieving a user's profile by username
    *
    * @param req - Express request object
@@ -385,5 +423,4 @@ export class UserController {
       return next(error);
     }
   }
-
 }

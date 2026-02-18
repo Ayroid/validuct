@@ -3,6 +3,7 @@ import { waitlistSchema } from '../utils/validation.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { Resend } from 'resend';
 import { waitlistEmail } from '../templates/waitlistEmailTemplate.js';
+import { paginate, buildPaginationMeta } from '../utils/pagination.js';
 
 export class WaitlistService {
   static async addToWaitlist(data: unknown) {
@@ -67,6 +68,58 @@ export class WaitlistService {
         createdAt: true,
       },
     });
+  }
+
+  // ── Admin-only ──────────────────────────────────────────────────────────────
+
+  static async getMainWaitlistAdmin(page: number = 1, limit: number = 50) {
+    const { skip, take } = paginate(page, limit);
+    const [entries, total] = await Promise.all([
+      prisma.waitlist.findMany({
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take,
+        select: { id: true, email: true, createdAt: true },
+      }),
+      prisma.waitlist.count(),
+    ]);
+    return { entries, pagination: buildPaginationMeta(page, limit, total) };
+  }
+
+  static async getAllIdeaWaitlistsAdmin(page: number = 1, limit: number = 50, ideaId?: string) {
+    const { skip, take } = paginate(page, limit);
+    const where = ideaId ? { ideaId } : {};
+    const [entries, total] = await Promise.all([
+      prisma.ideaWaitlist.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take,
+        include: {
+          idea: {
+            select: {
+              id: true,
+              heading: true,
+              user: { select: { username: true } },
+            },
+          },
+        },
+      }),
+      prisma.ideaWaitlist.count({ where }),
+    ]);
+    return { entries, pagination: buildPaginationMeta(page, limit, total) };
+  }
+
+  static async removeFromMainWaitlist(id: string) {
+    const entry = await prisma.waitlist.findUnique({ where: { id } });
+    if (!entry) throw new AppError('Waitlist entry not found', 404);
+    await prisma.waitlist.delete({ where: { id } });
+  }
+
+  static async removeFromIdeaWaitlist(id: string) {
+    const entry = await prisma.ideaWaitlist.findUnique({ where: { id } });
+    if (!entry) throw new AppError('Idea waitlist entry not found', 404);
+    await prisma.ideaWaitlist.delete({ where: { id } });
   }
 
   static async sendWaitlistEmail(toEmail: string) {

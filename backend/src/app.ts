@@ -14,6 +14,8 @@ import ideaWaitlistRoutes from './routes/ideaWaitlistRoutes.js';
 import waitlistRoutes from './routes/waitlistRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import suggestionRoutes from './routes/suggestionRoutes.js';
+import emailRoutes from './routes/emailRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 const app: Application = express();
 
@@ -54,6 +56,8 @@ app.use('/api/v1', ideaWaitlistRoutes);
 app.use('/api/v1/waitlist', waitlistRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/suggestions', suggestionRoutes);
+app.use('/api/v1/emails', emailRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 // Error handlers
 app.use(notFound);
