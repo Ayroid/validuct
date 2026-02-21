@@ -101,6 +101,38 @@ export default function AppSidebar() {
 					</Link>
 				</div>
 			</nav>
+
+			{/* User Profile Card */}
+			{user && (
+				<div className="border-t border-border/50 p-3">
+					<Link
+						href={`/${user.username}`}
+						className="flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted"
+					>
+						{user.profilePicture ? (
+							<Image
+								src={user.profilePicture}
+								alt={user.username}
+								width={32}
+								height={32}
+								className="h-8 w-8 shrink-0 rounded-full object-cover ring-2 ring-border"
+							/>
+						) : (
+							<div className="bg-primary/10 text-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold uppercase">
+								{user.username?.[0] ?? "U"}
+							</div>
+						)}
+						<div className="min-w-0 flex-1">
+							<p className="text-foreground truncate text-sm font-bold">
+								{user.username}
+							</p>
+							<p className="text-muted-foreground truncate text-xs">
+								{user.email}
+							</p>
+						</div>
+					</Link>
+				</div>
+			)}
 		</aside>
 	);
 }
