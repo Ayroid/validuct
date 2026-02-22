@@ -19,6 +19,7 @@ export class UserService {
       select: {
         id: true,
         username: true,
+        email: true,
         profilePicture: true,
         bio: true,
         createdAt: true,
@@ -75,6 +76,46 @@ export class UserService {
       }));
     }
 
+    const [upvotesGiven, signalsGiven, commentsGiven, waitlistJoins] = await Promise.all([
+      prisma.vote.count({
+        where: {
+          userId: user.id,
+          voteType: 'UPVOTE',
+          idea: {
+            userId: { not: user.id },
+          },
+        },
+      }),
+      prisma.ideaSignal.count({
+        where: {
+          userId: user.id,
+          idea: {
+            userId: { not: user.id },
+          },
+        },
+      }),
+      prisma.comment.count({
+        where: {
+          userId: user.id,
+          idea: {
+            userId: {
+              not: user.id,
+            },
+          },
+        },
+      }),
+      prisma.ideaWaitlist.count({
+        where: {
+          email: user.email,
+          idea: {
+            userId: {
+              not: user.id,
+            },
+          },
+        },
+      }),
+    ]);
+
     return {
       user: {
         id: user.id,
@@ -85,21 +126,29 @@ export class UserService {
       },
       ideasCount: user._count.ideas,
       pinnedIdeas: pinnedIdeasWithVotes,
+      contributionStats: {
+        upvotesGiven,
+        signalsGiven,
+        commentsGiven,
+        waitlistJoins,
+      },
     };
   }
 
   /**
    * Retrieve paginated list of all users (admin only)
    */
-  static async getAllUsers(page: number = 1, limit: number = 10, userType?: UserType, sort: UserSort = 'newest') {
+  static async getAllUsers(
+    page: number = 1,
+    limit: number = 10,
+    userType?: UserType,
+    sort: UserSort = 'newest'
+  ) {
     const { skip, take } = paginate(page, limit);
     const where = userType
       ? userType === 'DUMMY'
         ? {
-            OR: [
-              { email: { endsWith: '@example.com' } },
-              { email: { endsWith: '@validuct.com' } },
-            ],
+            OR: [{ email: { endsWith: '@example.com' } }, { email: { endsWith: '@validuct.com' } }],
           }
         : {
             AND: [

@@ -22,10 +22,18 @@ export interface User {
 	updatedAt?: string;
 }
 
+export interface ContributionStats {
+	upvotesGiven: number;
+	signalsGiven: number;
+	commentsGiven: number;
+	waitlistJoins: number;
+}
+
 export interface UserProfile {
 	user: User;
 	ideasCount: number;
 	pinnedIdeas: Idea[];
+	contributionStats: ContributionStats;
 }
 
 export interface UpdateProfileData {
@@ -96,9 +104,7 @@ export const userApi = {
 
 	// Get user's idea portfolio
 	getIdeaPortfolio: async (username: string): Promise<IdeaPortfolio> => {
-		const response = await apiClient.get(
-			`/users/${username}/idea-portfolio`
-		);
+		const response = await apiClient.get(`/users/${username}/idea-portfolio`);
 		return response.data.data;
 	},
 
@@ -137,5 +143,4 @@ export const userApi = {
 		);
 		return response.data.data;
 	},
-
 };

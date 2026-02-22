@@ -339,6 +339,12 @@ export interface BuilderSnapshotHeaderProps {
 		};
 		ideasCount: number;
 		pinnedIdeas: Idea[];
+		contributionStats: {
+			upvotesGiven: number;
+			commentsGiven: number;
+			signalsGiven: number;
+			waitlistJoins: number;
+		}
 	};
 	validationSummary: ValidationSummary | null;
 	isOwnProfile: boolean;
